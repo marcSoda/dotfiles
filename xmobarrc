@@ -1,1 +1,16 @@
-/home/marc/.config/xmobar/xmobarrc
+Config { font    = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true, FontAwesome:size=10"
+       , bgColor = "#222222"
+       , fgColor = "#eeeeee"
+       , position = Top
+       , lowerOnStart = True
+       , hideOnStart = False
+       , commands = [Run Date " %a %b %d - %I:%M %p " "date" 60
+                    ,Run Cpu ["-t", "  <total>%"] 60
+                    ,Run Memory ["-t", "  <usedratio>%"] 60
+                    ,Run Com "/home/marc/working/dotfiles/scripts/pacupdate" [] "pacupdate" 36000
+                    ,Run Com "/home/marc/working/dotfiles/scripts/battery_status" [] "bat" 60
+                    ,Run StdinReader]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = " %StdinReader% <fc=#666666>|</fc>}{ <fc=#666666>|</fc>  <fc=#0087D7>%bat%</fc> <fc=#666666>|</fc> <fc=#ecbe7b> %cpu% </fc> <fc=#666666>|</fc> <fc=#ff6c6b>%memory% </fc> <fc=#666666>|</fc> <fc=#FC8F0B> %pacupdate%</fc> <fc=#666666>|</fc> <fc=#eeeeee>%date% </fc>"
+       }
