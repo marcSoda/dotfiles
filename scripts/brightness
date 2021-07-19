@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#usage:
+#    brightness pixel <device> <up/down>   #get device name from xrandr
+#    brightness backlight <up/down>        #only works with laptop display
+
+if [ $1 = "pixel" ]; then
+    function send_notification {
+        new_pixel_brightness=$( echo "($new_pixel_brightness * 100) / 1" | bc -l | cut -d. -f1)
+        # dunstify -i $(dirname $0)/brightness.png -r 1701 " $new_pixel_brightness%"
+        dunstify -i $(dirname $0)/brightness.png -r 1701 " $new_pixel_brightness%"
+    }
+    inc=.01
+    pixel_brightness=$(xrandr --verbose | grep -w -A 5 $2 | grep Brightness | awk '{print $2}')
+    if [ $3 = "up" ]; then
+        if (( $(echo "$pixel_brightness >= 1.0" | bc -l) )); then
+            new_pixel_brightness=1
+            send_notification
+            exit 0
+        fi
+        new_pixel_brightness=$(echo $pixel_brightness + $inc | bc )
+    elif [ $3 = "down" ]; then
+        if (( $(echo "$pixel_brightness <= 0.0" | bc -l) )); then
+            new_pixel_brightness=0
+            send_notification
+            exit 0
+        fi
+        new_pixel_brightness=$(echo $pixel_brightness - $inc | bc )
+    fi
+    xrandr --output $2 --brightness $new_pixel_brightness
+    send_notification
+#this mode only works for laptop brightness because I cannot control the backlight  brightness of the external display
+elif [ $1 = "backlight" ]; then
+    inc="1%"
+    function send_notification {
+        backlight=$(brightnessctl | grep Current | awk '{print $4}' | sed 's/^.//;s/.$//')
+        dunstify -i $(dirname $0)/brightness.png -r 1701 " $backlight"
+    }
+    if [ $2 = "up" ]; then
+        brightnessctl s +$inc
+    elif [ $2 = "down" ]; then
+        brightnessctl s $inc-
+    fi
+    send_notification
+fi

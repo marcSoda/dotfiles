@@ -1,0 +1,8 @@
+#! /bin/bash
+#Pauses the last started instance of vlc.
+
+pid=$(ps -eo pid,cmd | grep bin/vlc | grep /usr/ | awk '{print $1}' | tail -n 1)
+playerctl -p vlc.instance$pid play-pause > /dev/null 2>&1
+if [[ $? != "0" ]]; then
+    playerctl -p vlc play-pause
+fi
