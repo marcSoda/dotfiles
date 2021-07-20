@@ -27,7 +27,8 @@ alias sunlab='e -n sunlab /ssh:masa20@sunlab.cse.lehigh.edu:working'
 e() {
     if [ $# -le 1 ]; then               #if no args, start the default daemon that is always running
         emacsclient -s default -t $1
-        if [ $? != 0 ] && [ $? != 147 ] ; then
+        ret=$?
+        if [ $ret != 0 ] && [ $ret != 147 ] ; then
             /usr/bin/emacs --daemon=default
             /usr/bin/emacsclient -s default -nw $1
         fi
