@@ -11,12 +11,12 @@
     text-color:                  #bbc2cf;
     font:                        "SauceCodePro Nerd Font Mono 9";
     prompt-font:                 "Ubuntu Bold 9";
-    prompt-background:           #51afef;
+    prompt-background:           #0087d7;
     prompt-foreground:           #282c34;
-    prompt-padding:              4px;
+    zrompt-padding:              4px;
     alternate-normal-background: #1c1f24;
     alternate-normal-foreground: @text-color;
-    selected-normal-background:  #ae3f3e;
+    selected-normal-background:  #0087d7;
     selected-normal-foreground:  #ffffff;
     spacing:                     3;
 }
