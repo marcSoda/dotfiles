@@ -11,14 +11,14 @@
   - Tool that configures the display and bluetooth devices when docking.
 - wifi
   - Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
-- dunstrc
-  - config file for dunst
-- init.el
-  - config file for emacs
-- ncspot.toml
-  - config file for ncspot
-- rofi.rasi
-  - rofi config file
+* dunstrc
+- config file for dunst
+* init.el
+- config file for emacs
+* ncspot.toml
+- config file for ncspot
+* rofi.rasi
+- rofi config file
 * scripts
 - bash scripts used by xmonad and xmobar
 - battery_status
