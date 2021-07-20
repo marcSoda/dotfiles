@@ -108,8 +108,8 @@ myKeys =
     -- Applications
         , ("M-S-<Return>", spawn (myTerminal))
         , ("M-S-b", spawn (myBrowser))
-        , ("M-p", spawn "dmenu_run -i -p \"Run: \"")
-        , ("M-S-p", spawn "passmenu")
+        , ("M-p", spawn "rofi -show run")
+        , ("M-S-p", spawn "rofi-pass")
     -- Kill windows
         , ("M-S-x", kill)                 -- Kill the currently focused client
     -- Windows navigation
