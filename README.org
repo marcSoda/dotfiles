@@ -1,41 +1,40 @@
-#+TITLE: README
+#+TITLE: My dotfiles
 #+AUTHOR: Marc Soda Jr.
 #+EMAIL: m@soda.fm
 
-* My dotfiles
-** .bashrc
-*** e:
-**** Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
-*** pass:
-**** Tool that syncs pass with ios pass through a private git repo
-*** doc
-**** Tool that configures the display and bluetooth devices when docking.
-*** wifi
-**** Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
+* .bashrc
+** e:
+- Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
+** pass:
+- Tool that syncs pass with ios pass through a private git repo
+** doc
+- Tool that configures the display and bluetooth devices when docking.
+** wifi
+- Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
 ** dunstrc
-*** config file for dunst
+- config file for dunst
 ** init.el
-*** config file for emacs
+- config file for emacs
 ** ncspot.toml
-*** config file for ncspot
+- config file for ncspot
 ** rofi.rasi
-*** rofi config file
-** scripts
-*** bash scripts used by xmonad and xmobar
-*** battery_status
-**** used by xmobar
-*** brightness
-**** keybound by xmonad
-*** pacupdate
-**** used by xmobar
-*** smart_vlc_control
-**** allows xmobar keybinding to play/pause vlc.
-**** windows opened later are given priority
-*** volume
-**** keybound by xmonad
-*** .xinitrc
-**** x11 config
-*** xmobarrc
-**** xmobar config
-*** xmonad.hs
-**** xmonad config
+- rofi config file
+* scripts
+** bash scripts used by xmonad and xmobar
+** battery_status
+- used by xmobar
+** brightness
+- keybound by xmonad
+** pacupdate
+- used by xmobar
+** smart_vlc_control
+- allows xmobar keybinding to play/pause vlc.
+- windows opened later are given priority
+** volume
+- keybound by xmonad
+** .xinitrc
+- x11 config
+* xmobarrc
+  - xmobar config
+* xmonad.hs
+  - xmonad config
