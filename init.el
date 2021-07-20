@@ -103,6 +103,7 @@
 (setq ibuffer-expert t)                                                   ;;don't ask for confirmation when deleting buffers
 (require 'ibuf-ext)                                                       ;;required for next line to work
 (add-to-list 'ibuffer-never-show-predicates "^\\*")                       ;;hide buffers with asterisks (emacs buffers)
+(add-to-list 'ibuffer-never-show-predicates "\\magit")                    ;;hide hide magit buffers
 (setq ibuffer-saved-filter-groups                                         ;;define a filter group
       '(("default"                                                        ;;default is the name of the filter group
          ("Org" (or (mode . org-mode) (filename . "OrgMode"))))))
