@@ -123,7 +123,7 @@
     "v v"   '(vterm                    :which-key "vterm")
     "m g"   '(magit-status             :which-key "magit")
     "w w"   '(save-buffer              :which-key "save buffer")
-    "z z"   '(suspend-frame            :which-key "suspend frame")
+    "z"     '(suspend-frame            :which-key "suspend frame")
     ;;org
     "o *"   '(org-ctrl-c-star          :which-key "Org-ctrl-c-star")
     "o +"   '(org-ctrl-c-minus         :which-key "Org-ctrl-c-minus")
