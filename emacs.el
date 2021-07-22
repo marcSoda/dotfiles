@@ -9,7 +9,6 @@
 (put 'dired-find-alternate-file 'disabled nil)  ;Has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ;emacsclient always opens to dashboard
 
 ;;package: setup package manager
 (require 'package)
@@ -45,9 +44,13 @@
   :init
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
-  (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  (setq dashboard-startup-banner 'logo)
   (setq dashboard-center-content t)
   (setq dashboard-items '((agenda . 20 )))
+  (setq initial-buffer-choice (lambda () ;refresh and display dashboard buffer on emacsclient open
+      (dashboard-refresh-buffer)
+      (ignore-errors (org-agenda-exit))  ;close auto-opened org-agenda buffers
+      (get-buffer "*dashboard*")))
   :config
   (dashboard-setup-startup-hook))
 
@@ -58,17 +61,19 @@
   (general-evil-setup t))
 
 ;;org
-(use-package org)
-(add-hook 'org-mode-hook 'org-indent-mode)
-(setq org-directory "~/working/sync/org"
+(use-package org
+  :init
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (setq org-directory "~/working/sync/org"
       org-agenda-files '("~/working/sync/org")
       org-log-done 'time
       org-hide-emphasis-markers t)
-(setq org-src-preserve-indentation nil
+  (setq org-src-preserve-indentation nil
       org-src-tab-acts-natively t
       org-edit-src-content-indentation 0)
-(setq org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)")))
-(setq org-blank-before-new-entry (quote ((heading . nil))))
+  (setq org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-blank-before-new-entry (quote ((heading . nil)))))
+
 ;;org-bullets
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
@@ -100,17 +105,17 @@
   :config (xclip-mode))
 
 ;;ibuffer setup
-(setq ibuffer-expert t)                                                   ;;don't ask for confirmation when deleting buffers
-(require 'ibuf-ext)                                                       ;;required for next line to work
-(add-to-list 'ibuffer-never-show-predicates "^\\*")                       ;;hide buffers with asterisks (emacs buffers)
-(add-to-list 'ibuffer-never-show-predicates "\\magit")                    ;;hide hide magit buffers
-(setq ibuffer-saved-filter-groups                                         ;;define a filter group
-      '(("default"                                                        ;;default is the name of the filter group
-         ("Org" (or (mode . org-mode) (filename . "OrgMode"))))))
-(add-hook 'ibuffer-mode-hook
-    (lambda ()
-        (ibuffer-auto-mode 1)
-        (ibuffer-switch-to-saved-filter-groups "default")))
+(setq ibuffer-expert t)                                  ;;don't ask for confirmation when deleting buffers
+(require 'ibuf-ext)
+(add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
+(add-to-list 'ibuffer-never-show-predicates "\\magit")   ;;hide hide magit buffers
+;; ;; (setq ibuffer-saved-filter-groups                                         ;;define a filter group
+;;       '(("default"                                                        ;;default is the name of the filter group
+;;          ("Org" (or (mode . org-mode) (filename . "OrgMode"))))))
+;; (add-hook 'ibuffer-mode-hook
+;;     (lambda ()
+;;         (ibuffer-auto-mode 1)
+;;         (ibuffer-switch-to-saved-filter-groups "default")))
 
 ;;keybindings
 (general-define-key
@@ -138,6 +143,7 @@
     "o t"   '(org-todo-list            :which-key "Org todo list")
     "o a"   '(org-agenda               :which-key "Org agenda")
     "o d"   '(org-deadline             :which-key "Org deadline")
+    "o o"   '(org-agenda-exit          :which-key "org-agenda-exit")
     ;;Ibuffer-related
     "b b"   '(ibuffer                  :which-key "Ibuffer")
     "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
@@ -156,7 +162,7 @@
     "w l"   '(evil-window-right        :which-key "Window right")
     ;;describe
     "d k"   '(describe-key             :which-key "Describe Key")
-    "d c"   '(where-is                 :which-key "Describe Command")
+    "d f"   '(where-is                 :which-key "Describe Function")
     ;;file-related
     "f f"   '(find-file                :which-key "Find file")
     "f r"   '(counsel-recentf          :which-key "Recent files"))
