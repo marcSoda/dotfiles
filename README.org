@@ -13,11 +13,14 @@
   - Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
 * dunstrc
 - config file for dunst
-* init.el
+* emacs.el
+- proper location and name ~/.emacs.d/init.el
 - config file for emacs
 * ncspot.toml
+- proper location and name ~/.config/ncspot/config.toml
 - config file for ncspot
 * rofi.rasi
+- proper location and name ~/.config/ncspot/config.rasi
 - rofi config file
 * scripts
 - bash scripts used by xmonad and xmobar
