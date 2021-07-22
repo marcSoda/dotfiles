@@ -9,8 +9,8 @@
     background-color:            #282c34;
     border-color:                #282c34;
     text-color:                  #bbc2cf;
-    font:                        "SauceCodePro Nerd Font Mono 9";
-    prompt-font:                 "Ubuntu Bold 9";
+    font:                        "SauceCodePro Nerd Font Mono 24";
+    prompt-font:                 "Ubuntu Bold 24";
     prompt-background:           #0087d7;
     prompt-foreground:           #282c34;
     zrompt-padding:              4px;

@@ -116,12 +116,13 @@
     :keymaps 'override
     :prefix "SPC"
     "" nil
-    "SPC"   '(execute-extended-command :which-key "M-x")
-    "t t"   '(toggle-truncate-lines    :which-key "Toggle truncate lines")
-    "v v"   '(vterm                    :which-key "vterm")
-    "w w"   '(save-buffer              :which-key "Save buffer")
-    "c l"   '(comment-line             :which-key "Comment-line")
-    "z"     '(suspend-frame            :which-key "Suspend frame")
+    "SPC"   '(execute-extended-command   :which-key "M-x")
+    "t t"   '(toggle-truncate-lines      :which-key "Toggle truncate lines")
+    "v v"   '(vterm                      :which-key "vterm")
+    "w w"   '(save-buffer                :which-key "Save buffer")
+    "c l"   '(comment-line               :which-key "Comment-line")
+    "z"     '(suspend-frame              :which-key "Suspend frame")
+    "q"     '(save-buffers-kill-terminal :which-key "Quit")
     ;;org
     "o *"   '(org-ctrl-c-star          :which-key "Org-ctrl-c-star")
     "o +"   '(org-ctrl-c-minus         :which-key "Org-ctrl-c-minus")
@@ -158,9 +159,7 @@
     "d f"   '(where-is                 :which-key "Describe Function")
     ;;file-related
     "f f"   '(find-file                :which-key "Find file")
-    "f r"   '(counsel-recentf          :which-key "Recent files")
-
-;; (define-key evil-normal-state-map (kbd "M-;") 'comment-line)  ;; M-; in normal mode to comment a line
+    "f r"   '(counsel-recentf          :which-key "Recent files"))
 
 ;;theme
 (defvar my-white    "#ffffff")
