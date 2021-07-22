@@ -143,7 +143,6 @@
     "o t"   '(org-todo-list            :which-key "Org todo list")
     "o a"   '(org-agenda               :which-key "Org agenda")
     "o d"   '(org-deadline             :which-key "Org deadline")
-    "o o"   '(org-agenda-exit          :which-key "org-agenda-exit")
     ;;Ibuffer-related
     "b b"   '(ibuffer                  :which-key "Ibuffer")
     "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
