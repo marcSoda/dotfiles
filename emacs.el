@@ -109,17 +109,10 @@
 (require 'ibuf-ext)
 (add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
 (add-to-list 'ibuffer-never-show-predicates "\\magit")   ;;hide hide magit buffers
-;; ;; (setq ibuffer-saved-filter-groups                                         ;;define a filter group
-;;       '(("default"                                                        ;;default is the name of the filter group
-;;          ("Org" (or (mode . org-mode) (filename . "OrgMode"))))))
-;; (add-hook 'ibuffer-mode-hook
-;;     (lambda ()
-;;         (ibuffer-auto-mode 1)
-;;         (ibuffer-switch-to-saved-filter-groups "default")))
 
 ;;keybindings
 (general-define-key
-    :states 'normal
+    :states '(normal visual)
     :keymaps 'override
     :prefix "SPC"
     "" nil
@@ -127,6 +120,7 @@
     "t t"   '(toggle-truncate-lines    :which-key "Toggle truncate lines")
     "v v"   '(vterm                    :which-key "vterm")
     "w w"   '(save-buffer              :which-key "Save buffer")
+    "c l"   '(comment-line             :which-key "Comment-line")
     "z"     '(suspend-frame            :which-key "Suspend frame")
     ;;org
     "o *"   '(org-ctrl-c-star          :which-key "Org-ctrl-c-star")
@@ -164,8 +158,9 @@
     "d f"   '(where-is                 :which-key "Describe Function")
     ;;file-related
     "f f"   '(find-file                :which-key "Find file")
-    "f r"   '(counsel-recentf          :which-key "Recent files"))
-(define-key evil-normal-state-map (kbd "M-;") 'comment-line)  ;; M-; in normal mode to comment a line
+    "f r"   '(counsel-recentf          :which-key "Recent files")
+
+;; (define-key evil-normal-state-map (kbd "M-;") 'comment-line)  ;; M-; in normal mode to comment a line
 
 ;;theme
 (defvar my-white    "#ffffff")
