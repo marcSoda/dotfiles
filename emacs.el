@@ -121,22 +121,19 @@
     "SPC"   '(execute-extended-command :which-key "M-x")
     "t t"   '(toggle-truncate-lines    :which-key "Toggle truncate lines")
     "v v"   '(vterm                    :which-key "vterm")
-    "m g"   '(magit-status             :which-key "magit")
-    "w w"   '(save-buffer              :which-key "save buffer")
-    "z"     '(suspend-frame            :which-key "suspend frame")
+    "w w"   '(save-buffer              :which-key "Save buffer")
+    "z"     '(suspend-frame            :which-key "Suspend frame")
     ;;org
     "o *"   '(org-ctrl-c-star          :which-key "Org-ctrl-c-star")
     "o +"   '(org-ctrl-c-minus         :which-key "Org-ctrl-c-minus")
     "o ."   '(counsel-org-goto         :which-key "Counsel org goto")
     "o e"   '(org-html-export-to-html  :which-key "Org export to html")
-    "o f"   '(org-footnote-new         :which-key "Org footnote new")
     "o h"   '(org-toggle-heading       :which-key "Org toggle heading")
     "o i"   '(org-toggle-item          :which-key "Org toggle item")
     "o n"   '(org-store-link           :which-key "Org store link")
     "o o"   '(org-set-property         :which-key "Org set property")
     "o x"   '(org-toggle-checkbox      :which-key "Org toggle checkbox")
     "o B"   '(org-babel-tangle         :which-key "Org babel tangle")
-    "o I"   '(org-toggle-inline-images :which-key "Org toggle inline imager")
     "o T"   '(org-todo                 :which-key "Org todo")
     "o t"   '(org-todo-list            :which-key "Org todo list")
     "o a"   '(org-agenda               :which-key "Org agenda")
@@ -144,6 +141,10 @@
     ;;Ibuffer-related
     "b b"   '(ibuffer                  :which-key "Ibuffer")
     "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
+    ;;Magit-related
+    "m g"   '(magit-status             :which-key "magit")
+    "m c"   '(with-editor-finish       :which-key "with-editor-finish")
+    "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
     ;;Window-related
     "w c"   '(evil-window-delete       :which-key "Close window")
     "w o"   '(delete-other-windows     :which-key "Make window fill frame")
@@ -153,6 +154,9 @@
     "w j"   '(evil-window-down         :which-key "Window down")
     "w k"   '(evil-window-up           :which-key "Window up")
     "w l"   '(evil-window-right        :which-key "Window right")
+    ;;describe
+    "d k"   '(describe-key             :which-key "Describe Key")
+    "d c"   '(where-is                 :which-key "Describe Command")
     ;;file-related
     "f f"   '(find-file                :which-key "Find file")
     "f r"   '(counsel-recentf          :which-key "Recent files"))
@@ -205,7 +209,6 @@
 (set-face-attribute 'org-priority nil        :foreground my-cyan)
 (set-face-attribute 'org-special-keyword nil :foreground my-grey)
 (set-face-attribute 'org-headline-done nil   :foreground my-green)
-
 
 ;;relative line numbers
 (setq-default display-line-numbers-type 'visual
