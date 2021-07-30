@@ -9,6 +9,8 @@
 (put 'dired-find-alternate-file 'disabled nil)  ;Has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
+(setq browse-url-browser-function 'browse-url-generic ;default browser
+      browse-url-generic-program "qutebrowser")
 
 ;;package: setup package manager
 (require 'package)
@@ -33,7 +35,7 @@
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(magit vterm dashboard dired ibuffer))
+  (setq evil-collection-mode-list '(magit vterm dashboard dired ibuffer mu4e))
   (evil-collection-init))
 ;;evil surround mode
 (use-package evil-surround
@@ -73,7 +75,6 @@
       org-edit-src-content-indentation 0)
   (setq org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)")))
   (setq org-blank-before-new-entry (quote ((heading . nil)))))
-
 ;;org-bullets
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
@@ -85,6 +86,7 @@
   (add-hook 'org-mode-hook 'evil-org-mode)
   :config
   (evil-org-set-key-theme '(textobjects insert navigation additional shift todo heading)))
+(use-package org-tempo)
 
 ;;syntax-highlighting
 (use-package haskell-mode)
@@ -97,6 +99,14 @@
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (setq web-mode-enable-auto-closing t))
 
+;;spellcheck
+(use-package flyspell
+  :config
+  (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
+  (setq ispell-dictionary "english")
+  (setq ispell-local-dictionary-alist
+    '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8))))
+
 ;;magit
 (use-package magit)
 
@@ -107,7 +117,7 @@
 ;;ibuffer setup
 (setq ibuffer-expert t)                                  ;;don't ask for confirmation when deleting buffers
 (require 'ibuf-ext)
-(add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
+;; (add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
 (add-to-list 'ibuffer-never-show-predicates "\\magit")   ;;hide hide magit buffers
 
 ;;keybindings
@@ -121,6 +131,7 @@
     "v v"   '(vterm                      :which-key "vterm")
     "w w"   '(save-buffer                :which-key "Save buffer")
     "c l"   '(comment-line               :which-key "Comment-line")
+    "i s"   '(ispell                     :which-key "ispell")
     "z"     '(suspend-frame              :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal :which-key "Quit")
     ;;org
@@ -145,6 +156,8 @@
     "m g"   '(magit-status             :which-key "magit")
     "m c"   '(with-editor-finish       :which-key "with-editor-finish")
     "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
+    ;;mu4e
+    "m u"   '(mu4e                     :which-key "mu4e")
     ;;Window-related
     "w c"   '(evil-window-delete       :which-key "Close window")
     "w o"   '(delete-other-windows     :which-key "Make window fill frame")
@@ -157,9 +170,131 @@
     ;;describe
     "d k"   '(describe-key             :which-key "Describe Key")
     "d f"   '(where-is                 :which-key "Describe Function")
+    "d v"   '(describe-variable        :which-key "Describe Variable")
     ;;file-related
     "f f"   '(find-file                :which-key "Find file")
     "f r"   '(counsel-recentf          :which-key "Recent files"))
+;mu4e main mode
+(general-define-key
+    :states 'normal
+    :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
+    :prefix "SPC"
+    "" nil
+    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Inbox"))  :which-key "Protonmail Inbox")
+    "p r" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Refile")) :which-key "Protonmail Refile")
+    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Sent"))   :which-key "Protonmail Sent")
+    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Drafts")) :which-key "Protonmail Drafts")
+    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Trash"))  :which-key "Protonmail Trash")
+
+    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Inbox"))      :which-key "Lehigh Inbox")
+    "l r" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Refile"))     :which-key "Lehigh Refile")
+    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Sent Mail"))  :which-key "Lehigh Sent")
+    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Drafts"))     :which-key "Lehigh Drafts")
+    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Trash"))      :which-key "Lehigh Trash")
+
+    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Inbox"))        :which-key "Gmail Inbox")
+    "g r" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Refile"))       :which-key "Gmail Refile")
+    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Sent Mail"))    :which-key "Gmail Sent")
+    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Drafts"))       :which-key "Gmail Drafts")
+    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Trash"))        :which-key "Gmail Trash")
+    )
+
+
+
+;;mu4e
+(use-package mu4e
+  :ensure nil
+  :config
+  (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-update-interval (* 10 60))
+  (setq mu4e-get-mail-command "mbsync -c ~/.config/mu4e/mbsyncrc -a")
+  (setq mu4e-maildir "~/.mail")
+  (setq mu4e-compose-complete-only-personal nil)
+  (setq mu4e-attachment-dir "~/working/downloads")
+  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+  (setq message-send-mail-function 'smtpmail-send-it
+	smtpmail-auth-credentials "~/.authinfo.gpg" ;; Here I assume you encrypted the credentials
+	smtpmail-smtp-server "127.0.0.1"
+        smtpmail-stream-type 'starttls
+	smtpmail-smtp-service 1025)
+
+  (setq mu4e-contexts
+        (list
+         ;; gmail account
+            (make-mu4e-context
+                :name "gmail"
+                :match-func
+                    (lambda (msg)
+                    (when msg
+                        (string-prefix-p "/msoda412-gmail" (mu4e-message-field msg :maildir))))
+                :vars '((user-mail-address . "m.soda412@gmail.com")
+                        (user-full-name    . "Marc Soda Jr.")
+                        (mu4e-drafts-folder  . "/msoda412-gmail/Drafts")
+                        (mu4e-sent-folder  . "/msoda412-gmail/Sent Mail")
+                        (mu4e-refile-folder  . "/msoda412-gmail/Refile")
+                        (mu4e-trash-folder  . "/msoda412-gmail/Trash")
+
+                        (message-send-mail-function . smtpmail-send-it)
+                        (starttls-use-gnutls . t)
+                        (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
+                        (smtpmail-auth-credentials . "~/.authinfo.gpg")
+                        (smtpmail-default-smtp-server . "smtp.gmail.com")
+                        (smtpmail-smtp-server ."smtp.gmail.com")
+                        (smtpmail-smtp-service . 587)))
+         ;; lehigh account
+            (make-mu4e-context
+                :name "lehigh"
+                :match-func
+                    (lambda (msg)
+                    (when msg
+                        (string-prefix-p "/masa20-lehigh" (mu4e-message-field msg :maildir))))
+                :vars '((user-mail-address . "masa20@lehigh.edu")
+                        (user-full-name    . "Marc Soda Jr.")
+                        (mu4e-drafts-folder  . "/masa20-lehigh/Drafts")
+                        (mu4e-sent-folder  . "/masa20-lehigh/Sent Mail")
+                        (mu4e-refile-folder  . "/masa20-lehigh/Refile")
+                        (mu4e-trash-folder  . "/masa20-lehigh/Trash")
+
+                        (message-send-mail-function . smtpmail-send-it)
+                        (starttls-use-gnutls . t)
+                        (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
+                        (smtpmail-auth-credentials . "~/.authinfo.gpg")
+                        (smtpmail-default-smtp-server . "smtp.gmail.com")
+                        (smtpmail-smtp-server ."smtp.gmail.com")
+                        (smtpmail-smtp-service . 587)))
+            ;protonmail
+            (make-mu4e-context
+                :name "protonmail"
+                :match-func
+                    (lambda (msg)
+                    (when msg
+                        (string-prefix-p "/m-soda-protonmail" (mu4e-message-field msg :maildir))))
+                :vars '((user-mail-address . "m@soda.fm")
+                        (user-full-name    . "Marc Soda Jr.")
+                        (mu4e-drafts-folder  . "/m-soda-protonmail/Drafts")
+                        (mu4e-sent-folder  . "/m-soda-protonmail/Sent")
+                        (mu4e-refile-folder  . "/m-soda-protonmail/Refile")
+                        (mu4e-trash-folder  . "/m-soda-protonmail/Trash")
+
+                        (message-send-mail-function . smtpmail-send-it)
+                        (smtpmail-auth-credentials . "~/.authinfo.gpg")
+                        (smtpmail-smtp-server . "127.0.0.1")
+                        (smtpmail-stream-type . starttls)
+                        (smtpmail-smtp-service . 1025))))))
+
+;;relative line numbers
+(setq-default display-line-numbers-type 'visual
+              display-line-numbers-current-absolute t)
+(add-hook 'text-mode-hook #'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
+
+;;smooth scrolling
+(setq redisplay-dont-pause t
+  scroll-margin 15
+  scroll-step 1
+  scroll-conservatively 10000
+  scroll-preserve-screen-position 1)
 
 ;;theme
 (defvar my-white    "#ffffff")
@@ -208,12 +343,13 @@
 (set-face-attribute 'org-priority nil        :foreground my-cyan)
 (set-face-attribute 'org-special-keyword nil :foreground my-grey)
 (set-face-attribute 'org-headline-done nil   :foreground my-green)
-
-;;relative line numbers
-(setq-default display-line-numbers-type 'visual
-              display-line-numbers-current-absolute t)
-(add-hook 'text-mode-hook #'display-line-numbers-mode)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+;mu4e
+(set-face-attribute 'mu4e-title-face nil   :foreground my-cyan :weight 'bold)
+(set-face-attribute 'mu4e-header-title-face nil   :foreground my-red)
+(set-face-attribute 'mu4e-header-value-face nil   :foreground my-red)
+(set-face-attribute 'mu4e-header-key-face nil   :foreground my-green)
+(set-face-attribute 'mu4e-replied-face nil   :foreground my-purple)
+(set-face-attribute 'mu4e-flagged-face nil   :foreground my-cyan)
 
 ;;vterm
 (use-package vterm
@@ -226,13 +362,6 @@
 (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;;smooth scrolling
-(setq redisplay-dont-pause t
-  scroll-margin 15
-  scroll-step 1
-  scroll-conservatively 10000
-  scroll-preserve-screen-position 1)
-
 ;;alacritty fixes
 (add-to-list 'term-file-aliases '("alacritty" . "xterm")) ;;make emacs-nox fully featured in alacritty
 (setq xterm-extra-capabilities nil)                       ;;fixes slow startup from above command
@@ -240,18 +369,3 @@
 (use-package which-key
   :config
   (which-key-mode))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(rainbow-mode vterm which-key xclip magit web-mode handlebars-mode go-mode yaml-mode haskell-mode evil-org org-bullets org general dashboard evil-surround evil-collection evil use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

@@ -1,0 +1,6 @@
+* To encrypt a new password, the command is:
+** gpg2 -e -r <key> file
+* As of 2021 the key I am using to encrypt is D11FB5FAD5131DBC.
+* To list keys, do:
+** gpg2 --list-secret-keys --keyid-format LONG
+** The key is the text  on one of the sec lines after the "/".

@@ -1,0 +1,78 @@
+IMAPAccount msoda412-gmail
+Host imap.gmail.com
+User m.soda412@gmail.com
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/auth.gpg | grep m.soda412@gmail.com | awk '{print $8}'"
+AuthMechs LOGIN
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore msoda412-gmail-remote
+Account msoda412-gmail
+
+MaildirStore msoda412-gmail-local
+SubFolders Verbatim
+Path ~/.mail/msoda412-gmail/
+Inbox ~/.mail/msoda412-gmail/Inbox/
+
+Channel msoda412-gmail
+Far :msoda412-gmail-remote:
+Near :msoda412-gmail-local:
+Patterns * ![Gmail]*
+Create Both
+SyncState *
+
+
+# ================================================================================
+
+
+IMAPAccount masa20-lehigh
+Host imap.gmail.com
+User masa20@lehigh.edu
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/auth.gpg | grep masa20@lehigh.edu | awk '{print $8}'"
+AuthMechs LOGIN
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore masa20-lehigh-remote
+Account masa20-lehigh
+
+MaildirStore masa20-lehigh-local
+SubFolders Verbatim
+Path ~/.mail/masa20-lehigh/
+Inbox ~/.mail/masa20-lehigh/Inbox/
+
+Channel masa20-lehigh
+Far :masa20-lehigh-remote:
+Near :masa20-lehigh-local:
+Patterns * ![Gmail]*
+Create Both
+SyncState *
+
+
+# ================================================================================
+
+
+IMAPAccount m-soda-protonmail
+Host 127.0.0.1
+User m@soda.fm
+Port 1143
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/auth.gpg | grep m@soda.fm | awk '{print $8}'"
+SSLType STARTTLS
+SSLVersions TLSv1.2
+CertificateFile ~/.config/protonmail/bridge/cert.pem
+
+IMAPStore m-soda-protonmail-remote
+Account m-soda-protonmail
+
+#You can change .mail to something else
+MaildirStore m-soda-protonmail-local
+Path ~/.mail/m-soda-protonmail/
+Inbox ~/.mail/m-soda-protonmail/Inbox/
+
+Channel m-soda-protonmail
+Far :m-soda-protonmail-remote:
+Near :m-soda-protonmail-local:
+Patterns *
+Create Both
+Expunge Both
+SyncState *
