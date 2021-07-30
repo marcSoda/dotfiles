@@ -180,26 +180,24 @@
     :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
     :prefix "SPC"
     "" nil
-    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Inbox"))  :which-key "Protonmail Inbox")
-    "p r" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Refile")) :which-key "Protonmail Refile")
-    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Sent"))   :which-key "Protonmail Sent")
-    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Drafts")) :which-key "Protonmail Drafts")
-    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/Trash"))  :which-key "Protonmail Trash")
+    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/inbox"))  :which-key "Protonmail Inbox")
+    "p a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/all"))    :which-key "Protonmail All Mail")
+    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/sent"))   :which-key "Protonmail Sent")
+    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/drafts")) :which-key "Protonmail Drafts")
+    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/trash"))  :which-key "Protonmail Trash")
 
-    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Inbox"))      :which-key "Lehigh Inbox")
-    "l r" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Refile"))     :which-key "Lehigh Refile")
-    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Sent Mail"))  :which-key "Lehigh Sent")
-    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Drafts"))     :which-key "Lehigh Drafts")
-    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Trash"))      :which-key "Lehigh Trash")
+    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/inbox"))  :which-key "Lehigh Inbox")
+    "l a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/all"))    :which-key "Lehigh All")
+    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/sent"))   :which-key "Lehigh Sent")
+    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Drafts")) :which-key "Lehigh Drafts")
+    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/Trash"))  :which-key "Lehigh Trash")
 
-    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Inbox"))        :which-key "Gmail Inbox")
-    "g r" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Refile"))       :which-key "Gmail Refile")
-    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Sent Mail"))    :which-key "Gmail Sent")
-    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Drafts"))       :which-key "Gmail Drafts")
-    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/Trash"))        :which-key "Gmail Trash")
+    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/inbox"))  :which-key "Gmail Inbox")
+    "g a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/all"))    :which-key "Gmail All Mail")
+    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/sent"))   :which-key "Gmail Sent")
+    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/drafts")) :which-key "Gmail Drafts")
+    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash"))  :which-key "Gmail Trash")
     )
-
-
 
 ;;mu4e
 (use-package mu4e
@@ -213,7 +211,7 @@
   (setq mu4e-attachment-dir "~/working/downloads")
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   (setq message-send-mail-function 'smtpmail-send-it
-	smtpmail-auth-credentials "~/.authinfo.gpg" ;; Here I assume you encrypted the credentials
+	smtpmail-auth-credentials "~/.authinfo.gpg"
 	smtpmail-smtp-server "127.0.0.1"
         smtpmail-stream-type 'starttls
 	smtpmail-smtp-service 1025)
@@ -229,10 +227,10 @@
                         (string-prefix-p "/msoda412-gmail" (mu4e-message-field msg :maildir))))
                 :vars '((user-mail-address . "m.soda412@gmail.com")
                         (user-full-name    . "Marc Soda Jr.")
-                        (mu4e-drafts-folder  . "/msoda412-gmail/Drafts")
-                        (mu4e-sent-folder  . "/msoda412-gmail/Sent Mail")
-                        (mu4e-refile-folder  . "/msoda412-gmail/Refile")
-                        (mu4e-trash-folder  . "/msoda412-gmail/Trash")
+                        (mu4e-drafts-folder  . "/msoda412-gmail/drafts")
+                        (mu4e-sent-folder  . "/msoda412-gmail/sent")
+                        (mu4e-refile-folder  . "/msoda412-gmail/all")
+                        (mu4e-trash-folder  . "/msoda412-gmail/trash")
 
                         (message-send-mail-function . smtpmail-send-it)
                         (starttls-use-gnutls . t)
@@ -250,10 +248,10 @@
                         (string-prefix-p "/masa20-lehigh" (mu4e-message-field msg :maildir))))
                 :vars '((user-mail-address . "masa20@lehigh.edu")
                         (user-full-name    . "Marc Soda Jr.")
-                        (mu4e-drafts-folder  . "/masa20-lehigh/Drafts")
-                        (mu4e-sent-folder  . "/masa20-lehigh/Sent Mail")
-                        (mu4e-refile-folder  . "/masa20-lehigh/Refile")
-                        (mu4e-trash-folder  . "/masa20-lehigh/Trash")
+                        (mu4e-drafts-folder  . "/masa20-lehigh/drafts")
+                        (mu4e-sent-folder  . "/masa20-lehigh/sent")
+                        (mu4e-refile-folder  . "/masa20-lehigh/all")
+                        (mu4e-trash-folder  . "/masa20-lehigh/trash")
 
                         (message-send-mail-function . smtpmail-send-it)
                         (starttls-use-gnutls . t)
@@ -271,10 +269,10 @@
                         (string-prefix-p "/m-soda-protonmail" (mu4e-message-field msg :maildir))))
                 :vars '((user-mail-address . "m@soda.fm")
                         (user-full-name    . "Marc Soda Jr.")
-                        (mu4e-drafts-folder  . "/m-soda-protonmail/Drafts")
-                        (mu4e-sent-folder  . "/m-soda-protonmail/Sent")
-                        (mu4e-refile-folder  . "/m-soda-protonmail/Refile")
-                        (mu4e-trash-folder  . "/m-soda-protonmail/Trash")
+                        (mu4e-drafts-folder  . "/m-soda-protonmail/drafts")
+                        (mu4e-sent-folder  . "/m-soda-protonmail/sent")
+                        (mu4e-refile-folder  . "/m-soda-protonmail/all")
+                        (mu4e-trash-folder  . "/m-soda-protonmail/trash")
 
                         (message-send-mail-function . smtpmail-send-it)
                         (smtpmail-auth-credentials . "~/.authinfo.gpg")

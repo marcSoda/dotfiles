@@ -12,14 +12,45 @@ Account msoda412-gmail
 MaildirStore msoda412-gmail-local
 SubFolders Verbatim
 Path ~/.mail/msoda412-gmail/
-Inbox ~/.mail/msoda412-gmail/Inbox/
+Inbox ~/.mail/msoda412-gmail/inbox
 
-Channel msoda412-gmail
+Channel msoda412-gmail-inbox
 Far :msoda412-gmail-remote:
 Near :msoda412-gmail-local:
-Patterns * ![Gmail]*
+Patterns INBOX
 Create Both
 SyncState *
+
+Channel msoda412-gmail-sent
+Far :msoda412-gmail-remote:"[Gmail]/Sent Mail"
+Near :msoda412-gmail-local:sent
+Create Both
+SyncState *
+
+Channel msoda412-gmail-drafts
+Far :msoda412-gmail-remote:"[Gmail]/Drafts"
+Near :msoda412-gmail-local:drafts
+Create Both
+SyncState *
+
+Channel msoda412-gmail-all
+Far :msoda412-gmail-remote:"[Gmail]/All Mail"
+Near :msoda412-gmail-local:"all"
+Create Both
+SyncState *
+
+Channel msoda412-gmail-trash
+Far :msoda412-gmail-remote:"[Gmail]/Trash"
+Near :msoda412-gmail-local:trash
+Create Both
+SyncState *
+
+Group msoda412-gmail
+Channel msoda412-gmail-inbox
+Channel msoda412-gmail-sent
+Channel msoda412-gmail-drafts
+Channel msoda412-gmail-all
+Channel msoda412-gmail-trash
 
 
 # ================================================================================
@@ -39,14 +70,45 @@ Account masa20-lehigh
 MaildirStore masa20-lehigh-local
 SubFolders Verbatim
 Path ~/.mail/masa20-lehigh/
-Inbox ~/.mail/masa20-lehigh/Inbox/
+Inbox ~/.mail/masa20-lehigh/inbox
 
-Channel masa20-lehigh
+Channel masa20-lehigh-inbox
 Far :masa20-lehigh-remote:
 Near :masa20-lehigh-local:
-Patterns * ![Gmail]*
+Patterns INBOX
 Create Both
 SyncState *
+
+Channel masa20-lehigh-sent
+Far :masa20-lehigh-remote:"[Gmail]/Sent Mail"
+Near :masa20-lehigh-local:sent
+Create Both
+SyncState *
+
+Channel masa20-lehigh-drafts
+Far :masa20-lehigh-remote:"[Gmail]/Drafts"
+Near :masa20-lehigh-local:drafts
+Create Both
+SyncState *
+
+Channel masa20-lehigh-all
+Far :masa20-lehigh-remote:"[Gmail]/All Mail"
+Near :masa20-lehigh-local:"all"
+Create Both
+SyncState *
+
+Channel masa20-lehigh-trash
+Far :masa20-lehigh-remote:"[Gmail]/Trash"
+Near :masa20-lehigh-local:trash
+Create Both
+SyncState *
+
+Group masa20-lehigh
+Channel masa20-lehigh-inbox
+Channel masa20-lehigh-sent
+Channel masa20-lehigh-drafts
+Channel masa20-lehigh-all
+Channel masa20-lehigh-trash
 
 
 # ================================================================================
@@ -64,15 +126,45 @@ CertificateFile ~/.config/protonmail/bridge/cert.pem
 IMAPStore m-soda-protonmail-remote
 Account m-soda-protonmail
 
-#You can change .mail to something else
 MaildirStore m-soda-protonmail-local
 Path ~/.mail/m-soda-protonmail/
-Inbox ~/.mail/m-soda-protonmail/Inbox/
+Inbox ~/.mail/m-soda-protonmail/inbox
 
-Channel m-soda-protonmail
+Channel m-soda-protonmail-inbox
 Far :m-soda-protonmail-remote:
 Near :m-soda-protonmail-local:
-Patterns *
+Patterns INBOX
 Create Both
-Expunge Both
 SyncState *
+
+Channel m-soda-protonmail-sent
+Far :m-soda-protonmail-remote:Sent
+Near :m-soda-protonmail-local:sent
+Create Both
+SyncState *
+
+Channel m-soda-protonmail-drafts
+Far :m-soda-protonmail-remote:Drafts
+Near :m-soda-protonmail-local:drafts
+Create Both
+SyncState *
+
+Channel m-soda-protonmail-all
+Far :m-soda-protonmail-remote:"All Mail"
+Near :m-soda-protonmail-local:all
+Create Both
+SyncState *
+
+Channel m-soda-protonmail-trash
+Far :m-soda-protonmail-remote:Trash
+Near :m-soda-protonmail-local:trash
+Create Both
+SyncState *
+
+
+Group m-soda-protonmail
+Channel m-soda-protonmail-inbox
+Channel m-soda-protonmail-sent
+Channel m-soda-protonmail-drafts
+Channel m-soda-protonmail-all
+Channel m-soda-protonmail-trash

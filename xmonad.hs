@@ -59,7 +59,8 @@ myStartupHook = do
     spawnOnce "compton --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
-    spawnOnce "/usr/bin/emacs --daemon &" -- emacs daemon for the emacsclient
+    spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
+    spawnOnce "/usr/bin/emacs --daemon=default &" -- emacs daemon for the emacsclient
 
 --Layouts
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
