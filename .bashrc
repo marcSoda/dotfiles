@@ -75,6 +75,11 @@ e() {
     fi
 }
 
+#share text to dropbox
+tshare() {
+    echo "${@:1}" > ~/working/sync/misc/tshare.txt
+}
+
 #Custom pass behavior
 pass() {
     if [ "$1" = "sync" ]; then
