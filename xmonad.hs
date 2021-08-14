@@ -82,9 +82,9 @@ myLayoutHook = avoidStruts
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
      -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
-     [ className =? "zoom"   --> doShift(myWorkspaces !! 5) --this might not work...
-     , className =? "Slack"  --> doShift(myWorkspaces !! 6)
-     , className =? "vlc"    --> doShift(myWorkspaces !! 7)
+     [ className =? "zoom"   --> doShift(myWorkspaces !! 6) --this might not work...
+     , className =? "Slack"  --> doShift(myWorkspaces !! 7)
+     , className =? "vlc"    --> doShift(myWorkspaces !! 8)
      ]
 
 --Scratchpads
