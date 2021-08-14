@@ -67,14 +67,11 @@
   :init
   (add-hook 'org-mode-hook 'org-indent-mode)
   (setq org-directory "~/working/sync/org"
-      org-agenda-files '("~/working/sync/org")
-      org-log-done 'time
-      org-hide-emphasis-markers t)
-  (setq org-src-preserve-indentation nil
-      org-src-tab-acts-natively t
-      org-edit-src-content-indentation 0)
-  (setq org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)")))
-  (setq org-blank-before-new-entry (quote ((heading . nil)))))
+    org-agenda-files '("~/working/sync/org")
+    org-log-done 'time
+    org-hide-emphasis-markers t
+    org-src-tab-acts-natively t
+    org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)"))))
 ;;org-bullets
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
@@ -117,105 +114,21 @@
 ;;ibuffer setup
 (setq ibuffer-expert t)                                  ;;don't ask for confirmation when deleting buffers
 (require 'ibuf-ext)
-;; (add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
+(add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
 (add-to-list 'ibuffer-never-show-predicates "\\magit")   ;;hide hide magit buffers
-
-;;keybindings
-(general-define-key
-    :states '(normal visual)
-    :keymaps 'override
-    :prefix "SPC"
-    "" nil
-    "SPC"   '(execute-extended-command   :which-key "M-x")
-    "t t"   '(toggle-truncate-lines      :which-key "Toggle truncate lines")
-    "v v"   '(vterm                      :which-key "vterm")
-    "w w"   '(save-buffer                :which-key "Save buffer")
-    "c l"   '(comment-line               :which-key "Comment-line")
-    "i s"   '(ispell                     :which-key "ispell")
-    "f f"   '(find-file                  :which-key "Find file")
-    "e e"   '(eval-last-sexp             :which-key "Eval lisp")
-    "z"     '(suspend-frame              :which-key "Suspend frame")
-    "q"     '(save-buffers-kill-terminal :which-key "Quit")
-    ;;org
-    "o *"   '(org-ctrl-c-star                      :which-key "Org-ctrl-c-star")
-    "o +"   '(org-ctrl-c-minus                     :which-key "Org-ctrl-c-minus")
-    "o ."   '(counsel-org-goto                     :which-key "Counsel org goto")
-    "o e"   '(org-html-export-to-html              :which-key "Org export to html")
-    "o h"   '(org-toggle-heading                   :which-key "Org toggle heading")
-    "o i"   '(org-toggle-item                      :which-key "Org toggle item")
-    "o n"   '(org-store-link                       :which-key "Org store link")
-    "o o"   '(org-set-property                     :which-key "Org set property")
-    "o x"   '(org-toggle-checkbox                  :which-key "Org toggle checkbox")
-    "o B"   '(org-babel-tangle                     :which-key "Org babel tangle")
-    "o T"   '(org-set-tags-command                 :which-key "Org set tags")
-    "o t t" '(org-todo-list                        :which-key "Org todo list")
-    "o t c" '(org-table-toggle-coordinate-overlays :which-key "Org Table toggle coordinates")
-    "o t a" '(org-table-align                      :which-key "Org table align")
-    "o a"   '(org-agenda                           :which-key "Org agenda")
-    "o d"   '(org-deadline                         :which-key "Org deadline")
-    "o d"   '(org-deadline                         :which-key "Org deadline")
-    "o c"   '(org-ctrl-c-ctrl-c                    :which-key "Org ctrl-c-ctrl-c")
-    ;;Ibuffer-related
-    "b b"   '(ibuffer                  :which-key "Ibuffer")
-    "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
-    ;;Magit-related
-    "m g"   '(magit-status             :which-key "magit")
-    "m c"   '(with-editor-finish       :which-key "with-editor-finish")
-    "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
-    ;;mu4e
-    "m u"   '(mu4e                     :which-key "mu4e")
-    ;;Window-related
-    "w c"   '(evil-window-delete       :which-key "Close window")
-    "w o"   '(delete-other-windows     :which-key "Make window fill frame")
-    "w s"   '(evil-window-split        :which-key "Horizontal split window")
-    "w v"   '(evil-window-vsplit       :which-key "Vertical split window")
-    "w h"   '(evil-window-left         :which-key "Window left")
-    "w j"   '(evil-window-down         :which-key "Window down")
-    "w k"   '(evil-window-up           :which-key "Window up")
-    "w l"   '(evil-window-right        :which-key "Window right")
-    ;;describe
-    "d k"   '(describe-key             :which-key "Describe Key")
-    "d f"   '(where-is                 :which-key "Describe Function")
-    "d v"   '(describe-variable        :which-key "Describe Variable"))
-
-;mu4e main mode
-(general-define-key
-    :states 'normal
-    :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
-    :prefix "SPC"
-    "" nil
-    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/inbox"))   :which-key "Protonmail Inbox")
-    "p a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/all"))     :which-key "Protonmail All Mail")
-    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/sent"))    :which-key "Protonmail Sent")
-    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/drafts"))  :which-key "Protonmail Drafts")
-    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/starred")) :which-key "Protonmail Starred")
-    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/trash"))   :which-key "Protonmail Trash")
-
-    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/inbox"))   :which-key "Lehigh Inbox")
-    "l a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/all"))     :which-key "Lehigh All")
-    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/sent"))    :which-key "Lehigh Sent")
-    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/drafts"))  :which-key "Lehigh Drafts")
-    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/starred")) :which-key "Lehigh Starred")
-    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/trash"))   :which-key "Lehigh Trash")
-
-    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/inbox"))   :which-key "Gmail Inbox")
-    "g a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/all"))     :which-key "Gmail All Mail")
-    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/sent"))    :which-key "Gmail Sent")
-    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/drafts"))  :which-key "Gmail Drafts")
-    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/starred")) :which-key "Gmail Starred")
-    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash"))   :which-key "Gmail Trash")
-    )
 
 ;;mu4e
 (use-package mu4e
   :ensure nil
   :config
   (setq mu4e-change-filenames-when-moving t)
-  (setq mu4e-update-interval (* 10 60))
   (setq mu4e-get-mail-command "mbsync -c ~/.config/mu4e/mbsyncrc -a")
   (setq mu4e-maildir "~/.mail")
   (setq mu4e-compose-complete-only-personal nil)
   (setq mu4e-attachment-dir "~/working/downloads")
+  (setq mu4e-headers-skip-duplicates t)
+  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-compose-context-policy 'always-ask)
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   (setq message-send-mail-function 'smtpmail-send-it
 	smtpmail-auth-credentials "~/.authinfo.gpg"
@@ -374,3 +287,87 @@
 (use-package which-key
   :config
   (which-key-mode))
+
+;;keybindings
+(general-define-key
+    :states '(normal visual)
+    :keymaps 'override
+    :prefix "SPC"
+    "" nil
+    "SPC"   '(execute-extended-command   :which-key "M-x")
+    "t t"   '(toggle-truncate-lines      :which-key "Toggle truncate lines")
+    "v v"   '(vterm                      :which-key "vterm")
+    "w w"   '(save-buffer                :which-key "Save buffer")
+    "c l"   '(comment-line               :which-key "Comment-line")
+    "i s"   '(ispell                     :which-key "ispell")
+    "f f"   '(find-file                  :which-key "Find file")
+    "e e"   '(eval-last-sexp             :which-key "Eval lisp")
+    "z"     '(suspend-frame              :which-key "Suspend frame")
+    "q"     '(save-buffers-kill-terminal :which-key "Quit")
+    ;;org
+    "o *"   '(org-ctrl-c-star                      :which-key "Org-ctrl-c-star")
+    "o +"   '(org-ctrl-c-minus                     :which-key "Org-ctrl-c-minus")
+    "o ."   '(counsel-org-goto                     :which-key "Counsel org goto")
+    "o e"   '(org-html-export-to-html              :which-key "Org export to html")
+    "o h"   '(org-toggle-heading                   :which-key "Org toggle heading")
+    "o i"   '(org-toggle-item                      :which-key "Org toggle item")
+    "o n"   '(org-store-link                       :which-key "Org store link")
+    "o o"   '(org-set-property                     :which-key "Org set property")
+    "o x"   '(org-toggle-checkbox                  :which-key "Org toggle checkbox")
+    "o B"   '(org-babel-tangle                     :which-key "Org babel tangle")
+    "o t t" '(org-set-tags-command                 :which-key "Org set tags")
+    "o t c" '(org-table-toggle-coordinate-overlays :which-key "Org Table toggle coordinates")
+    "o t a" '(org-table-align                      :which-key "Org table align")
+    "o t s" '(org-time-stamp                       :which-key "Org time stamp")
+    "o a"   '(org-agenda                           :which-key "Org agenda")
+    "o d"   '(org-deadline                         :which-key "Org deadline")
+    "o c"   '(org-ctrl-c-ctrl-c                    :which-key "Org ctrl-c-ctrl-c")
+    ;;Ibuffer-related
+    "b b"   '(ibuffer                  :which-key "Ibuffer")
+    "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
+    ;;Magit-related
+    "m g"   '(magit-status             :which-key "magit")
+    "m c"   '(with-editor-finish       :which-key "with-editor-finish")
+    "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
+    ;;mu4e
+    "m u"   '(mu4e                     :which-key "mu4e")
+    ;;Window-related
+    "w c"   '(evil-window-delete       :which-key "Close window")
+    "w o"   '(delete-other-windows     :which-key "Make window fill frame")
+    "w s"   '(evil-window-split        :which-key "Horizontal split window")
+    "w v"   '(evil-window-vsplit       :which-key "Vertical split window")
+    "w h"   '(evil-window-left         :which-key "Window left")
+    "w j"   '(evil-window-down         :which-key "Window down")
+    "w k"   '(evil-window-up           :which-key "Window up")
+    "w l"   '(evil-window-right        :which-key "Window right")
+    ;;describe
+    "d k"   '(describe-key             :which-key "Describe Key")
+    "d f"   '(where-is                 :which-key "Describe Function")
+    "d v"   '(describe-variable        :which-key "Describe Variable"))
+
+;mu4e mode
+(general-define-key
+    :states 'normal
+    :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
+    :prefix "SPC"
+    "" nil
+    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/inbox"))   :which-key "Protonmail Inbox")
+    "p a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/all"))     :which-key "Protonmail All Mail")
+    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/sent"))    :which-key "Protonmail Sent")
+    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/drafts"))  :which-key "Protonmail Drafts")
+    "p f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/starred")) :which-key "Protonmail Starred")
+    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/trash"))   :which-key "Protonmail Trash")
+    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/inbox"))   :which-key "Lehigh Inbox")
+    "l a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/all"))     :which-key "Lehigh All")
+    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/sent"))    :which-key "Lehigh Sent")
+    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/drafts"))  :which-key "Lehigh Drafts")
+    "l f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/starred")) :which-key "Lehigh Starred")
+    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/trash"))   :which-key "Lehigh Trash")
+    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/inbox"))   :which-key "Gmail Inbox")
+    "g a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/all"))     :which-key "Gmail All Mail")
+    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/sent"))    :which-key "Gmail Sent")
+    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/drafts"))  :which-key "Gmail Drafts")
+    "g f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/starred")) :which-key "Gmail Starred")
+    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash"))   :which-key "Gmail Trash"))
+(define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
+(define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)

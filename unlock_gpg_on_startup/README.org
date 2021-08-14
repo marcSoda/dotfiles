@@ -1,0 +1,4 @@
+* These two files are necessary for allowing your password to unlock a gpg key using pam-gnupg.
+- The `pam-gnupg` file is stored in ~/.config
+- The `gpg-agent.conf` file is stored in ~/.gnupg
+- Follow instructions [[https://github.com/cruegge/pam-gnupg][here]]

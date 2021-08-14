@@ -8,7 +8,7 @@ export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# enable programmable completion features (you don't need to enable sources /etc/bash.bashrc).
+# enable programmable completion features
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
@@ -49,29 +49,26 @@ alias mg='gcc -g -Wall -Wextra -Wwrite-strings'
 alias mg+='g++ -g -Wall -Wextra -Wwrite-strings'
 
 #emacs remote dev using named workspaces
-alias ancilla='e -n ancilla /ssh:ancilla:working/'
-alias sunlab='e -n sunlab /ssh:masa20@sunlab.cse.lehigh.edu:working'
+alias ancilla='e a /ssh:ancilla:working/'
+alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
 
 #emacsclient named workspaces
 e() {
-    if [ $# -le 1 ]; then               #if no args, start the default daemon that is always running
-        emacsclient -s default -t $1
-        ret=$?
-        if [ $ret != 0 ] && [ $ret != 147 ] ; then
-            /usr/bin/emacs --daemon=default
-            /usr/bin/emacsclient -s default -nw $1
-        fi
-    elif [ "$1" = "-n" ]; then         #if -n, make a new named daemon and run it in fg
-        /usr/bin/emacs --daemon=$2
-        /usr/bin/emacsclient -s $2 -nw $3
-    elif [ "$1" = "-o" ]; then         #if -n, make a new named daemon and run it in fg
-        /usr/bin/emacsclient -s $2 -nw $3
-        if [ $? != 0 ] && [ $? != 147 ] ; then
-            /usr/bin/emacs --daemon=$2
-            /usr/bin/emacsclient -s $2 -nw $3
-        fi
-    elif [ "$1" = "-d" ]; then         #if -d, kill named daemon called $2
-        /usr/bin/emacsclient -s $2 -e '(save-buffers-kill-emacs)'
+    if [[ $1 = "-k" ]]; then         #if -d, kill named daemon called $2
+        /usr/bin/emacsclient -s $2 -e '(kill-emacs)'
+	return
+    elif [[ ${#1} = 1 ]]; then
+       name=$1
+       file=$2
+    else
+       name=default
+       file=$1
+    fi
+    /usr/bin/emacsclient -s $name -nw $file 
+    ret=$?
+    if [[ $ret != 0 ]] && [[ $ret != 147 ]] ; then
+        /usr/bin/emacs --daemon=$name
+        /usr/bin/emacsclient -s $name -nw $file 
     fi
 }
 
@@ -94,12 +91,11 @@ pass() {
 doc() {
     if [ "$1" = "on" ]; then
         xrandr --output $EXTERNAL_DISPLAY --auto --left-of eDP1 --primary
-        anker
         keyboard
         mouse
         echo "Docked"
     elif [ "$1" = "off" ]; then
-        xrandr --output DP1 --off
+        xrandr --output $EXTERNAM_DISPLAY --off
         btc power off
         echo "Undocked"
     fi

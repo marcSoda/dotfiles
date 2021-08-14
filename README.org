@@ -41,3 +41,5 @@
 - xmobar config
 * xmonad.hs
 - xmonad config
+* unlock_gpg_on_startup
+- Read the readme in the directory for details.
