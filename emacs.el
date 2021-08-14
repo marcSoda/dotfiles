@@ -12,18 +12,18 @@
 (setq browse-url-browser-function 'browse-url-generic ;default browser
       browse-url-generic-program "qutebrowser")
 
-;;package: setup package manager
+;;PACKAGE MANAGER
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/"))
-;;setup use-package
+;;USE-PACKAGE
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (setq use-package-always-ensure t)
 
-;;evil
+;;EVIL
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -31,17 +31,17 @@
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
   (evil-mode))
-;;evil-collection
+;;EVIL-COLLECTION
 (use-package evil-collection
   :after evil
   :config
   (setq evil-collection-mode-list '(magit vterm dashboard dired ibuffer mu4e))
   (evil-collection-init))
-;;evil surround mode
+;;EVIL-SURROUND
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
 
-;;dashboard
+;;DASHBOARD
 (use-package dashboard
   :init
   (setq dashboard-set-heading-icons t)
@@ -56,13 +56,13 @@
   :config
   (dashboard-setup-startup-hook))
 
-;;general: for keybindings
+;;GENERAL: for keybindings
 (use-package general
   :after evil
   :config
   (general-evil-setup t))
 
-;;org
+;;ORG
 (use-package org
   :init
   (add-hook 'org-mode-hook 'org-indent-mode)
@@ -72,10 +72,10 @@
     org-hide-emphasis-markers t
     org-src-tab-acts-natively t
     org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)"))))
-;;org-bullets
+;;ORG-BULLETS
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
-;;evil-org
+;;EVIL-ORG
 (use-package evil-org
   :commands evil-org-mode
   :after org
@@ -85,7 +85,7 @@
   (evil-org-set-key-theme '(textobjects insert navigation additional shift todo heading)))
 (use-package org-tempo)
 
-;;syntax-highlighting
+;;SYNTAX HIGHLIGHTING
 (use-package haskell-mode)
 (use-package yaml-mode)
 (use-package go-mode)
@@ -96,7 +96,7 @@
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (setq web-mode-enable-auto-closing t))
 
-;;spellcheck
+;;SPELLCHECK
 (use-package flyspell
   :config
   (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
@@ -104,20 +104,20 @@
   (setq ispell-local-dictionary-alist
     '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8))))
 
-;;magit
+;;MAGIT
 (use-package magit)
 
-;;xclip: copy to clipboard
+;;XClIP: copy to clipboard
 (use-package xclip
   :config (xclip-mode))
 
-;;ibuffer setup
+;;IBUFFER setup
 (setq ibuffer-expert t)                                  ;;don't ask for confirmation when deleting buffers
 (require 'ibuf-ext)
 (add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
 (add-to-list 'ibuffer-never-show-predicates "\\magit")   ;;hide hide magit buffers
 
-;;mu4e
+;;MU4e
 (use-package mu4e
   :ensure nil
   :config
@@ -200,95 +200,40 @@
                         (smtpmail-stream-type . starttls)
                         (smtpmail-smtp-service . 1025))))))
 
-;;relative line numbers
+;;VTERM
+(use-package vterm
+    :init
+    (setq shell-file-name "/bin/bash"))
+
+;;WHITESPACE: remove whitespace on save
+(require 'whitespace)
+(setq-default show-trailing-whitespace t)
+(set-face-attribute 'trailing-whitespace nil :underline t :background "black")
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;;RELATIVE LINE NUMBERS
 (setq-default display-line-numbers-type 'visual
               display-line-numbers-current-absolute t)
 (add-hook 'text-mode-hook #'display-line-numbers-mode)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
-
-;;smooth scrolling
+;;SMOOTH SCROLLING
 (setq redisplay-dont-pause t
   scroll-margin 15
   scroll-step 1
   scroll-conservatively 10000
   scroll-preserve-screen-position 1)
 
-;;theme
-(defvar my-white    "#ffffff")
-(defvar my-black    "#000000")
-(defvar my-red      "#ff0000")
-(defvar my-cyan     "#0087d7")
-(defvar my-green    "#03fc94")
-(defvar my-purple   "#cd75ff")
-(defvar my-orange   "#ffa500")
-(defvar my-pink     "#ff7efd")
-(defvar my-yellow   "#f4ff5c")
-(defvar my-brown    "#af5f00")
-(defvar my-grey     "#8f8c8c")
-(defvar my-darkgrey "#3e4446")
-;general
-(set-face-attribute 'default nil                      :foreground my-white)
-(set-face-attribute 'font-lock-comment-face nil       :foreground my-grey)
-(set-face-attribute 'font-lock-string-face nil        :foreground my-red)
-(set-face-attribute 'font-lock-constant-face nil      :foreground my-yellow)
-(set-face-attribute 'font-lock-keyword-face nil       :foreground my-green)
-(set-face-attribute 'font-lock-builtin-face nil       :foreground my-purple)
-(set-face-attribute 'font-lock-type-face nil          :foreground my-orange)
-(set-face-attribute 'line-number nil                  :foreground my-white)
-(set-face-attribute 'font-lock-function-name-face nil :foreground my-pink  :weight 'bold)
-(set-face-attribute 'font-lock-variable-name-face nil :foreground my-cyan  :weight 'bold)
-(set-face-attribute 'mode-line nil                    :foreground my-white :background my-darkgrey)
-(set-face-attribute 'mode-line-inactive nil                                :background my-grey)
-(set-face-attribute 'hl-line nil                                           :background my-darkgrey)
-;magit
-(set-face-attribute 'magit-section-heading nil    :foreground my-cyan)
-(set-face-attribute 'magit-branch-remote nil      :foreground my-green)
-(set-face-attribute 'magit-branch-remote-head nil :foreground my-green)
-(set-face-attribute 'magit-branch-current nil     :foreground my-red)
-(set-face-attribute 'magit-branch-local nil       :foreground my-red)
-;org
-(set-face-attribute 'org-level-1 nil         :foreground my-purple)
-(set-face-attribute 'org-level-2 nil         :foreground my-cyan)
-(set-face-attribute 'org-level-3 nil         :foreground my-green)
-(set-face-attribute 'org-level-4 nil         :foreground my-red)
-(set-face-attribute 'org-level-5 nil         :foreground my-pink)
-(set-face-attribute 'org-level-6 nil         :foreground my-grey)
-(set-face-attribute 'org-level-7 nil         :foreground my-yellow)
-(set-face-attribute 'org-level-8 nil         :foreground my-brown)
-(set-face-attribute 'org-done nil            :foreground my-green)
-(set-face-attribute 'org-todo nil            :foreground my-red)
-(set-face-attribute 'org-priority nil        :foreground my-cyan)
-(set-face-attribute 'org-special-keyword nil :foreground my-grey)
-(set-face-attribute 'org-headline-done nil   :foreground my-green)
-;mu4e
-(set-face-attribute 'mu4e-title-face nil   :foreground my-cyan :weight 'bold)
-(set-face-attribute 'mu4e-header-title-face nil   :foreground my-red)
-(set-face-attribute 'mu4e-header-value-face nil   :foreground my-red)
-(set-face-attribute 'mu4e-header-key-face nil   :foreground my-green)
-(set-face-attribute 'mu4e-replied-face nil   :foreground my-purple)
-(set-face-attribute 'mu4e-flagged-face nil   :foreground my-cyan)
-
-;;vterm
-(use-package vterm
-    :init
-    (setq shell-file-name "/bin/bash"))
-
-;; whitespace: remove whitespace on save
-(require 'whitespace)
-(setq-default show-trailing-whitespace t)
-(set-face-attribute 'trailing-whitespace nil :underline t :background "black")
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;;alacritty fixes
+;;ALACRITTY FIXES
 (add-to-list 'term-file-aliases '("alacritty" . "xterm")) ;;make emacs-nox fully featured in alacritty
 (setq xterm-extra-capabilities nil)                       ;;fixes slow startup from above command
 
-(use-package which-key
-  :config
-  (which-key-mode))
+;; ;;WICH-KEY
+;; (use-package which-key
+;;   :config
+;;   (which-key-mode))
 
-;;keybindings
+;;KEYBINDINGS
 (general-define-key
     :states '(normal visual)
     :keymaps 'override
@@ -345,7 +290,7 @@
     "d f"   '(where-is                 :which-key "Describe Function")
     "d v"   '(describe-variable        :which-key "Describe Variable"))
 
-;mu4e mode
+;MU4E KEYBINDINGS
 (general-define-key
     :states 'normal
     :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
@@ -371,3 +316,58 @@
     "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash"))   :which-key "Gmail Trash"))
 (define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
 (define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)
+
+;;THEME
+(defvar my-white    "#ffffff")
+(defvar my-black    "#000000")
+(defvar my-red      "#ff0000")
+(defvar my-cyan     "#0087d7")
+(defvar my-green    "#03fc94")
+(defvar my-purple   "#cd75ff")
+(defvar my-orange   "#ffa500")
+(defvar my-pink     "#ff7efd")
+(defvar my-yellow   "#f4ff5c")
+(defvar my-brown    "#af5f00")
+(defvar my-grey     "#8f8c8c")
+(defvar my-darkgrey "#3e4446")
+;general
+(set-face-attribute 'default nil                      :foreground my-white)
+(set-face-attribute 'font-lock-comment-face nil       :foreground my-grey)
+(set-face-attribute 'font-lock-string-face nil        :foreground my-red)
+(set-face-attribute 'font-lock-constant-face nil      :foreground my-yellow)
+(set-face-attribute 'font-lock-keyword-face nil       :foreground my-green)
+(set-face-attribute 'font-lock-builtin-face nil       :foreground my-purple)
+(set-face-attribute 'font-lock-type-face nil          :foreground my-orange)
+(set-face-attribute 'line-number nil                  :foreground my-cyan  :weight 'bold)
+(set-face-attribute 'font-lock-function-name-face nil :foreground my-pink  :weight 'bold)
+(set-face-attribute 'font-lock-variable-name-face nil :foreground my-cyan  :weight 'bold)
+(set-face-attribute 'mode-line nil                    :foreground my-white :background my-darkgrey)
+(set-face-attribute 'mode-line-inactive nil                                :background my-grey)
+(set-face-attribute 'hl-line nil                                           :background my-darkgrey)
+;magit
+(set-face-attribute 'magit-section-heading nil    :foreground my-cyan)
+(set-face-attribute 'magit-branch-remote nil      :foreground my-green)
+(set-face-attribute 'magit-branch-remote-head nil :foreground my-green)
+(set-face-attribute 'magit-branch-current nil     :foreground my-red)
+(set-face-attribute 'magit-branch-local nil       :foreground my-red)
+;org
+(set-face-attribute 'org-level-1 nil         :foreground my-purple)
+(set-face-attribute 'org-level-2 nil         :foreground my-cyan)
+(set-face-attribute 'org-level-3 nil         :foreground my-green)
+(set-face-attribute 'org-level-4 nil         :foreground my-red)
+(set-face-attribute 'org-level-5 nil         :foreground my-pink)
+(set-face-attribute 'org-level-6 nil         :foreground my-grey)
+(set-face-attribute 'org-level-7 nil         :foreground my-yellow)
+(set-face-attribute 'org-level-8 nil         :foreground my-brown)
+(set-face-attribute 'org-done nil            :foreground my-green)
+(set-face-attribute 'org-todo nil            :foreground my-red)
+(set-face-attribute 'org-priority nil        :foreground my-cyan)
+(set-face-attribute 'org-special-keyword nil :foreground my-grey)
+(set-face-attribute 'org-headline-done nil   :foreground my-green)
+;mu4e
+(set-face-attribute 'mu4e-title-face nil   :foreground my-cyan :weight 'bold)
+(set-face-attribute 'mu4e-header-title-face nil   :foreground my-red)
+(set-face-attribute 'mu4e-header-value-face nil   :foreground my-red)
+(set-face-attribute 'mu4e-header-key-face nil   :foreground my-green)
+(set-face-attribute 'mu4e-replied-face nil   :foreground my-purple)
+(set-face-attribute 'mu4e-flagged-face nil   :foreground my-cyan)
