@@ -117,7 +117,7 @@
 (add-to-list 'ibuffer-never-show-predicates "^\\*")      ;;hide buffers with asterisks (emacs buffers)
 (add-to-list 'ibuffer-never-show-predicates "\\magit")   ;;hide hide magit buffers
 
-;;MU4e
+;;MU4E
 (use-package mu4e
   :ensure nil
   :config

@@ -19,7 +19,6 @@ fi
 
 #path
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
 
 #set editor
 export EDITOR=emacs
@@ -64,10 +63,10 @@ e() {
        name=default
        file=$1
     fi
-    /usr/bin/emacsclient -s $name -nw $file 
+    /usr/bin/emacsclient -s $name -nw $file
     ret=$?
     if [[ $ret != 0 ]] && [[ $ret != 147 ]] ; then
-        /usr/bin/emacs --daemon=$name
+        /usr/bin/emacs --daemon=$name 
         /usr/bin/emacsclient -s $name -nw $file 
     fi
 }
