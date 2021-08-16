@@ -268,8 +268,7 @@
     "b k"   'kill-current-buffer
     ;;vterm
     "v n"   'multi-vterm
-    "v l"   'multi-vterm-next
-    "v h"   'multi-vterm-prev
+    "v v"   'multi-vterm-next
     ;;Magit-related
     "m g"   'magit-status
     "m c"   'with-editor-finish

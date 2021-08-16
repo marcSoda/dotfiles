@@ -51,6 +51,8 @@ alias mg+='g++ -g -Wall -Wextra -Wwrite-strings'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
 
+alias jrnl='e 1 ~/working/sync/org/journal/personal.org.gpg'
+
 #emacsclient named workspaces
 e() {
     if [[ $1 = "-k" ]]; then         #if -d, kill named daemon called $2
@@ -66,8 +68,8 @@ e() {
     /usr/bin/emacsclient -s $name -nw $file
     ret=$?
     if [[ $ret != 0 ]] && [[ $ret != 147 ]] ; then
-        /usr/bin/emacs --daemon=$name 
-        /usr/bin/emacsclient -s $name -nw $file 
+        /usr/bin/emacs --daemon=$name
+        /usr/bin/emacsclient -s $name -nw $file
     fi
 }
 
@@ -94,7 +96,7 @@ doc() {
         mouse
         echo "Docked"
     elif [ "$1" = "off" ]; then
-        xrandr --output $EXTERNAM_DISPLAY --off
+        xrandr --output $EXTERNAL_DISPLAY --off
         btc power off
         echo "Undocked"
     fi
