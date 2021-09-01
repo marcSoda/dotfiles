@@ -66,8 +66,8 @@
 (use-package org
   :init
   (add-hook 'org-mode-hook 'org-indent-mode)
-  (setq org-directory "~/working/sync/org"
-    org-agenda-files '("~/working/sync/org")
+  (setq org-directory "~/Dropbox/org"
+    org-agenda-files '("~/Dropbox/org")
     org-log-done 'time
     org-hide-emphasis-markers t
     org-src-tab-acts-natively t
@@ -121,14 +121,14 @@
 (use-package mu4e
   :ensure nil
   :config
-  (setq mu4e-change-filenames-when-moving t)
   (setq mu4e-get-mail-command "mbsync -c ~/.config/mu4e/mbsyncrc -a")
   (setq mu4e-maildir "~/.mail")
   (setq mu4e-compose-complete-only-personal nil)
   (setq mu4e-attachment-dir "~/working/downloads")
-  (setq mu4e-headers-skip-duplicates t)
-  (setq mu4e-headers-include-related t)
-  (setq mu4e-context-policy 'pick-first)
+  ;; (setq mu4e-headers-skip-duplicates t)
+  ;; (setq mu4e-headers-include-related nil)
+  (setq mu4e-change-filenames-when-moving t)
+  ;; (setq mu4e-context-policy 'pick-first)
   (setq mu4e-compose-context-policy 'always-ask)
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   (setq message-send-mail-function 'smtpmail-send-it
@@ -377,7 +377,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(multi-vterm yaml-mode xclip web-mode vterm use-package org-bullets org magit haskell-mode handlebars-mode go-mode general evil-surround evil-org evil-collection dashboard)))
+   '(docker-tramp multi-vterm yaml-mode xclip web-mode vterm use-package org-bullets org magit haskell-mode handlebars-mode go-mode general evil-surround evil-org evil-collection dashboard)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
