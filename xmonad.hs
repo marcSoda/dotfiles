@@ -55,7 +55,7 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 
 myStartupHook :: X ()
 myStartupHook = do
-    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/save/backgrounds/1701.jpg' &"
+    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/save/backgrounds/melty.jpg' &"
     spawnOnce "compton --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
@@ -82,16 +82,15 @@ myLayoutHook = avoidStruts
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
      -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
-     [ className =? "zoom"   --> doShift(myWorkspaces !! 6) --this might not work...
-     , className =? "Slack"  --> doShift(myWorkspaces !! 7)
-     , className =? "vlc"    --> doShift(myWorkspaces !! 8)
-     ]
+     [ className =? "zoom"                   --> doShift(myWorkspaces !! 6) --this might not work...
+     , className =? "Slack"                  --> doShift(myWorkspaces !! 7)
+     , className =? "Google-chrome"   --> doShift(myWorkspaces !! 8)
+     , className =? "vlc"                    --> doShift(myWorkspaces !! 8)]
 
 --Scratchpads
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
-                , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
-                ]
+                , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot]
     where
         spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad'"
         findTerm   = title =? "Terminal Scratchpad"

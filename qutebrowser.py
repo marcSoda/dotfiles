@@ -174,7 +174,9 @@ c.tabs.show = 'never'
 
 # Bindings for normal mode
 config.unbind('m')
-config.bind('m', 'spawn vlc {url}')
+# config.bind('m', 'spawn mpv --ytdl-format=best {url}')
+# config.bind('m', 'spawn vlc {url}')
+config.bind('m', 'hint links spawn google-chrome-stable --start-fullscreen {hint-url}')
 config.bind('M', 'hint links run :open {hint-url}')
 config.bind('b', 'set-cmd-text -s :tab-select')
 config.bind('j', 'scroll-px 0 100')

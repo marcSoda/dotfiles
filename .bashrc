@@ -25,6 +25,7 @@ export EDITOR=emacs
 
 #set external display
 export EXTERNAL_DISPLAY=DP1
+export PROJECTOR_PORT=DP3
 
 #aliases:
 
@@ -75,7 +76,7 @@ e() {
 
 #share text to dropbox
 tshare() {
-    echo "${@:1}" > ~/working/sync/misc/tshare.txt
+    echo "${@:1}" > ~/working/misc/tshare.txt
 }
 
 #Custom pass behavior
@@ -95,6 +96,9 @@ doc() {
         keyboard
         mouse
         echo "Docked"
+    elif [ "$1" = "p" ]; then
+        xrandr --output $EXTERNAL_DISPLAY --auto --above eDP1 --primary
+        anker
     elif [ "$1" = "off" ]; then
         xrandr --output $EXTERNAL_DISPLAY --off
         btc power off

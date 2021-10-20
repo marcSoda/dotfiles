@@ -9,6 +9,7 @@
 (put 'dired-find-alternate-file 'disabled nil)  ;Has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
+(setq-default tab-width 2)
 (setq browse-url-browser-function 'browse-url-generic ;default browser
       browse-url-generic-program "qutebrowser")
 
@@ -30,6 +31,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
+  (setq evil-shift-width 2)
   (evil-mode))
 ;;EVIL-COLLECTION
 (use-package evil-collection
@@ -41,20 +43,20 @@
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
 
-;;DASHBOARD
-(use-package dashboard
-  :init
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-startup-banner 'logo)
-  (setq dashboard-center-content t)
-  (setq dashboard-items '((agenda . 20 )))
-  (setq initial-buffer-choice (lambda () ;refresh and display dashboard buffer on emacsclient open
-      (dashboard-refresh-buffer)
-      (ignore-errors (org-agenda-exit))  ;close auto-opened org-agenda buffers
-      (get-buffer "*dashboard*")))
-  :config
-  (dashboard-setup-startup-hook))
+;;DOCKER-TRAMP
+(use-package docker-tramp)
+
+;;COMPANY: syntax completion
+(use-package company
+  :init (global-company-mode t))
+
+;;COUNSEL: better nav
+(use-package counsel
+  :init (counsel-mode t))
+
+;;FLYCHECK: syntax checking
+(use-package flycheck
+  :init (global-flycheck-mode))
 
 ;;GENERAL: for keybindings
 (use-package general
@@ -89,6 +91,7 @@
 (use-package haskell-mode)
 (use-package yaml-mode)
 (use-package go-mode)
+(use-package rust-mode)
 (use-package handlebars-mode
   :init (add-to-list 'auto-mode-alist '("\\.hb?\\'" . handlebars-mode)))
 (use-package web-mode
@@ -231,63 +234,72 @@
 (add-to-list 'term-file-aliases '("alacritty" . "xterm")) ;;make emacs-nox fully featured in alacritty
 (setq xterm-extra-capabilities nil)                       ;;fixes slow startup from above command
 
+;; ;;WICH-KEY
+(use-package which-key
+  :config (which-key-mode))
+
 ;;KEYBINDINGS
 (general-define-key
     :states '(normal visual)
     :keymaps 'override
     :prefix "SPC"
-    "SPC"   'execute-extended-command
-    "t t"   'toggle-truncate-lines
-    "w w"   'save-buffer
-    "c l"   'comment-line
-    "i s"   'ispell
-    "f f"   'find-file
-    "e e"   'eval-last-sexp
-    "z"     'suspend-frame
-    "q"     'save-buffers-kill-terminal
+    "" nil
+    "SPC"   '(execute-extended-command   :which-key "M-x")
+    "t t"   '(toggle-truncate-lines      :which-key "Toggle truncate lines")
+    "v v"   '(vterm                      :which-key "vterm")
+    "w w"   '(save-buffer                :which-key "Save buffer")
+    "c c"   '(comment-line               :which-key "Comment-line")
+    "c p"   '(c++-mode                   :which-key "c++-mode")
+    "i s"   '(ispell                     :which-key "ispell")
+    "f f"   '(find-file                  :which-key "Find file")
+    "e e"   '(eval-last-sexp             :which-key "Eval lisp")
+    "z"     '(suspend-frame              :which-key "Suspend frame")
+    "q"     '(save-buffers-kill-terminal :which-key "Quit")
+    ;;flycheck
+    "f a"   '(counsel-flycheck        :which-key "counsel-flycheck")
+    "f n"   '(flycheck-next-error     :which-key "flycheck-next-error")
+    "f p"   '(flycheck-previous-error :which-key "flycheck-previous-error")
     ;;org
-    "o *"   'org-ctrl-c-star
-    "o +"   'org-ctrl-c-minus
-    "o ."   'counsel-org-goto
-    "o e"   'org-html-export-to-html
-    "o h"   'org-toggle-heading
-    "o i"   'org-toggle-item
-    "o n"   'org-store-link
-    "o o"   'org-set-property
-    "o x"   'org-toggle-checkbox
-    "o B"   'org-babel-tangle
-    "o t t" 'org-set-tags-command
-    "o t c" 'org-table-toggle-coordinate-overlays
-    "o t a" 'org-table-align
-    "o t s" 'org-time-stamp
-    "o a"   'org-agenda
-    "o d"   'org-deadline
-    "o c"   'org-ctrl-c-ctrl-c
-    ;;Ibuffer-related
-    "b b"   'ibuffer
-    "b k"   'kill-current-buffer
-    ;;vterm
-    "v n"   'multi-vterm
-    "v v"   'multi-vterm-next
+    "o *"   '(org-ctrl-c-star                      :which-key "Org-ctrl-c-star")
+    "o +"   '(org-ctrl-c-minus                     :which-key "Org-ctrl-c-minus")
+    "o ."   '(counsel-org-goto                     :which-key "Counsel org goto")
+    "o e"   '(org-html-export-to-html              :which-key "Org export to html")
+    "o h"   '(org-toggle-heading                   :which-key "Org toggle heading")
+    "o i"   '(org-toggle-item                      :which-key "Org toggle item")
+    "o n"   '(org-store-link                       :which-key "Org store link")
+    "o o"   '(org-set-property                     :which-key "Org set property")
+    "o x"   '(org-toggle-checkbox                  :which-key "Org toggle checkbox")
+    "o B"   '(org-babel-tangle                     :which-key "Org babel tangle")
+    "o t t" '(org-set-tags-command                 :which-key "Org set tags")
+    "o t c" '(org-table-toggle-coordinate-overlays :which-key "Org Table toggle coordinates")
+    "o t a" '(org-table-align                      :which-key "Org table align")
+    "o t s" '(org-time-stamp                       :which-key "Org time stamp")
+    "o a"   '(org-agenda                           :which-key "Org agenda")
+    "o d"   '(org-deadline                         :which-key "Org deadline")
+    "o c"   '(org-ctrl-c-ctrl-c                    :which-key "Org ctrl-c-ctrl-c")
+    ;;buffer-related
+    "b b"   '(ibuffer                  :which-key "Ibuffer")
+    "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
+    "b r"   '(revert-buffer            :which-key "revert-buffer")
     ;;Magit-related
-    "m g"   'magit-status
-    "m c"   'with-editor-finish
-    "m k"   'with-editor-cancel
+    "m g"   '(magit-status             :which-key "magit")
+    "m c"   '(with-editor-finish       :which-key "with-editor-finish")
+    "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
     ;;mu4e
-    "m u"   'mu4e
+    "m u"   '(mu4e                     :which-key "mu4e")
     ;;Window-related
-    "w c"   'evil-window-delete
-    "w o"   'delete-other-windows
-    "w s"   'evil-window-split
-    "w v"   'evil-window-vsplit
-    "w h"   'evil-window-left
-    "w j"   'evil-window-down
-    "w k"   'evil-window-up
-    "w l"   'evil-window-right
+    "w c"   '(evil-window-delete       :which-key "Close window")
+    "w o"   '(delete-other-windows     :which-key "Make window fill frame")
+    "w s"   '(evil-window-split        :which-key "Horizontal split window")
+    "w v"   '(evil-window-vsplit       :which-key "Vertical split window")
+    "w h"   '(evil-window-left         :which-key "Window left")
+    "w j"   '(evil-window-down         :which-key "Window down")
+    "w k"   '(evil-window-up           :which-key "Window up")
+    "w l"   '(evil-window-right        :which-key "Window right")
     ;;describe
-    "d k"   'describe-key
-    "d f"   'where-is
-    "d v"   'describe-variable)
+    "d k"   '(describe-key             :which-key "Describe Key")
+    "d f"   '(where-is                 :which-key "Describe Function")
+    "d v"   '(describe-variable        :which-key "Describe Variable"))
 
 ;MU4E KEYBINDINGS
 (general-define-key
@@ -295,26 +307,24 @@
     :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
     :prefix "SPC"
     "" nil
-    "p i" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/inbox"))
-    "p a" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/all"))
-    "p s" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/sent"))
-    "p d" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/drafts"))
-    "p f" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/starred"))
-    "p t" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/trash"))
-    "l i" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/inbox"))
-    "l a" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/all"))
-    "l s" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/sent"))
-    "l d" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/drafts"))
-    "l f" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/starred"))
-    "l t" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/trash"))
-    "g i" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/inbox"))
-    "g a" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/all"))
-    "g s" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/sent"))
-    "g d" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/drafts"))
-    "g f" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/starred"))
-    "g t" '(lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash")))
-    (define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
-    (define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)
+    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/inbox"))   :which-key "Protonmail Inbox")
+    "p a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/all"))     :which-key "Protonmail All Mail")
+    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/sent"))    :which-key "Protonmail Sent")
+    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/drafts"))  :which-key "Protonmail Drafts")
+    "p f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/starred")) :which-key "Protonmail Starred")
+    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/trash"))   :which-key "Protonmail Trash")
+    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/inbox"))   :which-key "Lehigh Inbox")
+    "l a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/all"))     :which-key "Lehigh All")
+    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/sent"))    :which-key "Lehigh Sent")
+    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/drafts"))  :which-key "Lehigh Drafts")
+    "l f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/starred")) :which-key "Lehigh Starred")
+    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/trash"))   :which-key "Lehigh Trash")
+    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/inbox"))   :which-key "Gmail Inbox")
+    "g a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/all"))     :which-key "Gmail All Mail")
+    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/sent"))    :which-key "Gmail Sent")
+    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/drafts"))  :which-key "Gmail Drafts")
+    "g f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/starred")) :which-key "Gmail Starred")
+    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash"))   :which-key "Gmail Trash"))
 
 ;;THEME
 (defvar my-white    "#ffffff")
@@ -377,7 +387,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(docker-tramp multi-vterm yaml-mode xclip web-mode vterm use-package org-bullets org magit haskell-mode handlebars-mode go-mode general evil-surround evil-org evil-collection dashboard)))
+   '(rust-mode company counsel flycheck docker-tramp multi-vterm yaml-mode xclip web-mode vterm use-package org-bullets org magit haskell-mode handlebars-mode go-mode general evil-surround evil-org evil-collection)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
