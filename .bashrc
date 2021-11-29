@@ -48,11 +48,16 @@ alias mouse='btc power on && btc connect FA:BE:26:DE:58:81'
 alias mg='gcc -g -Wall -Wextra -Wwrite-strings'
 alias mg+='g++ -g -Wall -Wextra -Wwrite-strings'
 
+#network
+alias lehigh='sudo netctl stop-all && sudo netctl start wlp2s0-lehigh'
+alias pierce='sudo netctl stop-all && sudo netctl start wlp2s0-618\ Pieeeeeeerce'
+alias home='sudo netctl stop-all && sudo netctl start wlp2s0-OldManDing'
+
 #emacs remote dev using named workspaces
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
 
-alias jrnl='e 1 ~/working/sync/org/journal/personal.org.gpg'
+alias jrnl='e 1 ~/working/org/journal/personal.org.gpg'
 
 #emacsclient named workspaces
 e() {
@@ -147,3 +152,9 @@ wifi() {
             ;;
     esac
 }
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/marc/.gcloud/google-cloud-sdk/path.bash.inc' ]; then . '/home/marc/.gcloud/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/marc/.gcloud/google-cloud-sdk/completion.bash.inc' ]; then . '/home/marc/.gcloud/google-cloud-sdk/completion.bash.inc'; fi
