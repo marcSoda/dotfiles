@@ -33,7 +33,7 @@ export PROJECTOR_PORT=DP3
 alias c='clear'
 alias pacman='sudo pacman'
 alias grep='grep --color=auto'
-alias ls='lsd -lAF --group-dirs=last --color=always'
+alias ls='lsd -lAF --group-dirs=last --color=always --blocks permission --blocks name'
 alias rm='rm -v'
 
 #bluetooth
@@ -54,10 +54,13 @@ alias pierce='sudo netctl stop-all && sudo netctl start wlp2s0-618\ Pieeeeeeerce
 alias home='sudo netctl stop-all && sudo netctl start wlp2s0-OldManDing'
 
 #emacs remote dev using named workspaces
+alias eltanin='e e /ssh:masa20@eltanin.dept.lehigh.edu:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
+alias jrnl='e j ~/working/org/journal/personal.org.gpg'
 
-alias jrnl='e 1 ~/working/org/journal/personal.org.gpg'
+#lehigh vpn
+alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
 
 #emacsclient named workspaces
 e() {

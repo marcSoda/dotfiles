@@ -10,7 +10,7 @@
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
 (setq-default tab-width 2)                      ;tab width
-(setq-default flycheck-disabled-checkers        ;don't treat this file liken elisp package file
+(setq-default flycheck-disabled-checkers        ;don't treat this file like an elisp package file
   '(emacs-lisp-checkdoc))
 (setq browse-url-browser-function               ;default browser qutebrowser
       'browse-url-generic browse-url-generic-program "qutebrowser")
@@ -62,6 +62,12 @@
 (use-package counsel
   :init (counsel-mode t))
 
+;;SMEX: enables M-X history
+(use-package smex)
+
+;;SWIPER: better searching
+(use-package swiper)
+
 ;;FLYCHECK: syntax checking
 (use-package flycheck
   :init (global-flycheck-mode))
@@ -70,8 +76,8 @@
 (use-package org
   :init
   (add-hook 'org-mode-hook 'org-indent-mode)
-  (setq org-directory "~/Dropbox/org"
-    org-agenda-files '("~/Dropbox/org")
+  (setq org-directory "/home/marc/Dropbox/org"
+    org-agenda-files '("/home/marc/Dropbox/org")
     org-log-done 'time
     org-hide-emphasis-markers t
     org-src-tab-acts-natively t
@@ -87,8 +93,6 @@
   :after org
   :init
   (add-hook 'org-mode-hook 'evil-org-mode))
-  ;; :config
-  ;; (evil-org-set-key-theme '(textobjects insert navigation additional shift todo heading)))
 (use-package org-tempo)
 
 ;;SYNTAX HIGHLIGHTING
@@ -140,11 +144,11 @@
 
 ;;RELATIVE LINE NUMBERS
 (setq-default display-line-numbers-type 'visual
-  display-line-numbers-current-absolute t)
+              display-line-numbers-current-absolute t)
 (add-hook 'text-mode-hook #'display-line-numbers-mode)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
-;; ;;SMOOTH SCROLLING
+;;SMOOTH SCROLLING
 (setq scroll-margin 15
   scroll-step 1
   scroll-conservatively 10000
@@ -161,3 +165,17 @@
 (load-file (expand-file-name "mu4e.el" user-emacs-directory))
 (load-file (expand-file-name "keybindings.el" user-emacs-directory))
 (load-file (expand-file-name "theme.el" user-emacs-directory))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

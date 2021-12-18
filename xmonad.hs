@@ -60,7 +60,7 @@ myStartupHook = do
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
-    spawnOnce "/usr/bin/emacs --daemon=default &" -- emacs daemon for the emacsclient
+    spawnOnce "/usr/bin/emacs --daemon=default &" -- emacs daemon for default
 
 --Layouts
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a

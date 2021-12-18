@@ -4,9 +4,21 @@
   :config
   (general-evil-setup t))
 
-;;KEYBINDINGS
+;;remap '/' to use swiper
+(define-key evil-normal-state-map (kbd "/") 'swiper)
+
+;;remap C-n and C-p to M-j and M-k in ivy buffers
+(define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
+(define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
+
+;;j/k in org-agenda mode are down/up. overrides org-agenda-goto-date and org-agenda-capture
+(add-hook 'org-agenda-mode-hook (lambda ()
+  (define-key org-agenda-mode-map "j" 'evil-next-line)
+  (define-key org-agenda-mode-map "k" 'evil-previous-line)
+  (define-key org-agenda-mode-map "q" 'org-agenda-exit))) ;;close org files when press 'q'
+
 (general-define-key
-    :states '(normal visual)
+    :states '(normal visual emacs motion)
     :keymaps 'override
     :prefix "SPC"
     "" nil
@@ -19,6 +31,7 @@
     "i s"   '(ispell                     :which-key "ispell")
     "f f"   '(find-file                  :which-key "Find file")
     "e e"   '(eval-last-sexp             :which-key "Eval lisp")
+    "g"     '(keyboard-quit              :which-key "keyboard-quit (C-g)")
     "z"     '(suspend-frame              :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal :which-key "Quit")
     ;;flycheck
@@ -43,6 +56,7 @@
     "o a"   '(org-agenda                           :which-key "Org agenda")
     "o d"   '(org-deadline                         :which-key "Org deadline")
     "o c"   '(org-ctrl-c-ctrl-c                    :which-key "Org ctrl-c-ctrl-c")
+    "o s"   '(org-todo                             :which-key "Org change state")
     ;;buffer-related
     "b b"   '(ibuffer                  :which-key "Ibuffer")
     "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
