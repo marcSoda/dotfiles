@@ -2,6 +2,9 @@
 (setq inhibit-startup-message t)                ;disable default welcome message
 (setq make-backup-files nil)                    ;disable backup files
 (menu-bar-mode -1)                              ;disable menubar
+(tool-bar-mode -1)                              ;disable tool bar
+(toggle-scroll-bar -1)                          ;disable scroll bar
+(global-linum-mode t)                           ;display line numbers
 (global-hl-line-mode)                           ;highlight current line
 (electric-pair-mode)                            ;smarter delimeters.
 (delete-selection-mode 1)                       ;replace hilighted text when pastings
@@ -47,9 +50,31 @@
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
 
+;;DOOM-THEME
+(use-package doom-themes
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-acario-dark t)
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (defvar doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config)
+  (set-face-attribute 'default nil :height 185 :weight 'bold)
+  (set-background-color "#121212")
+  (set-face-attribute 'hl-line nil :background "#3e4446"))
+
 ;;DOOM-MODELINE:
 (use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  :init (doom-modeline-mode 1)
+  :config (set-face-attribute 'mode-line nil :height 160))
+
 
 ;;DOCKER-TRAMP
 (use-package docker-tramp)
@@ -142,14 +167,8 @@
 (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;;RELATIVE LINE NUMBERS
-(setq-default display-line-numbers-type 'visual
-              display-line-numbers-current-absolute t)
-(add-hook 'text-mode-hook #'display-line-numbers-mode)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
 ;;SMOOTH SCROLLING
-(setq scroll-margin 15
+(setq scroll-margin 5
   scroll-step 1
   scroll-conservatively 10000
   scroll-preserve-screen-position 1)

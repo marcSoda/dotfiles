@@ -6,10 +6,15 @@
 
 ;;remap '/' to use swiper
 (define-key evil-normal-state-map (kbd "/") 'swiper)
-
 ;;remap C-n and C-p to M-j and M-k in ivy buffers
 (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
+;;S-j/k to navigate faster
+(define-key evil-normal-state-map (kbd "J") 'evil-forward-paragraph)
+(define-key evil-normal-state-map (kbd "K") 'evil-backward-paragraph)
+;;M-j/k move up and down in mu4e-view-mode-map
+(define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
+(define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)
 
 ;;j/k in org-agenda mode are down/up. overrides org-agenda-goto-date and org-agenda-capture
 (add-hook 'org-agenda-mode-hook (lambda ()
@@ -31,7 +36,6 @@
     "i s"   '(ispell                     :which-key "ispell")
     "f f"   '(find-file                  :which-key "Find file")
     "e e"   '(eval-last-sexp             :which-key "Eval lisp")
-    "g"     '(keyboard-quit              :which-key "keyboard-quit (C-g)")
     "z"     '(suspend-frame              :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal :which-key "Quit")
     ;;flycheck
