@@ -110,6 +110,7 @@ myKeys =
         , ("M-S-b", spawn (myBrowser))
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
+        , ("M-S-e", spawn "/usr/bin/emacsclient -c -s default")
     -- Kill windows
         , ("M-S-x", kill)                 -- Kill the currently focused client
     -- Windows navigation

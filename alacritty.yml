@@ -1,4 +1,4 @@
-# Colors (Blood Moon)
+#Colors (Blood Moon)
 colors:
   # Default colors
   primary:
@@ -30,5 +30,5 @@ colors:
 #opacity
 background_opacity: .92
 
-# directory of the parent process will be used.
+#directory of the parent process will be used.
 working_directory: /home/marc/working

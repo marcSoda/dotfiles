@@ -55,7 +55,10 @@
   :config
   (load-theme 'doom-acario-dark t)
   (set-face-attribute 'default nil :height 195 :weight 'bold)
-  (set-background-color "#121212")
+  (setq default-frame-alist
+      '((background-color . "#121212")))
+  ;; (set-background-color "#121212")
+  (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
   (set-face-attribute 'hl-line nil :background "#3e4446"))
 
 ;;DOOM-MODELINE:

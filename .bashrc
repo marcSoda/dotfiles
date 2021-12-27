@@ -48,6 +48,9 @@ alias mouse='btc power on && btc connect FA:BE:26:DE:58:81'
 alias mg='gcc -g -Wall -Wextra -Wwrite-strings'
 alias mg+='g++ -g -Wall -Wextra -Wwrite-strings'
 
+#lehigh vpn
+alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
+
 #network
 alias lehigh='sudo netctl stop-all && sudo netctl start wlp2s0-lehigh'
 alias pierce='sudo netctl stop-all && sudo netctl start wlp2s0-618\ Pieeeeeeerce'
@@ -59,10 +62,10 @@ alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
 alias jrnl='e j ~/working/org/journal/personal.org.gpg'
 
-#lehigh vpn
-alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
+#emacsclient
+alias ec='emacsclient'
 
-#emacsclient named workspaces
+#emacsclient named workspaces : not updated since switching to emacs with x
 e() {
     if [[ $1 = "-k" ]]; then         #if -d, kill named daemon called $2
         /usr/bin/emacsclient -s $2 -e '(kill-emacs)'
