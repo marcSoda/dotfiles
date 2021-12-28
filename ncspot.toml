@@ -1,4 +1,4 @@
-audio_cache_size = 1000 #limit cache size to 1 gig
+#audio_cache_size = 1000 #limit cache size to 1 gig
 [theme]
 background = "#181818"
 primary = "#F1F1F1"

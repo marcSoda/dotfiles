@@ -27,7 +27,7 @@ myModMask :: KeyMask
 myModMask = mod4Mask
 
 disp0 :: String
-disp0 = "eDP1"
+disp0 = "eDP-1"
 
 disp1 :: String
 disp1 = "DP1"

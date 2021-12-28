@@ -180,7 +180,7 @@ c.zoom.default = '125%'
 config.unbind('m')
 # config.bind('m', 'spawn mpv --ytdl-format=best {url}')
 # config.bind('m', 'spawn vlc {url}')
-config.bind('m', 'hint links spawn google-chrome-stable {hint-url}')
+config.bind('m', 'hint links spawn chromium {hint-url}')
 config.bind('M', 'hint links run :open {hint-url}')
 config.bind('b', 'set-cmd-text -s :tab-select')
 config.bind('j', 'scroll-px 0 100')

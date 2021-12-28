@@ -17,6 +17,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
+#keyhold rate
+xset r rate 220 40
+
 #path
 export PATH="$HOME/.local/bin:$PATH"
 

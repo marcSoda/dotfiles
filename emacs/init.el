@@ -3,7 +3,8 @@
 (setq make-backup-files nil)                    ;disable backup files
 (menu-bar-mode -1)                              ;disable menubar
 (tool-bar-mode -1)                              ;disable tool bar
-(toggle-scroll-bar -1)                          ;disable scroll bar
+(setq default-frame-alist '((background-color . "#121212")))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 (global-linum-mode t)                           ;display line numbers
 (global-hl-line-mode)                           ;highlight current line
 (electric-pair-mode)                            ;smarter delimeters.
@@ -55,10 +56,6 @@
   :config
   (load-theme 'doom-acario-dark t)
   (set-face-attribute 'default nil :height 195 :weight 'bold)
-  (setq default-frame-alist
-      '((background-color . "#121212")))
-  ;; (set-background-color "#121212")
-  (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
   (set-face-attribute 'hl-line nil :background "#3e4446"))
 
 ;;DOOM-MODELINE:
