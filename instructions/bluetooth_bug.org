@@ -1,0 +1,6 @@
+* helped: https://askubuntu.com/questions/1172000/a2dp-sink-profile-connect-failed
+* repeating steps in above works (kill pulse, start, restart bt) then bctl pwr on connect works
+sudo apt-get install pulseaudio-module-bluetooth
+sudo killall pulseaudio
+pulseaudio --start
+sudo systemctl restart bluetoothci

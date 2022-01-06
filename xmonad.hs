@@ -55,7 +55,7 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 
 myStartupHook :: X ()
 myStartupHook = do
-    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/save/backgrounds/05.jpg' &"
+    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/dotfiles/backgrounds/05.jpg' &"
     spawnOnce "picom --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"

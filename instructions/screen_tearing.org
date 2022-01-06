@@ -1,0 +1,14 @@
+* In 2021 with the XPS13 9380 with Intel UHD Graphics 620 running X11 I noticed intense screen tearing on the laptop screen. The behavior was especially bad with terminal emulators. I noticed it when I began using a second  monotor (problem was only with the Laptop screen), but it would happen even when it was disconnected.
+
+* To fix the issue, I added this to /etc/X11/xorg.conf.d:
+20-intel.conf:
+"""
+Section "Device"
+	Identifier "Intel Graphics"
+    	Driver "intel"
+	Option "TripleBuffer" "true"
+    	Option "TearFree" "true"
+EndSection
+"""
+
+* Make sure xf86-video-intel driver is installed (for this particular chip. Consult the arch wiki to be sure)

@@ -79,7 +79,7 @@ e() {
        name=$1
        file=$2
     else
-       name=default
+       name=0
        file=$1
     fi
     /usr/bin/emacsclient -s $name -nw $file

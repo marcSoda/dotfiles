@@ -1,0 +1,5 @@
+* pacman -S cups #if not installed
+* sudo systemctl start cups
+- may want to enable cups
+* connect to localhost: http://localhost:631/
+- for configuration only

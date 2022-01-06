@@ -1,0 +1,14 @@
+* This file describes how to enable multi-touch trackpade clicks. I initially needed this when I switched to DWM (stopped using GNOME).
+** "mkdir /etc/X11/xorg.conf.d"
+** "emacs 01-input.conf"
+"""
+#CUSTOM SCRIPT FOR ADDING MULTI_FINGER CLICKS
+Section "InputClass"
+	Identifier "libinput touchpad catchall"
+	MatchIsTouchpad "on"
+	MatchDevicePath "/dev/input/event*"
+        Driver "libinput"
+	Option "Tapping" "True"
+	Option "NaturalScrolling" "True"
+EndSection
+"""

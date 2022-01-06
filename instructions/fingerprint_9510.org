@@ -1,0 +1,17 @@
+* insturctions
+  - https://aur.archlinux.org/packages/libfprint-tod-git/
+* if link broken:
+  - yay -S libfprint-2-tod1-xps9300-bin
+  - yay -S libfprint-tod-git
+  - git clone https://gitlab.freedesktop.org/3v1n0/libfprint.git
+  - cd libfprint/
+  - git checkout tags/v1.94.1+tod1
+  - meson builddir && cd builddir
+  - meson compile
+  - meson install
+  - sudo cp libfprint/libfprint-2.so.2.0.0 /usr/lib64/
+  - sudo cp libfprint/tod/libfprint-2-tod.so /usr/lib64/
+  - sudo cp libfprint/tod/libfprint-2-tod.so.1 /usr/lib64/
+
+* to enroll:
+  - fprintd-enroll

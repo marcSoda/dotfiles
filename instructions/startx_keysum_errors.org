@@ -1,0 +1,2 @@
+* when you cannot boot onto xdm with startx and you get some weird errors, just recompile xmonad.
+- especially on xps9380

@@ -1,0 +1,33 @@
+* This method uses prime-run to disable the GPU until you run `prime-run <app-name>` to specifically turn on the GPU to run said application.
+* Follow steps [[https://wiki.archlinux.org/title/PRIME][here]] under PRIME render offload.
+** steps as of 01/22
+- install nvidia, nvidia-utils, and nvidia-prime
+  - running `prime-run glxinfo | grep "OpenGL renderer"` should output the nvidia card and running `glxinfo | grep "OpenGL renderer"` should output the intel integrated card.
+  - If the above is not true, there is something wrong.
+- Add to `/etc/udev/rules.d/80-nvidia-pm.rules`
+  #+BEGIN_SRC
+    # Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
+    ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
+    ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
+
+    # Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
+    ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
+    ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"
+  #+END_SRC
+- Add to `/etc/modprobe.d/nvidia-pm.conf`
+  #+BEGIN_SRC
+    options nvidia "NVreg_DynamicPowerManagement=0x02"
+  #+END_SRC
+- run `sudo systemctl enable nvidia-presistenced`
+
+* If you run `nvidia-smi`, you may notice that the card is running xorg. To disable this, remove /usr/lib64/xorg/modules/drivers/nvidia_drv.so
+- You should notice that nvidia-smi reveals that there are no running processes found. If this is not the case, there is an issue
+* What you should notice (note: all numbers based on XPS 15 9510)
+- Run `watch sensors`
+  The system should "curr1" should idle around a little less than 1A
+- Run `prime-run <program>`. The program should be resource intensive.
+  - Regardless of the program, the current  should jump up to 2-4A and settle somewhere comparativelyt  lower. This indicates that is working.
+  - If you chose a resource intensive program, you should notice that the process appears in nvidia-smi.
+- Games should run better when using prime-run
+* Trouble shooting
+[[https://bbs.archlinux.org/viewtopic.php?pid=2013482#p201348h][this]] may be helpful.
