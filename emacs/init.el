@@ -123,19 +123,26 @@
 
 ;;IBUFFER setup
 (setq ibuffer-expert t)                                 ;;don't ask for confirmation when deleting buffers
-(use-package ibuf-ext)
-;;hide buffers in ibuffer
-(add-to-list 'ibuffer-never-show-predicates "*Messages*")
-(add-to-list 'ibuffer-never-show-predicates "*Scratch*")
-(add-to-list 'ibuffer-never-show-predicates "\\magit")
-(add-to-list 'ibuffer-never-show-predicates "*Flycheck error")
-(add-to-list 'ibuffer-never-show-predicates "*Python Fast*")
-(add-to-list 'ibuffer-never-show-predicates "*lsp-log*")
-(add-to-list 'ibuffer-never-show-predicates "*Completions*")
-(add-to-list 'ibuffer-never-show-predicates "*Compile-Log*")
-(add-to-list 'ibuffer-never-show-predicates "\\*pyright")
-(add-to-list 'ibuffer-never-show-predicates "\\*rust-analyzer")
-(add-to-list 'ibuffer-never-show-predicates "\\*run")
+(setq ibuffer-saved-filter-groups
+          (quote (("main"
+                   ("other" (or
+                             (name . "^\\*scratch\\*$")
+                             (name . "^\\*Messages\\*$")
+                             (mode . dired-mode)
+                             (name . "^\\magit")
+                             (name . "^\\*Compile")
+                             (name . "^\\*Flycheck")
+                             (name . "^\\*lsp")
+                             (name . "^\\*pyright")
+                             (name . "^\\*rust")
+                             (name . "^\\*run")
+                             (name . "^\\*Completions")
+                             (name . "^\\*Backtrace")
+                             (name . "^\\*Python")
+                             (name . "^\\*Shell")))))))
+(add-hook 'ibuffer-mode-hook
+	  '(lambda ()
+	     (ibuffer-switch-to-saved-filter-groups "main")))
 
 ;;VTERM
 (use-package vterm
@@ -175,7 +182,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
