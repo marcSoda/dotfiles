@@ -122,6 +122,8 @@
   :config (xclip-mode))
 
 ;;IBUFFER setup
+(use-package ibuffer)
+(use-package ibuf-ext)
 (setq ibuffer-expert t)                                 ;;don't ask for confirmation when deleting buffers
 (setq ibuffer-saved-filter-groups
           (quote (("main"
@@ -129,6 +131,7 @@
                              (name . "^\\*scratch\\*$")
                              (name . "^\\*Messages\\*$")
                              (mode . dired-mode)
+                             (name . "^\\*Help*")
                              (name . "^\\magit")
                              (name . "^\\*Compile")
                              (name . "^\\*Flycheck")

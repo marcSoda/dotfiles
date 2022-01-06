@@ -21,6 +21,7 @@
 (define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
 (define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)
 ;;ibuffer
+;; (require 'ibuffer) ;ensure ibuffer is loaded
 (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-toggle-filter-group)
 
 ;;j/k in org-agenda mode are down/up. overrides org-agenda-goto-date and org-agenda-capture
