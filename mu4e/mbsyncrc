@@ -1,7 +1,7 @@
 IMAPAccount msoda412-gmail
 Host imap.gmail.com
 User m.soda412@gmail.com
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/auth.gpg | grep m.soda412@gmail.com | awk '{print $8}'"
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep m.soda412@gmail.com | awk '{print $8}'"
 AuthMechs LOGIN
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
@@ -66,7 +66,7 @@ Channel msoda412-gmail-trash
 IMAPAccount masa20-lehigh
 Host imap.gmail.com
 User masa20@lehigh.edu
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/auth.gpg | grep masa20@lehigh.edu | awk '{print $8}'"
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep masa20@lehigh.edu | awk '{print $8}'"
 AuthMechs LOGIN
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
@@ -132,7 +132,7 @@ IMAPAccount m-soda-protonmail
 Host 127.0.0.1
 User m@soda.fm
 Port 1143
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/auth.gpg | grep m@soda.fm | awk '{print $8}'"
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep m@soda.fm | awk '{print $8}'"
 SSLType STARTTLS
 SSLVersions TLSv1.2
 CertificateFile ~/.config/protonmail/bridge/cert.pem

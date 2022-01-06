@@ -6,6 +6,11 @@
 
 ;;remap '/' to use swiper
 (define-key evil-normal-state-map (kbd "/") 'swiper)
+;;remap tab to act as enter for company
+(define-key company-active-map (kbd "<tab>") #'company-complete-selection)
+;;remap company up/down to M-k/j
+(define-key company-active-map (kbd "M-j") #'company-select-next)
+(define-key company-active-map (kbd "M-k") #'company-select-previous)
 ;;remap C-n and C-p to M-j and M-k in ivy buffers
 (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
@@ -36,6 +41,7 @@
     "i s"   '(ispell                     :which-key "ispell")
     "f f"   '(find-file                  :which-key "Find file")
     "e e"   '(eval-last-sexp             :which-key "Eval lisp")
+    "n n"   '(linum-mode                 :which-key "Show line numbers")
     "z"     '(suspend-frame              :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal :which-key "Quit")
     ;;flycheck

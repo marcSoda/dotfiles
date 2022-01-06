@@ -17,14 +17,16 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#keyhold rate
-xset r rate 220 40
-
 #path
 export PATH="$HOME/.local/bin:$PATH"
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 #set editor
 export EDITOR=emacs
+
+#set .lesshst location
+export LESSHISTFILE=-
 
 #set external display
 export EXTERNAL_DISPLAY=DP1
@@ -84,7 +86,7 @@ e() {
     ret=$?
     if [[ $ret != 0 ]] && [[ $ret != 147 ]] ; then
         /usr/bin/emacs --daemon=$name
-        /usr/bin/emacsclient -s $name -nw $file
+        /usr/bin/emacsclient -s $name $file
     fi
 }
 

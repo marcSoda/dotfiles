@@ -55,12 +55,14 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 
 myStartupHook :: X ()
 myStartupHook = do
-    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/save/backgrounds/melty.jpg' &"
-    spawnOnce "compton --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
+    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/save/backgrounds/05.jpg' &"
+    spawnOnce "picom --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
+    spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
+    spawnOnce "xset r rate 220 40" --keyhold rate
+    spawnOnce "xsetroot -cursor_name left_ptr" --set cursor
     spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
-    spawnOnce "/usr/bin/emacs --daemon=default &" -- emacs daemon for default
 
 --Layouts
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -81,16 +83,16 @@ myLayoutHook = avoidStruts
 --Workspaces
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
-     -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
-     [ className =? "zoom"                   --> doShift(myWorkspaces !! 6) --this might not work...
+     [ className =? "zoom"                   --> doShift(myWorkspaces !! 6)
      , className =? "Slack"                  --> doShift(myWorkspaces !! 7)
-     , className =? "Google-chrome"   --> doShift(myWorkspaces !! 8)
+     , className =? "firefox"                --> doShift(myWorkspaces !! 8)
      , className =? "vlc"                    --> doShift(myWorkspaces !! 8)]
 
 --Scratchpads
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
-                , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot]
+                , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
+                , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient]
     where
         spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad'"
         findTerm   = title =? "Terminal Scratchpad"
@@ -99,6 +101,10 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         spawnNcspot  = myTerminal ++ " -t 'ncspot Scratchpad' -e ncspot"
         findNcspot   = title =? "ncspot Scratchpad"
         manageNcspot = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+
+        spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
+        findEmacsClient   = title =? "emacs-scratch"
+        manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
 --Keybindings
 myKeys :: [(String, X ())]
@@ -110,7 +116,7 @@ myKeys =
         , ("M-S-b", spawn (myBrowser))
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
-        , ("M-S-e", spawn "/usr/bin/emacsclient -c -s default")
+        , ("M-S-e", spawn "/usr/bin/emacsclient -a='' --no-wait -c -s 0")
     -- Kill windows
         , ("M-S-x", kill)                 -- Kill the currently focused client
     -- Windows navigation
@@ -127,23 +133,31 @@ myKeys =
     -- Scratchpads
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
-    -- Scrot
+        , ("M-e", namedScratchpadAction myScratchpads "emacsScratch")
+    -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))
-    -- Multimedia Keys
         , ("<XF86AudioPlay>", spawn (scriptPath ++ "spotify play-pause"))
+        , ("M-.", spawn (scriptPath ++ "spotify next")) -- >
+        , ("M-,", spawn (scriptPath ++ "spotify previous")) -- <
         , ("S-<XF86AudioPlay>", spawn (scriptPath ++ "smart_vlc_control"))
         , ("<XF86AudioPrev>", spawn (scriptPath ++ "spotify previous"))
         , ("<XF86AudioNext>", spawn (scriptPath ++ "spotify next"))
         , ("<XF86AudioMute>", spawn (scriptPath ++ "volume mute"))
         , ("<XF86AudioLowerVolume>", spawn (scriptPath ++ "volume down"))
         , ("<XF86AudioRaiseVolume>", spawn (scriptPath ++ "volume up"))
-        , ("M-<Up>", spawn (scriptPath ++ "brightness pixel " ++ disp0 ++ " up"))
-        , ("M-<Down>", spawn (scriptPath ++ "brightness pixel " ++ disp0 ++ " down"))
-        , ("M-S-<Up>", spawn (scriptPath ++ "brightness pixel " ++ disp1 ++ " up"))
-        , ("M-S-<Down>", spawn (scriptPath ++ "brightness pixel " ++ disp1 ++ " down"))
-        , ("M-C-<Up>", spawn (scriptPath ++ "brightness backlight up"))
-        , ("M-C-<Down>", spawn (scriptPath ++ "brightness backlight down"))
+        , ("<XF86MonBrightnessUp>", spawn (scriptPath ++ "brightness backlight up"))
+        , ("<XF86MonBrightnessDown>", spawn (scriptPath ++ "brightness backlight down"))
+        , ("M-<XF86MonBrightnessUp>", spawn (scriptPath ++ "brightness pixel " ++ disp0 ++ " up"))
+        , ("M-<XF86MonBrightnessDown>", spawn (scriptPath ++ "brightness pixel " ++ disp0 ++" down"))
+        , ("M-S-<XF86MonBrightnessUp>", spawn (scriptPath ++ "brightness pixel " ++ disp1 ++ " up"))
+        , ("M-S-<XF86MonBrightnessDown>", spawn (scriptPath ++ "brightness pixel " ++ disp1 ++" down"))
+        , ("M-<Up>", spawn (scriptPath ++ "brightness backlight up"))
+        , ("M-<Down>", spawn (scriptPath ++ "brightness backlight down"))
+        , ("M-S-<Up>", spawn (scriptPath ++ "brightness pixel " ++ disp0 ++ " up"))
+        , ("M-S-<Down>", spawn (scriptPath ++ "brightness pixel " ++ disp0 ++ " down"))
+        , ("M-C-<Up>", spawn (scriptPath ++ "brightness pixel " ++ disp1 ++ " up"))
+        , ("M-C-<Down>", spawn (scriptPath ++ "brightness pixel " ++ disp1 ++ " down"))
         ]
 
 main :: IO ()

@@ -5,11 +5,10 @@
 (tool-bar-mode -1)                              ;disable tool bar
 (setq default-frame-alist '((background-color . "#121212")))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-(global-linum-mode t)                           ;display line numbers
 (global-hl-line-mode)                           ;highlight current line
 (electric-pair-mode)                            ;smarter delimeters.
 (delete-selection-mode 1)                       ;replace hilighted text when pastings
-(defvar explicit-shell-file-name "/bin/bash")   ;ensure emacs uses bash shell
+(setq explicit-shell-file-name "/bin/bash")   ;ensure emacs uses bash shell
 (put 'dired-find-alternate-file 'disabled nil)  ;Has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
@@ -28,7 +27,7 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(defvar use-package-always-ensure t)
+(setq use-package-always-ensure t)
 
 ;;EVIL
 (use-package evil
@@ -63,12 +62,17 @@
   :init (doom-modeline-mode 1)
   :config (set-face-attribute 'mode-line nil :height 160))
 
-;;DOCKER-TRAMP
-(use-package docker-tramp)
-
 ;;COMPANY: syntax completion
 (use-package company
   :init (global-company-mode t))
+;;FLYCHECK: syntax checking
+(use-package flycheck
+  :init (global-flycheck-mode))
+
+;;end
+
+;;DOCKER-TRAMP
+(use-package docker-tramp)
 
 ;;COUNSEL: better nav
 (use-package counsel
@@ -79,10 +83,6 @@
 
 ;;SWIPER: better searching
 (use-package swiper)
-
-;;FLYCHECK: syntax checking
-(use-package flycheck
-  :init (global-flycheck-mode))
 
 ;;ORG
 (use-package org
@@ -103,21 +103,8 @@
 (use-package evil-org
   :commands evil-org-mode
   :after org
-  :init
-  (add-hook 'org-mode-hook 'evil-org-mode))
+  :init (add-hook 'org-mode-hook 'evil-org-mode))
 (use-package org-tempo)
-
-;;SYNTAX HIGHLIGHTING
-(use-package haskell-mode)
-(use-package yaml-mode)
-(use-package go-mode)
-(use-package rust-mode)
-(use-package handlebars-mode
-  :init (add-to-list 'auto-mode-alist '("\\.hb?\\'" . handlebars-mode)))
-(use-package web-mode
-  :init
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (setq web-mode-enable-auto-closing t))
 
 ;;SPELLCHECK
 (use-package flyspell
@@ -135,11 +122,20 @@
   :config (xclip-mode))
 
 ;;IBUFFER setup
-(defvar ibuffer-expert t)                                 ;;don't ask for confirmation when deleting buffers
+(setq ibuffer-expert t)                                 ;;don't ask for confirmation when deleting buffers
 (use-package ibuf-ext)
-(add-to-list 'ibuffer-never-show-predicates "*Messages*") ;;hide *Messages* buffer from vterm
-(add-to-list 'ibuffer-never-show-predicates "*Scratch*")  ;;hide *Scratch* buffer from vterm
-(add-to-list 'ibuffer-never-show-predicates "\\magit")    ;;hide hide magit buffers
+;;hide buffers in ibuffer
+(add-to-list 'ibuffer-never-show-predicates "*Messages*")
+(add-to-list 'ibuffer-never-show-predicates "*Scratch*")
+(add-to-list 'ibuffer-never-show-predicates "\\magit")
+(add-to-list 'ibuffer-never-show-predicates "*Flycheck error")
+(add-to-list 'ibuffer-never-show-predicates "*Python Fast*")
+(add-to-list 'ibuffer-never-show-predicates "*lsp-log*")
+(add-to-list 'ibuffer-never-show-predicates "*Completions*")
+(add-to-list 'ibuffer-never-show-predicates "*Compile-Log*")
+(add-to-list 'ibuffer-never-show-predicates "\\*pyright")
+(add-to-list 'ibuffer-never-show-predicates "\\*rust-analyzer")
+(add-to-list 'ibuffer-never-show-predicates "\\*run")
 
 ;;VTERM
 (use-package vterm
@@ -171,6 +167,7 @@
 ;;LOAD FILES
 (load-file (expand-file-name "mu4e.el" user-emacs-directory))
 (load-file (expand-file-name "keybindings.el" user-emacs-directory))
+(load-file (expand-file-name "lsp.el" user-emacs-directory))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -178,7 +175,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

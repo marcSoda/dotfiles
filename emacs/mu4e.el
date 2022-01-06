@@ -2,24 +2,25 @@
 (use-package mu4e
   :ensure nil
   :config
-  (setq user-mail-address "m@soda.fm") ;hides annoying notification
-  (defvar mu4e-get-mail-command "mbsync -c ~/.config/mu4e/mbsyncrc -a")
-  (defvar mu4e-maildir "~/.mail")
-  (defvar mu4e-compose-complete-only-personal nil)
-  (defvar mu4e-attachment-dir "~/working/downloads")
-  (defvar mu4e-headers-skip-duplicates t)
-  (defvar mu4e-headers-include-related nil)
-  (defvar mu4e-change-filenames-when-moving t)
-  (defvar mu4e-context-policy 'pick-first)
-  (defvar mu4e-compose-context-policy 'always-ask)
+  (setq mu4e-get-mail-command "mbsync -c ~/.config/mu4e/mbsyncrc -a")
+  (setq mu4e-main-view-hide-addresses t)
+  (setq mu4e-compose-complete-only-personal nil)
+  (setq mu4e-attachment-dir "~/working/downloads")
+  (setq mu4e-headers-skip-duplicates t)
+  (setq mu4e-headers-include-related nil)
+  (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-compose-context-policy 'always-ask)
+  (setq user-mail-address "masa20@lehigh.edu")
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   (setq message-send-mail-function 'smtpmail-send-it
 	smtpmail-auth-credentials "~/.authinfo.gpg"
 	smtpmail-smtp-server "127.0.0.1"
   smtpmail-stream-type 'starttls
 	smtpmail-smtp-service 1025)
+  (require 'mu4e-context)
 
-  (defvar mu4e-contexts
+  (setq mu4e-contexts
     (list
       ;; gmail account
       (make-mu4e-context
