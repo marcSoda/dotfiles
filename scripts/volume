@@ -10,9 +10,9 @@
 INC=5%
 
 function get_volume {
-    for SINK in `pactl list sinks | grep Name | awk '{print $2}'`
+    for SINK in `sinks`
     do
-        if [ $SINK == `pactl list sinks | grep "RUNNING" -A 1 | grep "Name:" | awk '{print $2}'` ] ; then
+        if [ $SINK == `selected_sink` ] ; then
             pactl list sinks | grep "Name: $SINK" -A 8 | grep Volume | awk '{print $5}' | sed 's/%//'
         fi
     done
@@ -21,8 +21,8 @@ function get_volume {
 function sinks {
     pactl list sinks | grep Name | awk '{print $2}'
 }
-function running_sink {
-    pactl list sinks | grep "RUNNING" -A 1 | grep "Name:" | awk '{print $2}'
+function selected_sink {
+    pacmd stat | grep 'Default sink name: ' | cut -d ' ' -f 4
 }
 
 function is_mute {
@@ -32,7 +32,7 @@ function is_mute {
 function toggle_mute {
     for SINK in `sinks`
     do
-        if [ $SINK == `running_sink` ] ; then
+        if [ $SINK == `selected_sink` ] ; then
             if is_mute ; then
                 pactl set-sink-mute $SINK false
                 send_notification
@@ -52,14 +52,13 @@ function send_notification {
 case $1 in
   up)
     # Set the volume on (if it was muted)
-      if is_mute ; then
-          toggle_mute
-      fi
-    # Up the volume by INC
+    if is_mute ; then
+        toggle_mute
+    fi
     if [ `get_volume` -lt  150 ] ; then
         for SINK in `sinks`
         do
-            if [ $SINK == `running_sink` ] ; then
+            if [ $SINK == `selected_sink` ] ; then
                 pactl set-sink-volume $SINK +$INC
             fi
         done
@@ -72,7 +71,7 @@ case $1 in
     fi
     for SINK in `sinks`
     do
-        if [ $SINK == `running_sink` ] ; then
+        if [ $SINK == `selected_sink` ] ; then
             pactl set-sink-volume $SINK -$INC
         fi
     done
