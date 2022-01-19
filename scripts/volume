@@ -10,50 +10,74 @@
 INC=5%
 
 function get_volume {
-    pactl list sinks | grep "Volume: f" | awk '{print $5}' | sed 's/%//'
+    for SINK in `pactl list sinks | grep Name | awk '{print $2}'`
+    do
+        if [ $SINK == `pactl list sinks | grep "RUNNING" -A 1 | grep "Name:" | awk '{print $2}'` ] ; then
+            pactl list sinks | grep "Name: $SINK" -A 8 | grep Volume | awk '{print $5}' | sed 's/%//'
+        fi
+    done
+}
+
+function sinks {
+    pactl list sinks | grep Name | awk '{print $2}'
+}
+function running_sink {
+    pactl list sinks | grep "RUNNING" -A 1 | grep "Name:" | awk '{print $2}'
 }
 
 function is_mute {
     pactl list sinks | grep Mute | awk '{print $2}' | grep yes
 }
 
+function toggle_mute {
+    for SINK in `sinks`
+    do
+        if [ $SINK == `running_sink` ] ; then
+            if is_mute ; then
+                pactl set-sink-mute $SINK false
+                send_notification
+            else
+                pactl set-sink-mute $SINK true
+                dunstify -i $(dirname $0)/volume.png -r 1701 -u normal "Mute"
+            fi
+        fi
+    done
+}
+
 function send_notification {
     volume=`get_volume`
-    dunstify -i	$(dirname $0)/volume.png -r 1701 " $volume%"
+    dunstify -i	$(dirname $0)/volume.png -r 1701 -t 1000 -h int:value:$volume "Volume"
 }
 
 case $1 in
   up)
     # Set the volume on (if it was muted)
-    pactl set-sink-mute 0 0
+      if is_mute ; then
+          toggle_mute
+      fi
     # Up the volume by INC
     if [ `get_volume` -lt  150 ] ; then
-        # for SINK in `pacmd list-sinks | grep 'index:' | cut -b12-`
-        for SINK in `pacmd list-sinks | grep "name: " | cut -d '<' -f 2 | cut -d '>' -f 1`
+        for SINK in `sinks`
         do
-      # printf "%s\n" $SINK
-      if [ $SINK == `pacmd stat | grep 'Default sink name: ' | cut -d ' ' -f 4` ] ; then
-          pactl set-sink-volume $SINK +$INC
-      fi
+            if [ $SINK == `running_sink` ] ; then
+                pactl set-sink-volume $SINK +$INC
+            fi
         done
     fi
     send_notification
     ;;
   down)
-    pactl set-sink-mute 0 0
-    for SINK in `pacmd list-sinks | grep 'index:' | cut -b12-`
+    if is_mute ; then
+        toggle_mute
+    fi
+    for SINK in `sinks`
     do
-    pactl set-sink-volume $SINK -$INC
+        if [ $SINK == `running_sink` ] ; then
+            pactl set-sink-volume $SINK -$INC
+        fi
     done
     send_notification
     ;;
   mute)
-  # Toggle mute
-    if is_mute ; then
-        pactl set-sink-mute 0 0
-        send_notification
-    else
-        pactl set-sink-mute 0 1
-        dunstify -i $(dirname $0)/volume.png -r 1701 -u normal "Mute"
-    fi
+      toggle_mute
 esac

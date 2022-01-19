@@ -4,11 +4,12 @@
 #    brightness pixel <device> <up/down>   #get device name from xrandr
 #    brightness backlight <up/down>        #only works with laptop display
 
+#for the pixel brightness. This only mutes the colors and makes it look less bright.
 if [ $1 = "pixel" ]; then
     function send_notification {
         new_pixel_brightness=$( echo "($new_pixel_brightness * 100) / 1" | bc -l | cut -d. -f1)
         # dunstify -i $(dirname $0)/brightness.png -r 1701 " $new_pixel_brightness%"
-        dunstify -i $(dirname $0)/brightness.png -r 1701 " $new_pixel_brightness%"
+        dunstify -i $(dirname $0)/brightness.png -r 1701 -t 1000 -h int:value:$new_pixel_brightness Brightness
     }
     inc=.01
     pixel_brightness=$(xrandr --verbose | grep -w -A 5 $2 | grep Brightness | awk '{print $2}')
@@ -29,12 +30,14 @@ if [ $1 = "pixel" ]; then
     fi
     xrandr --output $2 --brightness $new_pixel_brightness
     send_notification
-#this mode only works for laptop brightness because I cannot control the backlight  brightness of the external display
+
+#actually dim the screen
+#this mode only works for laptop brightness because I cannot control the backlight brightness of the external display
 elif [ $1 = "backlight" ]; then
     inc="1%"
     function send_notification {
         backlight=$(brightnessctl | grep Current | awk '{print $4}' | sed 's/^.//;s/.$//')
-        dunstify -i $(dirname $0)/brightness.png -r 1701 " $backlight"
+        dunstify -i $(dirname $0)/brightness.png -r 1701 -t 1000 -h int:value:$backlight Brightness
     }
     if [ $2 = "up" ]; then
         brightnessctl s +$inc

@@ -56,7 +56,7 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/dotfiles/backgrounds/05.jpg' &"
-    spawnOnce "picom --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
+    spawnOnce "picom --backend glx --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
@@ -116,7 +116,7 @@ myKeys =
         , ("M-S-b", spawn (myBrowser))
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
-        , ("M-S-e", spawn "/usr/bin/emacsclient -a='' --no-wait -c -s 0")
+        , ("M-S-c", spawn "/usr/bin/emacsclient -a='' --no-wait -c -s 0")
     -- Kill windows
         , ("M-S-x", kill)                 -- Kill the currently focused client
     -- Windows navigation
@@ -133,7 +133,7 @@ myKeys =
     -- Scratchpads
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
-        , ("M-e", namedScratchpadAction myScratchpads "emacsScratch")
+        , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))

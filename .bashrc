@@ -57,9 +57,9 @@ alias mg+='g++ -g -Wall -Wextra -Wwrite-strings'
 alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
 
 #network
-alias lehigh='sudo netctl stop-all && sudo netctl start wlp2s0-lehigh'
-alias pierce='sudo netctl stop-all && sudo netctl start wlp2s0-618\ Pieeeeeeerce'
-alias home='sudo netctl stop-all && sudo netctl start wlp2s0-OldManDing'
+alias lehigh='sudo netctl stop-all && sudo netctl start lehigh'
+alias pierce='sudo netctl stop-all && sudo netctl start 618\ Pieeeeeeerce'
+alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 
 #emacs remote dev using named workspaces
 alias eltanin='e e /ssh:masa20@eltanin.dept.lehigh.edu:working/'

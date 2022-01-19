@@ -3,19 +3,19 @@ function send_notification {
     artist=`playerctl metadata artist`
     song=`playerctl metadata title`
     album=`playerctl metadata album`
-    dunstify -r 1701 "$artist" "$song\n$album"
+    dunstify -r 1701 -t 2000 "$artist" "$song\n$album"
 }
 
 case $1 in
-    play-pause)
-	playerctl play-pause
+  play-pause)
+      playerctl play-pause
 	;;
-    next)
-	playerctl next
-	send_notification
+  next)
+      playerctl next
+      send_notification
 	;;
-    previous)
-	playerctl previous
-	send_notification
+  previous)
+      playerctl previous
+      send_notification
 	;;
 esac

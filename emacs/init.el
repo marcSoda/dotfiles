@@ -69,8 +69,6 @@
 (use-package flycheck
   :init (global-flycheck-mode))
 
-;;end
-
 ;;DOCKER-TRAMP
 (use-package docker-tramp)
 
@@ -170,9 +168,12 @@
 (add-to-list 'term-file-aliases '("alacritty" . "xterm")) ;;make emacs-nox fully featured in alacritty
 (setq xterm-extra-capabilities nil)                       ;;fixes slow startup from above command
 
-;; ;;WICH-KEY
+;;WICH-KEY
 (use-package which-key
   :config (which-key-mode))
+
+;;yasnippet ;;MAYBE REMOVE
+(use-package yasnippet)
 
 ;;LOAD FILES
 (load-file (expand-file-name "mu4e.el" user-emacs-directory))
@@ -185,7 +186,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

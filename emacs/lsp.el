@@ -28,9 +28,7 @@
   :hook (python-mode . lsp-deferred))
 
 ;;RUST
-(use-package rustic
-  :config
-  (setq rustic-format-on-save t))
+(use-package rustic)
 
 ;; following may not be setup yet for lsp:
 (use-package go-mode)
