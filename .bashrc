@@ -47,7 +47,8 @@ alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
 alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
-alias mouse='btc power on && btc connect FA:BE:26:DE:58:81'
+# alias mouse='btc power on && btc connect FA:BE:26:DE:58:81' WAS THIS ON THE 9380
+alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 
 #c
 alias mg='gcc -g -Wall -Wextra -Wwrite-strings'
@@ -63,6 +64,7 @@ alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 
 #emacs remote dev using named workspaces
 alias eltanin='e e /ssh:masa20@eltanin.dept.lehigh.edu:working/'
+alias seed='e n /ssh:seed:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
 alias jrnl='e j ~/working/org/journal/personal.org.gpg'

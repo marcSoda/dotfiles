@@ -104,7 +104,7 @@
   :init (add-hook 'org-mode-hook 'evil-org-mode))
 (use-package org-tempo)
 
-;;SPELLCHECK
+;;SPELLCHECK NOTE: to install the dictionary: pacman -S hunspell-en_us
 (use-package flyspell
   :config
   (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
@@ -140,6 +140,8 @@
                              (name . "^\\*Completions")
                              (name . "^\\*Backtrace")
                              (name . "^\\*Python")
+                             (name . "^\\*clang")
+                             (name . "^\\*tramp")
                              (name . "^\\*Shell")))))))
 (add-hook 'ibuffer-mode-hook
 	  '(lambda ()
@@ -186,7 +188,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

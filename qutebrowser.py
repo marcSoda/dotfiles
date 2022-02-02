@@ -176,6 +176,9 @@ c.tabs.show = 'never'
 #set default zoom
 c.zoom.default = '125%'
 
+c.content.blocking.adblock.lists = ['https://easylist.to/easylist/easylist.txt', 'https://easylist.to/easylist/easyprivacy.txt', 'https://easylist-downloads.adblockplus.org/easylistdutch.txt', 'https://easylist-downloads.adblockplus.org/abp-filters-anti-cv.txt', 'https://www.i-dont-care-about-cookies.eu/abp/', 'https://secure.fanboy.co.nz/fanboy-cookiemonster.txt']
+
+
 # Bindings for normal mode
 config.unbind('m')
 # config.bind('m', 'hint links spawn mpv -ytdl-format=best {hint-url}')

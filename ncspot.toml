@@ -1,21 +1,6 @@
 audio_cache_size = 1000 #limit cache size to 1 gig
-# [theme]
-# background = "#181818"
-# primary = "#F1F1F1"
-# secondary = "#DCDCDC"
-# title = "#0087D7"
-# playing = "#929292"
-# playing_selected = "#0087D7"
-# playing_bg = "#181818"
-# highlight = "#0087D7"
-# highlight_bg = "#000000"
-# error = "#FFE4E4"
-# error_bg = "#A50000"
-# statusbar = "#000000"
-# statusbar_progress = "#0087D7"
-# statusbar_bg = "#0087D7"
-# cmdline = "#CBFFDE"
-# cmdline_bg = "#444444"
+album_column	= false
+
 [theme]
 background = "black"
 primary = "light white"
