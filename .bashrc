@@ -22,6 +22,9 @@ export PATH="$HOME/.local/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
+#keyhold rates
+xset r rate 220 40
+
 #set editor
 export EDITOR=emacs
 
@@ -63,10 +66,10 @@ alias pierce='sudo netctl stop-all && sudo netctl start 618\ Pieeeeeeerce'
 alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 
 #emacs remote dev using named workspaces
-alias eltanin='e e /ssh:masa20@eltanin.dept.lehigh.edu:working/'
-alias seed='e n /ssh:seed:working/'
+alias eltanin='e e "/ssh:gateway|ssh:eltanin:working/"'
+alias seed='e n "/ssh:gateway|ssh:seed:working/"'
 alias ancilla='e a /ssh:ancilla:working/'
-alias sunlab='e s /ssh:masa20@sunlab.cse.lehigh.edu:working'
+alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
 alias jrnl='e j ~/working/org/journal/personal.org.gpg'
 
 #emacsclient
@@ -74,9 +77,9 @@ alias ec='emacsclient'
 
 #emacsclient named workspaces : not updated since switching to emacs with x
 e() {
-    if [[ $1 = "-k" ]]; then         #if -d, kill named daemon called $2
+    if [[ $1 = "-k" ]]; then
         /usr/bin/emacsclient -s $2 -e '(kill-emacs)'
-	return
+        return
     elif [[ ${#1} = 1 ]]; then
        name=$1
        file=$2
@@ -89,6 +92,24 @@ e() {
     if [[ $ret != 0 ]] && [[ $ret != 147 ]] ; then
         /usr/bin/emacs --daemon=$name
         /usr/bin/emacsclient -s $name $file
+    fi
+}
+
+#zathura
+za() {
+    zathura $1 & disown
+}
+
+#tmux
+tm() {
+    if [[ $# = 0 ]]; then
+        /usr/bin/tmux -f /home/marc/working/dotfiles/.tmux.conf
+    elif [[ $1 = "-a" ]]; then
+        /usr/bin/tmux attach-session -t $2
+    elif [[ $1 = "-k" ]]; then
+        /usr/bin/tmux kill-session -t $2
+    elif [[ $1 = "-l" ]]; then
+        /usr/bin/tmux list-sessions
     fi
 }
 

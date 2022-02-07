@@ -60,7 +60,6 @@ myStartupHook = do
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
-    spawnOnce "xset r rate 220 40" --keyhold rate
     spawnOnce "xsetroot -cursor_name left_ptr" --set cursor
     spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
 

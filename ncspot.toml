@@ -1,5 +1,6 @@
 audio_cache_size = 1000 #limit cache size to 1 gig
 album_column	= false
+volnorm = true
 
 [theme]
 background = "black"
