@@ -22,9 +22,6 @@ export PATH="$HOME/.local/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
-#keyhold rates
-xset r rate 220 40
-
 #set editor
 export EDITOR=emacs
 
@@ -43,6 +40,8 @@ alias pacman='sudo pacman'
 alias grep='grep --color=auto'
 alias ls='lsd -lAF --group-dirs=last --color=always --blocks permission --blocks name'
 alias rm='rm -v'
+alias ks='xset r rate 220 40'
+alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
 
 #bluetooth
 alias btc='bluetoothctl'
@@ -50,7 +49,6 @@ alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
 alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
-# alias mouse='btc power on && btc connect FA:BE:26:DE:58:81' WAS THIS ON THE 9380
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 
 #c
@@ -93,6 +91,11 @@ e() {
         /usr/bin/emacs --daemon=$name
         /usr/bin/emacsclient -s $name $file
     fi
+}
+
+#change screen layout
+lay() {
+    bash ~/.screenlayout/$1.sh
 }
 
 #zathura

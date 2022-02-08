@@ -55,12 +55,13 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 
 myStartupHook :: X ()
 myStartupHook = do
-    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/dotfiles/backgrounds/05.jpg' &"
+    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/dotfiles/backgrounds/05.jpg' &" -- ALSO CHANGE BASH ALIAS
     spawnOnce "picom --backend glx --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
-    spawnOnce "xsetroot -cursor_name left_ptr" --set cursor
+    spawnOnce "xsetroot -cursor_name left_ptr" --set cursor shape
+    spawnOnce "xset r rate 220 40" --keyboard speed
     spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
 
 --Layouts
