@@ -3,8 +3,7 @@
 (setq make-backup-files nil)                    ;disable backup files
 (menu-bar-mode -1)                              ;disable menubar
 (tool-bar-mode -1)                              ;disable tool bar
-(setq default-frame-alist '((background-color . "#121212")))
-(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+(scroll-bar-mode -1)                            ;disable scroll bar
 (global-hl-line-mode)                           ;highlight current line
 (electric-pair-mode)                            ;smarter delimeters.
 (delete-selection-mode 1)                       ;replace hilighted text when pastings
@@ -12,7 +11,8 @@
 (put 'dired-find-alternate-file 'disabled nil)  ;Has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
-(setq-default tab-width 2)                      ;tab width
+(setq-default tab-width 4)                      ;tab width
+(setq auto-save-default nil)                    ;disable autosave
 (setq-default flycheck-disabled-checkers        ;don't treat this file like an elisp package file
   '(emacs-lisp-checkdoc))
 (setq browse-url-browser-function               ;default browser qutebrowser
@@ -50,12 +50,19 @@
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
 
-;;DOOM-THEME
-(use-package doom-themes
+;;THEME
+(use-package humanoid-themes
   :config
-  (load-theme 'doom-acario-dark t)
   (set-face-attribute 'default nil :height 195 :weight 'bold)
   (set-face-attribute 'hl-line nil :background "#3e4446"))
+
+;;LOAD THEME PROPERLY WHEN USING EMACS DAEMON
+(if (daemonp)
+  (add-hook 'after-make-frame-functions
+    (lambda (frame)
+      (with-selected-frame frame
+        (load-theme 'humanoid-dark t))))
+  (load-theme 'humanoid-dark t))
 
 ;;DOOM-MODELINE:
 (use-package doom-modeline
@@ -187,10 +194,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("769758cebe1262d1cfd5d450b27afad1c7f428060fd7700b6912858e611ee26d" default))
  '(package-selected-packages
-   '(org-latex-impatient org-evil vs-dark vs-dark-theme melancholy-theme ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
