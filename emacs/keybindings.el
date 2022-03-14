@@ -30,23 +30,26 @@
   (define-key org-agenda-mode-map "k" 'evil-previous-line)
   (define-key org-agenda-mode-map "q" 'org-agenda-exit))) ;;close org files when press 'q'
 
+;; (general-define-key "C-c p" '(:keymap projectile-command-map :package projectile))
+
 (general-define-key
     :states '(normal visual emacs motion)
     :keymaps 'override
     :prefix "SPC"
     "" nil
-    "SPC"   '(execute-extended-command   :which-key "M-x")
-    "t t"   '(toggle-truncate-lines      :which-key "Toggle truncate lines")
-    "v v"   '(vterm                      :which-key "vterm")
-    "w w"   '(save-buffer                :which-key "Save buffer")
-    "c c"   '(comment-line               :which-key "Comment-line")
-    "c p"   '(c++-mode                   :which-key "c++-mode")
-    "i s"   '(ispell                     :which-key "ispell")
-    "f f"   '(find-file                  :which-key "Find file")
-    "e e"   '(eval-last-sexp             :which-key "Eval lisp")
-    "n n"   '(linum-mode                 :which-key "Show line numbers")
-    "z"     '(suspend-frame              :which-key "Suspend frame")
-    "q"     '(save-buffers-kill-terminal :which-key "Quit")
+    "SPC"   '(execute-extended-command       :which-key "M-x")
+    "t t"   '(toggle-truncate-lines          :which-key "Toggle truncate lines")
+    "v v"   '(vterm                          :which-key "vterm")
+    "w w"   '(save-buffer                    :which-key "Save buffer")
+    "c c"   '(comment-line                   :which-key "Comment-line")
+    "c p"   '(c++-mode                       :which-key "c++-mode")
+    "i s"   '(ispell                         :which-key "ispell")
+    "f f"   '(find-file                      :which-key "Find file")
+    "e e"   '(eval-last-sexp                 :which-key "Eval lisp")
+    "n n"   '(linum-mode                     :which-key "Show line numbers")
+    "p"     '(:keymap projectile-command-map :which-key "Projectile prefix")
+    "z"     '(suspend-frame                  :which-key "Suspend frame")
+    "q"     '(save-buffers-kill-terminal     :which-key "Quit")
     ;;flycheck
     "f l"   '(flycheck-list-errors    :which-key "flycheck-list-errors")
     "f n"   '(flycheck-next-error     :which-key "flycheck-next-error")

@@ -1,0 +1,3 @@
+* after daylight savings time in march 2022, the time was not updated so it was an hour ahead
+- sudo timedatectl set-ntp yes
+- fixed it ^

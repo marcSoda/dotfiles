@@ -1,0 +1,26 @@
+Host *
+    HostKeyAlgorithms +ssh-rsa
+    PubkeyAcceptedKeyTypes +ssh-rsa
+
+Host seed
+     HostName 128.180.123.88
+     User seed
+     ProxyJump gateway
+
+Host sunlab
+     HostName sunlab.cse.lehigh.edu
+     User masa20
+     ProxyJump gateway
+
+Host eltanin
+     HostName eltanin.dept.lehigh.edu
+     User masa20
+     ProxyJump gateway
+
+Host gateway
+     HostName ssh.lehigh.edu
+     User masa20
+
+Host das
+     HostName das-lab.org
+     User masa20

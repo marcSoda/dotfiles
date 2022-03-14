@@ -13,9 +13,8 @@
   - Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
 * dunstrc
 - config file for dunst
-* emacs.el
-- proper location and name ~/.emacs.d/init.el
-- config file for emacs
+* emacs
+- config files for emacs
 * ncspot.toml
 - proper location and name ~/.config/ncspot/config.toml
 - config file for ncspot
@@ -37,6 +36,9 @@
   - keybound by xmonad
 - .xinitrc
   - x11 config
+* ssh_config
+- proper location and name ~/.ssh/config
+- config file for ssh
 * xmobarrc
 - xmobar config
 * xmonad.hs

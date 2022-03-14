@@ -151,14 +151,24 @@
                              (name . "^\\*tramp")
                              (name . "^\\*Shell")))))))
 (add-hook 'ibuffer-mode-hook
-	  '(lambda ()
-	     (ibuffer-switch-to-saved-filter-groups "main")))
+    '(lambda () (ibuffer-switch-to-saved-filter-groups "main")))
+
+(use-package rainbow-delimiters
+    :init (progn (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
+
+(use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :init
+    (when (file-directory-p "~/working/dev")
+      (setq projectile-project-search-path '("~/working/dev")))
+    (setq projectile-switch-project-action #'projectile-dired))
 
 ;;VTERM
 (use-package vterm
     :init
     (setq shell-file-name "/bin/bash"))
-;;MULTI-VTERM: allows for multiple vterm instances.
+;;MULTI-VTERM: allows for multiple vterm instances. unused as of 3/1/22
 (use-package multi-vterm)
 
 ;;WHITESPACE: remove whitespace on save
@@ -178,8 +188,7 @@
 (setq xterm-extra-capabilities nil)                       ;;fixes slow startup from above command
 
 ;;WICH-KEY
-(use-package which-key
-  :config (which-key-mode))
+(use-package which-key :config (which-key-mode))
 
 ;;yasnippet ;;MAYBE REMOVE
 (use-package yasnippet)
@@ -195,7 +204,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(rainbow-delimiters humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
