@@ -84,27 +84,4 @@
             (smtpmail-stream-type . starttls)
             (smtpmail-smtp-service . 1025))))))
 
-;MU4E KEYBINDINGS
-(general-define-key
-    :states 'normal
-    :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
-    :prefix "SPC"
-    "" nil
-    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/inbox"))   :which-key "Protonmail Inbox")
-    "p a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/all"))     :which-key "Protonmail All Mail")
-    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/sent"))    :which-key "Protonmail Sent")
-    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/drafts"))  :which-key "Protonmail Drafts")
-    "p f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/starred")) :which-key "Protonmail Starred")
-    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/m-soda-protonmail/trash"))   :which-key "Protonmail Trash")
-    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/inbox"))   :which-key "Lehigh Inbox")
-    "l a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/all"))     :which-key "Lehigh All")
-    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/sent"))    :which-key "Lehigh Sent")
-    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/drafts"))  :which-key "Lehigh Drafts")
-    "l f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/starred")) :which-key "Lehigh Starred")
-    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/masa20-lehigh/trash"))   :which-key "Lehigh Trash")
-    "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/inbox"))   :which-key "Gmail Inbox")
-    "g a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/all"))     :which-key "Gmail All Mail")
-    "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/sent"))    :which-key "Gmail Sent")
-    "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/drafts"))  :which-key "Gmail Drafts")
-    "g f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/starred")) :which-key "Gmail Starred")
-    "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/msoda412-gmail/trash"))   :which-key "Gmail Trash"))
+;; keybindings defined in keybindings.el

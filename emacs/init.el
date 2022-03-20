@@ -1,20 +1,21 @@
 ;;general
 (setq inhibit-startup-message t)                ;disable default welcome message
-(setq make-backup-files nil)                    ;disable backup files
 (menu-bar-mode -1)                              ;disable menubar
 (tool-bar-mode -1)                              ;disable tool bar
 (scroll-bar-mode -1)                            ;disable scroll bar
 (global-hl-line-mode)                           ;highlight current line
+(setq make-backup-files nil)                    ;disable backup files
+(setq-default truncate-lines t)                 ;truncate lines by default
 (electric-pair-mode)                            ;smarter delimeters.
-(delete-selection-mode 1)                       ;replace hilighted text when pastings
-(setq explicit-shell-file-name "/bin/bash")   ;ensure emacs uses bash shell
-(put 'dired-find-alternate-file 'disabled nil)  ;Has something to do w a hotkey in dired.
+(delete-selection-mode 1)                       ;replace hilighted text when pasting
+(setq explicit-shell-file-name "/bin/bash")     ;ensure emacs uses bash shell
+(setq make-backup-files nil)                    ;disable backup files
+(put 'dired-find-alternate-file 'disabled nil)  ;has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
 (setq-default tab-width 4)                      ;tab width
 (setq auto-save-default nil)                    ;disable autosave
-(setq-default flycheck-disabled-checkers        ;don't treat this file like an elisp package file
-  '(emacs-lisp-checkdoc))
+(setq vc-follow-symlinks t)                     ;open file where symlink points
 (setq browse-url-browser-function               ;default browser qutebrowser
       'browse-url-generic browse-url-generic-program "qutebrowser")
 
@@ -36,33 +37,39 @@
   (setq evil-want-keybinding nil)
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
-  (setq evil-shift-width 2)
   (evil-mode))
 
 ;;EVIL-COLLECTION
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(magit vterm dired ibuffer mu4e))
+  (setq evil-collection-mode-list '(magit dashboard vterm dired ibuffer mu4e))
   (evil-collection-init))
 
 ;;EVIL-SURROUND
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
 
+;;dashboard
+(use-package dashboard
+  :init
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-startup-banner 2)
+  (setq dashboard-center-content t)
+  (setq dashboard-items '((projects  . 5)
+                          (recents   . 5)
+			              (bookmarks . 5)))
+  (setq initial-buffer-choice (lambda () ;refresh and display dashboard buffer on emacsclient open
+      (ignore-errors (org-agenda-exit))  ;close auto-opened org-agenda buffers
+      (get-buffer "*dashboard*")))
+  :config
+  (dashboard-setup-startup-hook))
+
 ;;THEME
 (use-package humanoid-themes
-  :config
-  (set-face-attribute 'default nil :height 195 :weight 'bold)
-  (set-face-attribute 'hl-line nil :background "#3e4446"))
-
-;;LOAD THEME PROPERLY WHEN USING EMACS DAEMON
-(if (daemonp)
-  (add-hook 'after-make-frame-functions
-    (lambda (frame)
-      (with-selected-frame frame
-        (load-theme 'humanoid-dark t))))
-  (load-theme 'humanoid-dark t))
+  :init (load-theme 'humanoid-dark t)
+  :config (set-face-attribute 'default nil :height 175 :weight 'bold))
 
 ;;DOOM-MODELINE:
 (use-package doom-modeline
@@ -82,6 +89,10 @@
 ;;COUNSEL: better nav
 (use-package counsel
   :init (counsel-mode t))
+
+;;ivy
+(use-package ivy
+  :init (ivy-mode t))
 
 ;;SMEX: enables M-X history
 (use-package smex)
@@ -103,6 +114,13 @@
 ;;ORG-BULLETS
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
+
+;;ORG-ROAM
+(use-package org-roam
+  :custom
+  (org-roam-directory "~/working/org/roam")
+  (org-roam-completion-everywhere t)
+  :config (org-roam-setup))
 
 ;;EVIL-ORG
 (use-package evil-org
@@ -129,12 +147,13 @@
 ;;IBUFFER setup
 (use-package ibuffer)
 (use-package ibuf-ext)
-(setq ibuffer-expert t)                                 ;;don't ask for confirmation when deleting buffers
+(setq ibuffer-expert t)    ;;don't ask for confirmation when deleting buffers
 (setq ibuffer-saved-filter-groups
           (quote (("main"
                    ("other" (or
                              (name . "^\\*scratch\\*$")
                              (name . "^\\*Messages\\*$")
+                             (name . "^\\*dashboard\\*$")
                              (mode . dired-mode)
                              (name . "^\\*Help*")
                              (name . "^\\magit")
@@ -153,23 +172,28 @@
 (add-hook 'ibuffer-mode-hook
     '(lambda () (ibuffer-switch-to-saved-filter-groups "main")))
 
+;;RAINBOW-DELIMITERS
 (use-package rainbow-delimiters
     :init (progn (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
 
+;;PROJECTILE
 (use-package projectile
     :diminish projectile-mode
     :config (projectile-mode)
+    :custom ((projectile-completion-system 'ivy))
     :init
     (when (file-directory-p "~/working/dev")
       (setq projectile-project-search-path '("~/working/dev")))
     (setq projectile-switch-project-action #'projectile-dired))
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
 
 ;;VTERM
 (use-package vterm
     :init
     (setq shell-file-name "/bin/bash"))
 ;;MULTI-VTERM: allows for multiple vterm instances. unused as of 3/1/22
-(use-package multi-vterm)
+;; (use-package multi-vterm)
 
 ;;WHITESPACE: remove whitespace on save
 (require 'whitespace)
@@ -204,7 +228,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rainbow-delimiters humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(org-roam counsel-projectile dashboard rainbow-delimiters humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

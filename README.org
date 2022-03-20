@@ -45,3 +45,11 @@
 - xmonad config
 * unlock_gpg_on_startup
 - Read the readme in the directory for details.
+* qutebrowser:
+- config.py:
+  - qutebrowser config
+  - path: `~/.config/qutebrowser/config.py`
+- yt-adblock.js
+  - greasmonkey script to block youtube ads
+  - RUN `:greasemonkey-reload` to refresh!!!
+  - path: `~/.local/share/qutebrowser/greasemonkey/yt-adblock.py`

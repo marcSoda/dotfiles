@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+#PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$(parse_git_branch)\[\033[00m\]$ '
 PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 #Add ls colors
@@ -66,6 +71,7 @@ alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 #emacs remote dev using named workspaces
 alias eltanin='e e "/ssh:gateway|ssh:eltanin:working/"'
 alias seed='e n "/ssh:gateway|ssh:seed:working/"'
+alias das='e d /ssh:das:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
 alias jrnl='e j ~/working/org/journal/personal.org.gpg'
