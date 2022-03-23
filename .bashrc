@@ -1,10 +1,5 @@
 #!/bin/bash
 
-
-parse_git_branch() {
-     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
-#PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$(parse_git_branch)\[\033[00m\]$ '
 PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 #Add ls colors
@@ -55,6 +50,12 @@ alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
+br() {
+    btc power off
+    killall -9 pulseaudio
+    pulseaudio --start
+    btc power on
+}
 
 #c
 alias mg='gcc -g -Wall -Wextra -Wwrite-strings'
@@ -74,12 +75,8 @@ alias seed='e n "/ssh:gateway|ssh:seed:working/"'
 alias das='e d /ssh:das:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
-alias jrnl='e j ~/working/org/journal/personal.org.gpg'
 
-#emacsclient
-alias ec='emacsclient'
-
-#emacsclient named workspaces : not updated since switching to emacs with x
+#emacsclient named workspaces
 e() {
     if [[ $1 = "-k" ]]; then
         /usr/bin/emacsclient -s $2 -e '(kill-emacs)'

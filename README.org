@@ -2,15 +2,23 @@
 #+AUTHOR: Marc Soda Jr.
 #+EMAIL: m@soda.fm
 
-* .bashrc
+* config.fish
+- location: `~/.config/fish/config.fish`
 - e:
   - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
 - pass:
   - Tool that syncs pass with ios pass through a private git repo
-- doc
+- there are several other useful functions that are self explanatory
+* .bashrc (replaced by fish)
+- e:
+  - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
+- pass:
+  - Tool that syncs pass with ios pass through a private git repo
+- doc (unused)
   - Tool that configures the display and bluetooth devices when docking.
-- wifi
+- wifi (unused)
   - Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
+- there are several other useful functions that are self explanatory
 * dunstrc
 - config file for dunst
 * emacs

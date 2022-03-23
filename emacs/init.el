@@ -5,7 +5,6 @@
 (scroll-bar-mode -1)                            ;disable scroll bar
 (global-hl-line-mode)                           ;highlight current line
 (setq make-backup-files nil)                    ;disable backup files
-(setq-default truncate-lines t)                 ;truncate lines by default
 (electric-pair-mode)                            ;smarter delimeters.
 (delete-selection-mode 1)                       ;replace hilighted text when pasting
 (setq explicit-shell-file-name "/bin/bash")     ;ensure emacs uses bash shell
@@ -16,6 +15,7 @@
 (setq-default tab-width 4)                      ;tab width
 (setq auto-save-default nil)                    ;disable autosave
 (setq vc-follow-symlinks t)                     ;open file where symlink points
+(setq bookmark-save-flag 1)                     ;bookmarks save automatically
 (setq browse-url-browser-function               ;default browser qutebrowser
       'browse-url-generic browse-url-generic-program "qutebrowser")
 
@@ -58,8 +58,8 @@
   (setq dashboard-startup-banner 2)
   (setq dashboard-center-content t)
   (setq dashboard-items '((projects  . 5)
-                          (recents   . 5)
-			              (bookmarks . 5)))
+			              (bookmarks . 5)
+                          (recents   . 5)))
   (setq initial-buffer-choice (lambda () ;refresh and display dashboard buffer on emacsclient open
       (ignore-errors (org-agenda-exit))  ;close auto-opened org-agenda buffers
       (get-buffer "*dashboard*")))
@@ -109,6 +109,7 @@
     org-log-done 'time
     org-hide-emphasis-markers t
     org-src-tab-acts-natively t
+    org-capture-bookmark nil
     org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)" "CANCELLED(c)"))))
 
 ;;ORG-BULLETS
@@ -117,10 +118,27 @@
 
 ;;ORG-ROAM
 (use-package org-roam
-  :custom
-  (org-roam-directory "~/working/org/roam")
-  (org-roam-completion-everywhere t)
-  :config (org-roam-setup))
+    :custom
+    (org-roam-directory "~/working/org/roam")
+    (org-roam-completion-everywhere t)
+    :config
+    (org-roam-setup)
+    (setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
+    (setq epa-file-select-keys 1)                                ;;don't prompt which key to use
+    (setq org-roam-capture-templates '(("d" "default" plain "%?" ;;encrypt all org roam files
+        :target (file+head "${slug}.org.gpg"
+                            "#+title: ${title}\n")
+        :unnarrowed t)))
+
+    (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry
+            "* %?"
+            :target (file+head "%<%Y-%m-%d>.org.gpg"
+                                "#+title: %<%Y-%m-%d>\n"))))
+
+
+    )
+
 
 ;;EVIL-ORG
 (use-package evil-org
@@ -179,7 +197,9 @@
 ;;PROJECTILE
 (use-package projectile
     :diminish projectile-mode
-    :config (projectile-mode)
+    :config
+    (projectile-mode)
+    (setq projectile-track-known-projects-automatically nil)
     :custom ((projectile-completion-system 'ivy))
     :init
     (when (file-directory-p "~/working/dev")

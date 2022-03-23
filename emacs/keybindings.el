@@ -45,6 +45,7 @@
     "f f"   '(find-file                      :which-key "Find file")
     "e e"   '(eval-last-sexp                 :which-key "Eval lisp")
     "n n"   '(linum-mode                     :which-key "Show line numbers")
+    "d d"   '(dashboard-refresh-buffer       :which-key "Refresh and show dashboard")
     "p"     '(:keymap projectile-command-map :which-key "Projectile prefix")
     "z"     '(suspend-frame                  :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal     :which-key "Quit")
@@ -77,6 +78,7 @@
     "o r d y" '(org-roam-dailies-capture-yesterday   :which-key "Roam Dailies Capture Yesterday")
     "o r d T" '(org-roam-dailies-goto-tomorrow       :which-key "Roam Dailies Goto Tomorrow")
     "o r d t" '(org-roam-dailies-capture-tomorrow    :which-key "Roam Dailies Capture Tomorrow")
+    "o r d d" '(org-roam-dailies-goto-date           :which-key "Roam Dailies Goto Date")
     "o a"     '(org-agenda                           :which-key "Org agenda")
     "o d"     '(org-deadline                         :which-key "Org deadline")
     "o c"     '(org-ctrl-c-ctrl-c                    :which-key "Org ctrl-c-ctrl-c")
@@ -102,5 +104,5 @@
     "w l"   '(evil-window-right        :which-key "Window right")
     ;;describe
     "d k"   '(describe-key             :which-key "Describe Key")
-    "d f"   '(where-is                 :which-key "Describe Function")
+    "d f"   '(describe-function        :which-key "Describe Function")
     "d v"   '(describe-variable        :which-key "Describe Variable"))
