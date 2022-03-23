@@ -1,10 +1,13 @@
-# start X at login
+### start X at login
 if status --is-login
     if test -z "$DISPLAY" -a $XDG_VTNR = 1
         exec startx
     end
 end
-
+###end
+#vim-mode
+fish_vi_key_bindings
+###env
 set -U fish_user_paths $fish_userr_paths $HOME/.local/bin/
 set fish_greeting                                           #suppres fish intro message
 set TERM "xterm-256color"
@@ -13,13 +16,16 @@ set VISUAL "emacsclient -c -a emacs -s 0"
 set LESSHISTFILE -
 set EXTERNAL_DISPLAY DP1
 set PROJECTOR_PORT DP3
-
+###end env
 ###aliases:
 #system
 alias c='clear'
 alias pacman='sudo pacman'
+alias pacup='sudo pacman -Syu'
+alias pacin='sudo pacman -S $argv[1]'
+alias pacrm='sudo pacman -R $argv[1]'
 alias grep='grep --color=auto'
-alias ls='lsd -lAF --group-dirs=last --color=always --blocks permission --blocks name'
+alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'

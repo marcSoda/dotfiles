@@ -11,6 +11,7 @@
 (setq make-backup-files nil)                    ;disable backup files
 (put 'dired-find-alternate-file 'disabled nil)  ;has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
+(setq dired-listing-switches "-aBhl  --group-directories-first") ;dired group directories
 (global-auto-revert-mode t)                     ;automatically refresh files changed on disk
 (setq-default tab-width 4)                      ;tab width
 (setq auto-save-default nil)                    ;disable autosave
