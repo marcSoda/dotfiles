@@ -187,4 +187,5 @@ config.bind('xx', 'config-cycle statusbar.show always never;; config-cycle tabs.
 config.bind('>', 'clear-messages;; jseval --quiet document.querySelector("video").playbackRate += 0.1; ;; jseval Math.round(parseFloat(document.querySelector("video").playbackRate) * 10) / 10;')
 config.bind('<', 'clear-messages;; jseval --quiet document.querySelector("video").playbackRate -= 0.1; ;; jseval Math.round(parseFloat(document.querySelector("video").playbackRate) * 10) / 10;')
 config.bind('=', 'clear-messages;; jseval document.querySelector("video").playbackRate = 1;')
+config.bind('?', 'clear-messages;; jseval document.querySelector("video").playbackRate = 12;')
 config.bind('cc', 'clear-messages')

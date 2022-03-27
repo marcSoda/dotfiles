@@ -58,6 +58,8 @@
   (setq dashboard-set-file-icons t)
   (setq dashboard-startup-banner 2)
   (setq dashboard-center-content t)
+  (setq dashboard-footer-messages nil)
+  (setq dashboard-set-init-info nil)
   (setq dashboard-items '((projects  . 5)
 			              (bookmarks . 5)
                           (recents   . 5)))

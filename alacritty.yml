@@ -29,7 +29,7 @@ colors:
 
 #opacity
 window:
-  opacity: .88
+  opacity: .83
 
 #directory of the parent process will be used.
 working_directory: /home/marc/working
