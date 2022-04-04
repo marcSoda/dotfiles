@@ -7,7 +7,8 @@
 (setq make-backup-files nil)                    ;disable backup files
 (electric-pair-mode)                            ;smarter delimeters.
 (delete-selection-mode 1)                       ;replace hilighted text when pasting
-(setq explicit-shell-file-name "/bin/bash")     ;ensure emacs uses bash shell
+(setq explicit-shell-file-name "/bin/fish")     ;ensure emacs uses fish shell
+(setq vterm-shell "/bin/fish")                  ;ensure vterm uses fish shell
 (setq make-backup-files nil)                    ;disable backup files
 (put 'dired-find-alternate-file 'disabled nil)  ;has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces

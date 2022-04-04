@@ -24,3 +24,8 @@ Host gateway
 Host das
      HostName das-lab.org
      User masa20
+
+Host electron
+     HostName electron.soda.fm
+     User marc
+     Port 7022

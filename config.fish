@@ -29,6 +29,8 @@ alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
+alias htop='bpytop'
+alias xr='xmonad --recompile'
 #bluetooth
 alias btc='bluetoothctl'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
@@ -39,7 +41,7 @@ alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 function br
     btc power off
     killall -9 pulseaudio
-    pulseaudio --start
+    pulseaudio --start -v
     btc power on
 end
 #c

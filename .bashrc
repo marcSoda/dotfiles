@@ -40,6 +40,7 @@ alias pacman='sudo pacman'
 alias grep='grep --color=auto'
 alias ls='lsd -lAF --group-dirs=last --color=always --blocks permission --blocks name'
 alias rm='rm -v'
+alias htop='bpytop'
 alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
 
