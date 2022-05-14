@@ -55,14 +55,14 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 
 myStartupHook :: X ()
 myStartupHook = do
-    spawnOnce "feh --no-fehbg --bg-scale '/home/marc/working/dotfiles/backgrounds/05.jpg' &" -- ALSO CHANGE BASH ALIAS
+    spawnOnce "bash /home/marc/working/dotfiles/backgrounds/feh.sh &"
     spawnOnce "picom --backend glx --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
     spawnOnce "xsetroot -cursor_name left_ptr" --set cursor shape
     spawnOnce "xset r rate 220 40" --keyboard speed
-    spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
+    -- spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
 
 --Layouts
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -92,6 +92,7 @@ myManageHook = composeAll
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
+                , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient]
     where
         spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad'"
@@ -105,6 +106,10 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
         findEmacsClient   = title =? "emacs-scratch"
         manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+
+        spawnNcpamixer  = myTerminal ++ " -t 'ncpamixer Scratchpad' -e ncpamixer"
+        findNcpamixer   = title =? "ncpamixer Scratchpad"
+        manageNcpamixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
 --Keybindings
 myKeys :: [(String, X ())]
@@ -134,6 +139,7 @@ myKeys =
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
+        , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))

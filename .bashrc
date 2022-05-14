@@ -76,6 +76,8 @@ alias seed='e n "/ssh:gateway|ssh:seed:working/"'
 alias das='e d /ssh:das:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
+alias wgw='e w "/ssh:seed|ssh:wgw:working"'
+
 
 #emacsclient named workspaces
 e() {

@@ -21,16 +21,17 @@ set PROJECTOR_PORT DP3
 #system
 alias c='clear'
 alias pacman='sudo pacman'
-alias pacup='sudo pacman -Syu'
+alias pacup='sudo pacman -Syu && xmonad --recompile'
 alias pacin='sudo pacman -S $argv[1]'
 alias pacrm='sudo pacman -R $argv[1]'
 alias grep='grep --color=auto'
 alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias ks='xset r rate 220 40'
-alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
+alias fehr='bash "/home/marc/working/dotfiles/backgrounds/feh.sh"'
 alias htop='bpytop'
 alias xr='xmonad --recompile'
+alias ss='systemctl suspend'
 #bluetooth
 alias btc='bluetoothctl'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
@@ -39,9 +40,12 @@ alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 function br
-    btc power off
+    #sudo alsactl restore
     killall -9 pulseaudio
     pulseaudio --start -v
+    sudo systemctl stop bluetooth
+    sudo systemctl start bluetooth
+    btc power off
     btc power on
 end
 #c
@@ -55,10 +59,12 @@ alias pierce='sudo netctl stop-all && sudo netctl start 618\ Pieeeeeeerce'
 alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 #emacs remote dev using named workspaces
 alias eltanin='e e "/ssh:gateway|ssh:eltanin:working/"'
-alias seed='e n "/ssh:gateway|ssh:seed:working/"'
+alias seed='e s "/ssh:gateway|ssh:seed:working/"'
 alias das='e d /ssh:das:working/'
+alias electron='e t /ssh:electron:working/'
 alias ancilla='e a /ssh:ancilla:working/'
-alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
+alias sunlab='e p "/ssh:gateway|ssh:sunlab:working"'
+alias wgw='e w "/ssh:wgw:working/"'
 ###end aliases
 
 ###emacsclient named workspaces

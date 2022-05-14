@@ -1,14 +1,20 @@
 ;;general
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (setq inhibit-startup-message t)                ;disable default welcome message
 (menu-bar-mode -1)                              ;disable menubar
 (tool-bar-mode -1)                              ;disable tool bar
 (scroll-bar-mode -1)                            ;disable scroll bar
 (global-hl-line-mode)                           ;highlight current line
+;; (set-face-background hl-line-face "grey" )
 (setq make-backup-files nil)                    ;disable backup files
 (electric-pair-mode)                            ;smarter delimeters.
 (delete-selection-mode 1)                       ;replace hilighted text when pasting
-(setq explicit-shell-file-name "/bin/bash")     ;ensure emacs uses bash shell
-(setq vterm-shell "/bin/bash")                  ;ensure vterm uses bash shell
 (setq make-backup-files nil)                    ;disable backup files
 (put 'dired-find-alternate-file 'disabled nil)  ;has something to do w a hotkey in dired.
 (setq-default indent-tabs-mode nil)             ;tabs are spaces
@@ -18,8 +24,6 @@
 (setq auto-save-default nil)                    ;disable autosave
 (setq vc-follow-symlinks t)                     ;open file where symlink points
 (setq bookmark-save-flag 1)                     ;bookmarks save automatically
-(setq browse-url-browser-function               ;default browser qutebrowser
-      'browse-url-generic browse-url-generic-program "qutebrowser")
 
 ;;PACKAGE MANAGER
 (require 'package)
@@ -45,30 +49,12 @@
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(magit dashboard vterm dired ibuffer mu4e))
+  (setq evil-collection-mode-list '(magit vterm dired ibuffer mu4e))
   (evil-collection-init))
 
 ;;EVIL-SURROUND
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
-
-;;dashboard
-(use-package dashboard
-  :init
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-startup-banner 2)
-  (setq dashboard-center-content t)
-  (setq dashboard-footer-messages nil)
-  (setq dashboard-set-init-info nil)
-  (setq dashboard-items '((projects  . 5)
-			              (bookmarks . 5)
-                          (recents   . 5)))
-  (setq initial-buffer-choice (lambda () ;refresh and display dashboard buffer on emacsclient open
-      (ignore-errors (org-agenda-exit))  ;close auto-opened org-agenda buffers
-      (get-buffer "*dashboard*")))
-  :config
-  (dashboard-setup-startup-hook))
 
 ;;THEME
 (use-package humanoid-themes
@@ -87,9 +73,6 @@
 (use-package flycheck
   :init (global-flycheck-mode))
 
-;;DOCKER-TRAMP
-(use-package docker-tramp)
-
 ;;COUNSEL: better nav
 (use-package counsel
   :init (counsel-mode t))
@@ -104,67 +87,22 @@
 ;;SWIPER: better searching
 (use-package swiper)
 
-;;ORG
-(use-package org
-  :init
-  (add-hook 'org-mode-hook 'org-indent-mode)
-  (setq org-directory "/home/marc/Dropbox/org"
-    org-agenda-files '("/home/marc/Dropbox/org")
-    org-agenda-window-setup 'only-window
-    org-hide-emphasis-markers t
-    org-src-tab-acts-natively t
-    org-capture-bookmark nil
-    org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "CLASS(c)" "|" "DONE(d)" "POSTPONED(p)" "CANCELLED(c)"))))
+;;SYNTAX
+(use-package rustic)
+(use-package python-mode)
+(use-package go-mode)
+(use-package haskell-mode)
+(use-package yaml-mode)
+(use-package handlebars-mode
+	       :init (add-to-list 'auto-mode-alist '("\\.hb?\\'" . handlebars-mode)))
+(use-package web-mode
+	       :init
+	         (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+		   (setq web-mode-enable-auto-closing t))
 
-;;ORG-BULLETS
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
-
-;;ORG-ROAM
-(use-package org-roam
-    :custom
-    (org-roam-directory "~/working/org/roam")
-    (org-roam-completion-everywhere t)
-    :config
-    (org-roam-setup)
-    (setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
-    (setq epa-file-select-keys 1)                                ;;don't prompt which key to use
-    (setq org-roam-capture-templates '(("d" "default" plain "%?" ;;encrypt all org roam files
-        :target (file+head "${slug}.org.gpg"
-                            "#+title: ${title}\n")
-        :unnarrowed t)))
-
-    (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-            "* %?"
-            :target (file+head "%<%Y-%m-%d>.org.gpg"
-                                "#+title: %<%Y-%m-%d>\n"))))
-
-
-    )
-
-
-;;EVIL-ORG
-(use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init (add-hook 'org-mode-hook 'evil-org-mode))
-(use-package org-tempo)
-
-;;SPELLCHECK NOTE: to install the dictionary: pacman -S hunspell-en_us
-(use-package flyspell
-  :config
-  (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
-  (setq ispell-dictionary "english")
-  (setq ispell-local-dictionary-alist
-    '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8))))
 
 ;;MAGIT
 (use-package magit)
-
-;;XClIP: copy to clipboard
-(use-package xclip
-  :config (xclip-mode))
 
 ;;IBUFFER setup
 (use-package ibuffer)
@@ -181,7 +119,6 @@
                              (name . "^\\magit")
                              (name . "^\\*Compile")
                              (name . "^\\*Flycheck")
-                             (name . "^\\*lsp")
                              (name . "^\\*pyright")
                              (name . "^\\*rust")
                              (name . "^\\*run")
@@ -197,27 +134,6 @@
 ;;RAINBOW-DELIMITERS
 (use-package rainbow-delimiters
     :init (progn (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
-
-;;PROJECTILE
-(use-package projectile
-    :diminish projectile-mode
-    :config
-    (projectile-mode)
-    (setq projectile-track-known-projects-automatically nil)
-    :custom ((projectile-completion-system 'ivy))
-    :init
-    (when (file-directory-p "~/working/dev")
-      (setq projectile-project-search-path '("~/working/dev")))
-    (setq projectile-switch-project-action #'projectile-dired))
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-
-;;VTERM
-(use-package vterm
-    :init
-    (setq shell-file-name "/bin/bash"))
-;;MULTI-VTERM: allows for multiple vterm instances. unused as of 3/1/22
-;; (use-package multi-vterm)
 
 ;;WHITESPACE: remove whitespace on save
 (require 'whitespace)
@@ -242,9 +158,7 @@
 (use-package yasnippet)
 
 ;;LOAD FILES
-(load-file (expand-file-name "mu4e.el" user-emacs-directory))
 (load-file (expand-file-name "keybindings.el" user-emacs-directory))
-(load-file (expand-file-name "lsp.el" user-emacs-directory))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -252,7 +166,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(org-roam counsel-projectile dashboard rainbow-delimiters humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   (quote
+    (yasnippet yaml-mode xclip which-key web-mode use-package smex rustic rainbow-delimiters python-mode magit humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-collection doom-modeline dashboard counsel company))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

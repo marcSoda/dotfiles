@@ -1,0 +1,5 @@
+* the function key does not work for the keychron by default
+* [[https://venthur.de/2021-04-30-keychron-c1-on-linux.html][guide]]
+* steps:
+- su
+- add 'options hid_apple fnmode=2' to 'options hid_apple fnmode=2'

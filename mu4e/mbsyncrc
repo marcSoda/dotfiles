@@ -128,63 +128,57 @@ Channel masa20-lehigh-trash
 # ================================================================================
 
 
-IMAPAccount m-soda-protonmail
-Host 127.0.0.1
-User m@soda.fm
-Port 1143
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep m@soda.fm | awk '{print $8}'"
-SSLType STARTTLS
-SSLVersions TLSv1.2
-CertificateFile ~/.config/protonmail/bridge/cert.pem
+# IMAPAccount m-soda-protonmail
+# Host 127.0.0.1
+# User m@soda.fm
+# Port 1143
+# PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep m@soda.fm | awk '{print $8}'"
+# SSLType STARTTLS
+# SSLVersions TLSv1.2
+# CertificateFile ~/.config/protonmail/bridge/cert.pem
 
-IMAPStore m-soda-protonmail-remote
-Account m-soda-protonmail
+# IMAPStore m-soda-protonmail-remote
+# Account m-soda-protonmail
 
-MaildirStore m-soda-protonmail-local
-Path ~/.mail/m-soda-protonmail/
-Inbox ~/.mail/m-soda-protonmail/inbox
+# MaildirStore m-soda-protonmail-local
+# Path ~/.mail/m-soda-protonmail/
+# Inbox ~/.mail/m-soda-protonmail/inbox
 
-Channel m-soda-protonmail-inbox
-Far :m-soda-protonmail-remote:
-Near :m-soda-protonmail-local:
-Patterns INBOX
-Create Both
-SyncState *
-
-Channel m-soda-protonmail-sent
-Far :m-soda-protonmail-remote:Sent
-Near :m-soda-protonmail-local:sent
-Create Both
-SyncState *
-
-Channel m-soda-protonmail-drafts
-Far :m-soda-protonmail-remote:Drafts
-Near :m-soda-protonmail-local:drafts
-Create Both
-SyncState *
-
-Channel m-soda-protonmail-all
-Far :m-soda-protonmail-remote:"All Mail"
-Near :m-soda-protonmail-local:all
-Create Both
-SyncState *
-
-# Channel m-soda-protonmail-starred
-# Far :m-soda-protonmail-remote:Starred
-# Near :m-soda-protonmail-local:starred
+# Channel m-soda-protonmail-inbox
+# Far :m-soda-protonmail-remote:
+# Near :m-soda-protonmail-local:
+# Patterns INBOX
 # Create Both
 # SyncState *
 
-Channel m-soda-protonmail-trash
-Far :m-soda-protonmail-remote:Trash
-Near :m-soda-protonmail-local:trash
-Create Both
-SyncState *
+# Channel m-soda-protonmail-sent
+# Far :m-soda-protonmail-remote:Sent
+# Near :m-soda-protonmail-local:sent
+# Create Both
+# SyncState *
 
-Group m-soda-protonmail
-Channel m-soda-protonmail-inbox
-Channel m-soda-protonmail-sent
-Channel m-soda-protonmail-drafts
-Channel m-soda-protonmail-all
-Channel m-soda-protonmail-starred
-Channel m-soda-protonmail-trash
+# Channel m-soda-protonmail-drafts
+# Far :m-soda-protonmail-remote:Drafts
+# Near :m-soda-protonmail-local:drafts
+# Create Both
+# SyncState *
+
+# Channel m-soda-protonmail-all
+# Far :m-soda-protonmail-remote:"All Mail"
+# Near :m-soda-protonmail-local:all
+# Create Both
+# SyncState *
+
+# Channel m-soda-protonmail-trash
+# Far :m-soda-protonmail-remote:Trash
+# Near :m-soda-protonmail-local:trash
+# Create Both
+# SyncState *
+
+# Group m-soda-protonmail
+# Channel m-soda-protonmail-inbox
+# Channel m-soda-protonmail-sent
+# Channel m-soda-protonmail-drafts
+# Channel m-soda-protonmail-all
+# Channel m-soda-protonmail-starred
+# Channel m-soda-protonmail-trash

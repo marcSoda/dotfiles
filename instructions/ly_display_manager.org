@@ -1,0 +1,6 @@
+* [[https://github.com/fairyglade/ly][instructions]]
+* for fingerprint:
+- follow instructions for fingerprint in other instructions file in this directory
+- if exists, remove `auth sufficient pam_fprintd.so` from the top of `/etc/pam.d/system-local-login`
+- add `auth sufficient pam_fprintd.so` to the top of `/etc/pam.d/ly`
+- when loggin in, just press enter and put finger on scanner. it will not prompt for fingerprint
