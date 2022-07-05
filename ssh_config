@@ -30,19 +30,6 @@ Host electron
      User marc
      Port 7022
 
-
-Host wgw
-     HostName 128.180.123.186
+Host rtm
+     HostName 147.182.135.192
      User marc
-     Port 1701
-     ProxyJump seed
-
-Host wg1
-     HostName 192.168.6.1
-     User marc
-     ProxyJump wgw
-
-Host wg2
-     HostName 192.168.6.2
-     User marc
-     ProxyJump wgw

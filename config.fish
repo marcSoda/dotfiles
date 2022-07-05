@@ -37,6 +37,7 @@ alias btc='bluetoothctl'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
 alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
+alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 function br
@@ -64,7 +65,6 @@ alias das='e d /ssh:das:working/'
 alias electron='e t /ssh:electron:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e p "/ssh:gateway|ssh:sunlab:working"'
-alias wgw='e w "/ssh:wgw:working/"'
 ###end aliases
 
 ###emacsclient named workspaces

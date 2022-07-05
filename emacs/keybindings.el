@@ -38,24 +38,28 @@
     :prefix "SPC"
     "" nil
     "SPC"   '(execute-extended-command       :which-key "M-x")
-    "t t"   '(toggle-truncate-lines          :which-key "Toggle truncate lines")
     "v v"   '(vterm                          :which-key "vterm")
-    "w w"   '(save-buffer                    :which-key "Save buffer")
     "c c"   '(comment-line                   :which-key "Comment-line")
     "c p"   '(c++-mode                       :which-key "c++-mode")
     "i s"   '(ispell                         :which-key "ispell")
-    "f f"   '(find-file                      :which-key "Find file")
     "e e"   '(eval-last-sexp                 :which-key "Eval lisp")
     "n n"   '(linum-mode                     :which-key "Show line numbers")
-    "d d"   '(dashboard-refresh-buffer       :which-key "Refresh and show dashboard")
     "p"     '(:keymap projectile-command-map :which-key "Projectile prefix")
     "z"     '(suspend-frame                  :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal     :which-key "Quit")
-    ;;flycheck
+    ;;d
+    "d d"   '(dashboard-refresh-buffer       :which-key "Refresh and show dashboard")
+    "d c d" '(dired-create-directory         :which-key "Dired create directory")
+    "d c f" '(dired-create-empty-file        :which-key "Direc create file")
+    "d k"   '(describe-key                   :which-key "Describe Key")
+    "d f"   '(describe-function              :which-key "Describe Function")
+    "d v"   '(describe-variable              :which-key "Describe Variable")
+    ;;f
     "f l"   '(flycheck-list-errors    :which-key "flycheck-list-errors")
     "f n"   '(flycheck-next-error     :which-key "flycheck-next-error")
     "f p"   '(flycheck-previous-error :which-key "flycheck-previous-error")
-    ;;org
+    "f f"   '(find-file               :which-key "Find file")
+    ;;o
     "o e"     '(org-html-export-to-html              :which-key "Org export to html")
     "o h"     '(org-toggle-heading                   :which-key "Org toggle heading")
     "o i"     '(org-toggle-item                      :which-key "Org toggle item")
@@ -80,17 +84,24 @@
     "o a s"   '(org-todo                             :which-key "Org change state")
     "o a d s" '(org-schedule                         :which-key "Org schedule")
     "o a d d" '(org-deadline                         :which-key "Org deadline")
-    "o a d t" '(org-time-stamp                        :which-key "Org timestamp")
-    ;;buffer-related
+    "o a d t" '(org-time-stamp                       :which-key "Org timestamp")
+    ;;b
     "b b"   '(ibuffer                  :which-key "Ibuffer")
     "b k"   '(kill-current-buffer      :which-key "Kill current buffer")
     "b r"   '(revert-buffer            :which-key "revert-buffer")
-    ;;Magit-related
+    ;;m
     "m g"   '(magit-status             :which-key "magit")
     "m c"   '(with-editor-finish       :which-key "with-editor-finish")
     "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
-    ;;mu4e
     "m u"   '(mu4e                     :which-key "mu4e")
+    ;; t
+    "t t"   '(treemacs-select-window    :which-key "treemacs-select-window")
+    "t e"   '(treemacs-edit-workspaces  :which-key "treemacs-edit-workspaces")
+    "t s"   '(treemacs-switch-workspace :which-key "treemacs-switch-workspace")
+    ;; l
+    "l s"   '(lsp-treemacs-symbols     :which-key "lsp-treemacs-symbols")
+    "l e"   '(lsp-treemacs-errors-list :which-key "lsp-treemacs-errors-list")
+    "l l"   '(toggle-truncate-lines    :which-key "Toggle truncate lines")
     ;;Window-related
     "w c"   '(evil-window-delete       :which-key "Close window")
     "w o"   '(delete-other-windows     :which-key "Make window fill frame")
@@ -100,7 +111,4 @@
     "w j"   '(evil-window-down         :which-key "Window down")
     "w k"   '(evil-window-up           :which-key "Window up")
     "w l"   '(evil-window-right        :which-key "Window right")
-    ;;describe
-    "d k"   '(describe-key             :which-key "Describe Key")
-    "d f"   '(describe-function        :which-key "Describe Function")
-    "d v"   '(describe-variable        :which-key "Describe Variable"))
+    "w w"   '(save-buffer              :which-key "Save buffer"))

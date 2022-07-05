@@ -23,22 +23,26 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 #set editor
-export EDITOR=emacs
+export EDITOR=vim
 
 #set .lesshst location
 export LESSHISTFILE=-
 
-#set external display
+#set external display NOTE: I don't think I use this anymore
 export EXTERNAL_DISPLAY=DP1
 export PROJECTOR_PORT=DP3
 
 #aliases:
 
 #system
+alias x='startx'
 alias c='clear'
 alias pacman='sudo pacman'
+alias pacup='sudo pacman -Syu'
+alias pacin='sudo pacman -S $1'
+alias pacrm='sudo pacman -R $1'
 alias grep='grep --color=auto'
-alias ls='lsd -lAF --group-dirs=last --color=always --blocks permission --blocks name'
+alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias htop='bpytop'
 alias ks='xset r rate 220 40'
@@ -51,10 +55,13 @@ alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
+alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
 br() {
-    btc power off
     killall -9 pulseaudio
-    pulseaudio --start
+    pulseaudio --start -v
+    sudo systemctl stop bluetooth
+    sudo systemctl start bluetooth
+    btc power off
     btc power on
 }
 
@@ -70,13 +77,16 @@ alias lehigh='sudo netctl stop-all && sudo netctl start lehigh'
 alias pierce='sudo netctl stop-all && sudo netctl start 618\ Pieeeeeeerce'
 alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 
+#minecwaft
+alias mine='prime-run minecraft-launcher & disown'
+
 #emacs remote dev using named workspaces
 alias eltanin='e e "/ssh:gateway|ssh:eltanin:working/"'
 alias seed='e n "/ssh:gateway|ssh:seed:working/"'
 alias das='e d /ssh:das:working/'
+alias electron='e t /ssh:electron:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
-alias wgw='e w "/ssh:seed|ssh:wgw:working"'
 
 
 #emacsclient named workspaces
@@ -101,7 +111,7 @@ e() {
 
 #change screen layout
 lay() {
-    bash ~/.screenlayout/$1.sh
+    bash ~/.screenlayout/$1.bash
 }
 
 #zathura
@@ -136,68 +146,3 @@ pass() {
         /usr/bin/pass "$@"
     fi
 }
-
-#Used when a display is connected to DP-1
-doc() {
-    if [ "$1" = "on" ]; then
-        xrandr --output $EXTERNAL_DISPLAY --auto --left-of eDP1 --primary
-        keyboard
-        mouse
-        echo "Docked"
-    elif [ "$1" = "p" ]; then
-        xrandr --output $EXTERNAL_DISPLAY --auto --above eDP1 --primary
-        anker
-    elif [ "$1" = "off" ]; then
-        xrandr --output $EXTERNAL_DISPLAY --off
-        btc power off
-        echo "Undocked"
-    fi
-}
-
-#Better than netctl
-wifi() {
-    function list_profiles() {
-       netctl list | cut --complement -d- -f1 | awk '{print NR-1 ") " $0}'
-    }
-
-    function get_current_ssid() {
-        iw dev | grep ssid | awk '{print $2}'
-    }
-
-    dev=$(iw dev | grep Interface | awk '{print $2}')
-
-    case $@ in
-        #Connect by index (indices enumerated with wifi -l)
-        *"-ci"*)
-            index=$(echo "$2 + 1" | bc -l)
-            to_connect=$(list_profiles | sed -n "$index p" | cut --complement -d" " -f1)
-            echo "Attempting to connect to $to_connect..."
-            current_ssid=`get_current_ssid`
-            sudo netctl stop "$dev-$current_ssid"
-            sudo netctl start "$dev-$to_connect"
-            ;;
-        #Connect by ssid name
-        *"-c"*)
-            echo "Attempting to connect to $2..."
-            current_ssid=`get_current_ssid`
-            sudo netctl stop "$dev-$current_ssid"
-            sudo netctl start "$dev-$2"
-            ;;
-        #Disconnect from current ssid
-        *"-d"*)
-            current_ssid=`get_current_ssid`
-            echo "Attempting to disconnect from $current_ssid..."
-            sudo netctl stop "$dev-$current_ssid"
-            ;;
-        #List ssids with indices
-        *"-l"*)
-            list_profiles
-            ;;
-    esac
-}
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/marc/.gcloud/google-cloud-sdk/path.bash.inc' ]; then . '/home/marc/.gcloud/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/marc/.gcloud/google-cloud-sdk/completion.bash.inc' ]; then . '/home/marc/.gcloud/google-cloud-sdk/completion.bash.inc'; fi

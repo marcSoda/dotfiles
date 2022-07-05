@@ -1,0 +1,58 @@
+* contains info on how to configure and autostart protonvpn on startup with openvpn
+- works for xps 15 9510
+* helpful link [[https://wiki.archlinux.org/title/ProtonVPN][here]]
+- note that my implementation differs from the above link. read on for what worked for me
+* my steps
+** download all protonvpn server configs by running
+- yay -S openvpn-protonvpn
+- installs all of the protonvpn server configs to /etc/openvpn/client/
+** save your username and password in a file called /etc/openvpn/auth
+- username and password are found at https://account.protonvpn.com/account
+  - OpenVPN/IKEv2 username section
+- username on line 1, password on line 2. that's it
+- according to the top of any .ovpn file in /etc/openvpn/auth if you append +f1+f2+nr to the end of your username, it will add some useful security things. only works for pro users.
+** be sure to enable NetworkManager. Protonvpn requires NetworkManager to run at all
+** necessary steps:
+- run yay -S openvpn-update-systemd-resolved
+  - this will create a config file in /usr/bin/update-systemd-resolved
+- run cp /usr/bin/update-systemd-resolved /etc/openvpn/update-resolv-conf
+  - this file is referenced in all of the client config files
+** run ln -sf /lib/systemd/system/systemd-resolved.service /etc/systemd/system/dbus-org.freedesktop.resolve1.service
+- I don't remember what told me to do this, but I was getting an error until I did this. not sure if necessary
+* usage
+- openvpn --config /etc/openvpn/client/protonvpn.node-us-46.udp.conf --auth-user-pass /etc/openvpn/auth
+  - this will start the vpn connected to some server in ny. you may change the server file
+* systemd autostart
+- create a file called /usr/lib/systemd/system/openvpn_marc_defined.service
+- contents
+#+BEGIN_SRC
+    [Unit]
+    Description=OpenVPN service
+    After=syslog.target network-online.target
+    Wants=network-online.target
+    Documentation=man:openvpn(8)
+    Documentation=https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage
+    Documentation=https://community.openvpn.net/openvpn/wiki/HOWTO
+
+    [Service]
+    Type=notify
+    PrivateTmp=true
+    WorkingDirectory=/etc/openvpn/server
+    ExecStart=/bin/openvpn --config /etc/openvpn/client/protonvpn.node-us-46.udp.conf --auth-user-pass /etc/openvpn/auth
+    CapabilityBoundingSet=CAP_IPC_LOCK CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SYS_CHROOT CAP_DAC_OVERRIDE CAP_AUDIT_WRITE
+    LimitNPROC=10
+    DeviceAllow=/dev/null rw
+    DeviceAllow=/dev/net/tun rw
+    ProtectSystem=true
+    ProtectHome=true
+    KillMode=process
+    RestartSec=5s
+    Restart=on-failure
+
+    [Install]
+    WantedBy=multi-user.target
+#+END_SRC
+- run systemd daemon-reload
+- enable it
+
+* it is possible that there is more to do. look at the above link and follow error messages. shouldn't be that hard

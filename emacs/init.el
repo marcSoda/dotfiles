@@ -1,24 +1,26 @@
 ;;general
-(setq inhibit-startup-message t)                ;disable default welcome message
-(menu-bar-mode -1)                              ;disable menubar
-(tool-bar-mode -1)                              ;disable tool bar
-(scroll-bar-mode -1)                            ;disable scroll bar
-(global-hl-line-mode)                           ;highlight current line
-(setq make-backup-files nil)                    ;disable backup files
-(electric-pair-mode)                            ;smarter delimeters.
-(delete-selection-mode 1)                       ;replace hilighted text when pasting
-(setq explicit-shell-file-name "/bin/bash")     ;ensure emacs uses bash shell
-(setq vterm-shell "/bin/bash")                  ;ensure vterm uses bash shell
-(setq make-backup-files nil)                    ;disable backup files
-(put 'dired-find-alternate-file 'disabled nil)  ;has something to do w a hotkey in dired.
-(setq-default indent-tabs-mode nil)             ;tabs are spaces
+(setq inhibit-startup-message t)                                 ;disable default welcome message
+(menu-bar-mode -1)                                               ;disable menubar
+(tool-bar-mode -1)                                               ;disable tool bar
+(scroll-bar-mode -1)                                             ;disable scroll bar
+(global-hl-line-mode)                                            ;highlight current line
+(setq make-backup-files nil)                                     ;disable backup files
+(electric-pair-mode)                                             ;smarter delimeters.
+(delete-selection-mode 1)                                        ;replace hilighted text when pasting
+(setq explicit-shell-file-name "/bin/bash")                      ;ensure emacs uses bash shell
+(setq vterm-shell "/bin/bash")                                   ;ensure vterm uses bash shell
+(setq make-backup-files nil)                                     ;disable backup files
+(put 'dired-find-alternate-file 'disabled nil)                   ;has something to do w a hotkey in dired.
+(setq-default indent-tabs-mode nil)                              ;tabs are spaces
 (setq dired-listing-switches "-aBhl  --group-directories-first") ;dired group directories
-(global-auto-revert-mode t)                     ;automatically refresh files changed on disk
-(setq-default tab-width 4)                      ;tab width
-(setq auto-save-default nil)                    ;disable autosave
-(setq vc-follow-symlinks t)                     ;open file where symlink points
-(setq bookmark-save-flag 1)                     ;bookmarks save automatically
-(setq browse-url-browser-function               ;default browser qutebrowser
+(global-auto-revert-mode t)                                      ;automatically refresh files changed on disk
+(setq-default tab-width 4)                                       ;tab width
+(setq auto-save-default nil)                                     ;disable autosave
+(setq vc-follow-symlinks t)                                      ;open file where symlink points
+(setq bookmark-save-flag 1)                                      ;bookmarks save automatically
+(add-to-list 'term-file-aliases '("alacritty" . "xterm"))        ;make emacs-nox fully featured in alacritty
+(setq xterm-extra-capabilities nil)                              ;fixes slow startup from above command
+(setq browse-url-browser-function                                ;default browser qutebrowser
       'browse-url-generic browse-url-generic-program "qutebrowser")
 
 ;;PACKAGE MANAGER
@@ -75,6 +77,8 @@
   :init (load-theme 'humanoid-dark t)
   :config (set-face-attribute 'default nil :height 175 :weight 'bold))
 
+(use-package all-the-icons)
+
 ;;DOOM-MODELINE:
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
@@ -114,7 +118,7 @@
     org-hide-emphasis-markers t
     org-src-tab-acts-natively t
     org-capture-bookmark nil
-    org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "CLASS(c)" "|" "DONE(d)" "POSTPONED(p)" "CANCELLED(c)"))))
+    org-todo-keywords '((sequence "URG(u)" "PROG(p)" "TODO(t)" "MEET(m)" "NEXT(n)" "DATE(D)" "|" "DONE(d)"))))
 
 ;;ORG-BULLETS
 (use-package org-bullets
@@ -138,11 +142,7 @@
         '(("d" "default" entry
             "* %?"
             :target (file+head "%<%Y-%m-%d>.org.gpg"
-                                "#+title: %<%Y-%m-%d>\n"))))
-
-
-    )
-
+                                "#+title: %<%Y-%m-%d>\n")))))
 
 ;;EVIL-ORG
 (use-package evil-org
@@ -167,32 +167,33 @@
   :config (xclip-mode))
 
 ;;IBUFFER setup
-(use-package ibuffer)
 (use-package ibuf-ext)
-(setq ibuffer-expert t)    ;;don't ask for confirmation when deleting buffers
-(setq ibuffer-saved-filter-groups
-          (quote (("main"
-                   ("other" (or
-                             (name . "^\\*scratch\\*$")
-                             (name . "^\\*Messages\\*$")
-                             (name . "^\\*dashboard\\*$")
-                             (mode . dired-mode)
-                             (name . "^\\*Help*")
-                             (name . "^\\magit")
-                             (name . "^\\*Compile")
-                             (name . "^\\*Flycheck")
-                             (name . "^\\*lsp")
-                             (name . "^\\*pyright")
-                             (name . "^\\*rust")
-                             (name . "^\\*run")
-                             (name . "^\\*Completions")
-                             (name . "^\\*Backtrace")
-                             (name . "^\\*Python")
-                             (name . "^\\*clang")
-                             (name . "^\\*tramp")
-                             (name . "^\\*Shell")))))))
-(add-hook 'ibuffer-mode-hook
-    '(lambda () (ibuffer-switch-to-saved-filter-groups "main")))
+(use-package ibuffer
+  :config
+    (setq ibuffer-expert t)    ;;don't ask for confirmation when deleting buffers
+    (setq ibuffer-saved-filter-groups
+            (quote (("main"
+                    ("other" (or
+                                (name . "^\\*scratch\\*$")
+                                (name . "^\\*Messages\\*$")
+                                (name . "^\\*dashboard\\*$")
+                                (mode . dired-mode)
+                                (name . "^\\*Help*")
+                                (name . "^\\magit")
+                                (name . "^\\*Compile")
+                                (name . "^\\*Flycheck")
+                                (name . "^\\*lsp")
+                                (name . "^\\*pyright")
+                                (name . "^\\*rust")
+                                (name . "^\\*run")
+                                (name . "^\\*Completions")
+                                (name . "^\\*Backtrace")
+                                (name . "^\\*Python")
+                                (name . "^\\*clang")
+                                (name . "^\\*tramp")
+                                (name . "^\\*Shell")))))))
+    (add-hook 'ibuffer-mode-hook
+        '(lambda () (ibuffer-switch-to-saved-filter-groups "main"))))
 
 ;;RAINBOW-DELIMITERS
 (use-package rainbow-delimiters
@@ -212,6 +213,17 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
+(use-package treemacs
+	     :init
+	     (setq treemacs-width 25)
+	     (setq treemacs-find-workspace-method 'find-for-file-or-manually-select )
+	     :config
+	     (setq treemacs-is-never-other-window t))
+
+(use-package lsp-treemacs
+	     :config
+	     (setq lsp-treemacs-sync-mode 1))
+
 ;;VTERM
 (use-package vterm
     :init
@@ -220,39 +232,36 @@
 ;; (use-package multi-vterm)
 
 ;;WHITESPACE: remove whitespace on save
-(require 'whitespace)
-(setq-default show-trailing-whitespace t)
-(set-face-attribute 'trailing-whitespace nil :underline t :background "black")
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(use-package whitespace
+  :config
+    (setq-default show-trailing-whitespace t)
+    (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
+    (add-hook 'before-save-hook 'delete-trailing-whitespace))
 
 ;;SMOOTH SCROLLING
-(setq scroll-margin 5
+(setq scroll-margin 10
   scroll-step 1
   scroll-conservatively 10000
   scroll-preserve-screen-position 1)
-
-;;ALACRITTY FIXES
-(add-to-list 'term-file-aliases '("alacritty" . "xterm")) ;;make emacs-nox fully featured in alacritty
-(setq xterm-extra-capabilities nil)                       ;;fixes slow startup from above command
 
 ;;WICH-KEY
 (use-package which-key :config (which-key-mode))
 
 ;;yasnippet ;;MAYBE REMOVE
-(use-package yasnippet)
+;; (use-package yasnippet
+;;   )
 
 ;;LOAD FILES
 (load-file (expand-file-name "mu4e.el" user-emacs-directory))
 (load-file (expand-file-name "keybindings.el" user-emacs-directory))
 (load-file (expand-file-name "lsp.el" user-emacs-directory))
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(org-roam counsel-projectile dashboard rainbow-delimiters humanoid-themes org-latex-impatient org-evil ccls yasnippet ibuf-ext rustic mu4e-alert lsp-pyright python-mode dap-mode lsp-ivy lsp-ui lsp-mode htmlize org-bullets smex swiper-helm yaml-mode xclip which-key web-mode use-package rust-mode org multi-vterm magit haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-modeline docker-tramp counsel company)))
+   '(org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode counsel-projectile company ccls all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
