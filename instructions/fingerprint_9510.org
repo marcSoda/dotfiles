@@ -1,6 +1,9 @@
-* insturctions
+* getting the fingerprint sensor working:
+** OLD INSTRUCTIONS:
+*** I kept these in here because fprintd is stupid. These USED to be required for xps15 9510
+*** insturctions
   - https://aur.archlinux.org/packages/libfprint-tod-git/
-* if link broken:
+*** if link broken:
   - yay -S libfprint-2-tod1-xps9300-bin
   - yay -S libfprint-tod-git
   - git clone https://gitlab.freedesktop.org/3v1n0/libfprint.git
@@ -12,6 +15,63 @@
   - sudo cp libfprint/libfprint-2.so.2.0.0 /usr/lib64/
   - sudo cp libfprint/tod/libfprint-2-tod.so /usr/lib64/
   - sudo cp libfprint/tod/libfprint-2-tod.so.1 /usr/lib64/
-
-* to enroll:
+*** to enroll:
   - fprintd-enroll
+
+** NEW INSTRUCTIONS
+*** works for xps 15 9510 as of june 2022
+#+BEGIN_SRC
+pacman -S fprintd         #install libfprint and fprintd
+sudo fprintd-enroll marc  #for some reason it doesn't work without sudo
+fprintd-verify marc       #checks to see that enroll worked
+#+END_SRC
+* screenlock on hibernate and suspend with fingerprint
+** install a screen locker. recommend slock or xsecure lock or something minimal like that
+** place this script in /usr/lib/lock.sh. I'll probably put it in the scripts folder of this repo so it can be symlinked
+#+BEGIN_SRC
+#!/bin/bash
+
+pid=$$
+#xsecurelock &
+slock &
+
+# block until fingerprint is verified
+until ! pidof slock || fprintd-verify marc; do
+    echo "FAILURE"
+done
+
+#kill the pid for the lock and thisPid
+#pkill xsecurelock
+sudo pkill -9 slock
+kill $pid
+#+END_SRC
+** create systemd service that runs /usr/lib/lock.sh on suspend/hibernate
+  - `sudo vim /usr/lib/systemd/system/lock.service`
+    #+BEGIN_SRC
+    [Unit]
+    Description=User resume actions
+    Before=suspend.target hibernate.target
+
+    [Service]
+    User=marc
+    Type=simple
+    Environment=DISPLAY=:0
+    ExecStart=/usr/bin/lock.sh
+
+    [Install]
+    WantedBy=suspend.target hibernate.target
+    #+END_SRC
+  - `sudo systemctl daemon-reload`
+  - `sudo systemctl enable lock`
+** create a polkit rule to always allow fprintd to run at /usr/share/polkit-1/rules.d/50-net.reactivated.fprint.device.verify.rules
+#+BEGIN_SRC
+polkit.addRule(function (action, subject) {
+    if (action.id == "net.reactivated.fprint.device.verify") {
+        return polkit.Result.YES
+    }
+})
+#+END_SRC
+- my origional issue: https://bbs.archlinux.org/viewtopic.php?pid=2045316#p2045316
+- found this script in this discussion: https://github.com/i3/i3lock/issues/210
+* unlock with fingerprint at startup.
+** you'll have to use pam-fprintd and add a pam rule. look it up, it's super easy

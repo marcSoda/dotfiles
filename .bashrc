@@ -19,6 +19,7 @@ fi
 
 #path
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
@@ -37,16 +38,21 @@ export PROJECTOR_PORT=DP3
 #system
 alias x='startx'
 alias c='clear'
+alias hb='systemctl hibernate'
 alias pacman='sudo pacman'
 alias pacup='sudo pacman -Syu'
 alias pacin='sudo pacman -S $1'
 alias pacrm='sudo pacman -R $1'
+alias peg='ps -aux | grep $1'
 alias grep='grep --color=auto'
 alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias htop='bpytop'
 alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
+alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
+alias wr='sudo systemctl restart netctl-auto@wlan0.service'
+
 
 #bluetooth
 alias btc='bluetoothctl'

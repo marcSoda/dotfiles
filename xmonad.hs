@@ -5,7 +5,7 @@ import System.Exit (exitSuccess)
 import qualified XMonad.StackSet as W
     -- Hooks
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
-import XMonad.Hooks.ManageDocks (avoidStruts, docksEventHook, manageDocks, ToggleStruts(..))
+import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
     -- Layouts and modifiers
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.LayoutModifier
@@ -86,12 +86,13 @@ myManageHook = composeAll
      [ className =? "zoom"                   --> doShift(myWorkspaces !! 6)
      , className =? "Slack"                  --> doShift(myWorkspaces !! 7)
      , className =? "firefox"                --> doShift(myWorkspaces !! 8)
-     , className =? "vlc"                    --> doShift(myWorkspaces !! 8)]
+     , className =? "vlc"                    --> doShift(myWorkspaces !! 8)
+     ] <+> namedScratchpadManageHook myScratchpads
 
 --Scratchpads
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
-                , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
+                , NS "sptScratch" spawnSpt findSpt manageSpt
                 , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient]
     where
@@ -99,9 +100,9 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnNcspot  = myTerminal ++ " -t 'ncspot Scratchpad' -e ncspot"
-        findNcspot   = title =? "ncspot Scratchpad"
-        manageNcspot = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+        spawnSpt   = myTerminal ++ " -t 'spt Scratchpad' -e bash -c 'spotifyd --no-daemon > /dev/null & spt'"
+        findSpt    = title =? "spt Scratchpad"
+        manageSpt  = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
         spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
         findEmacsClient   = title =? "emacs-scratch"
@@ -137,7 +138,7 @@ myKeys =
         , ("M-l", sendMessage Expand)                -- Expand horiz window width
     -- Scratchpads
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
-        , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
+        , ("M-m", namedScratchpadAction myScratchpads "sptScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
     -- Multimedia Keys
@@ -169,9 +170,10 @@ myKeys =
 main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar -x 0 /home/marc/.config/xmobar/xmobarrc"
-    xmonad $ def
-        { manageHook         = myManageHook <+> namedScratchpadManageHook myScratchpads
-        , handleEventHook    = docksEventHook
+    xmonad $ docks $ def
+        -- { manageHook         = myManageHook <+> manageDocks
+        { manageHook         = myManageHook
+        -- , handleEventHook    = docks
         , modMask            = myModMask
         , terminal           = myTerminal
         , startupHook        = myStartupHook

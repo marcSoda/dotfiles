@@ -20,8 +20,11 @@
 ;;M-j/k move up and down in mu4e-view-mode-map
 (define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
 (define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)
+;;make yas not interfere with autocomplete
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
+(define-key yas-minor-mode-map (kbd "<M-tab>") 'yas-expand)
 ;;ibuffer
-;; (require 'ibuffer) ;ensure ibuffer is loaded
 (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-toggle-filter-group)
 
 ;;j/k in org-agenda mode are down/up. overrides org-agenda-goto-date and org-agenda-capture
@@ -44,7 +47,8 @@
     "i s"   '(ispell                         :which-key "ispell")
     "e e"   '(eval-last-sexp                 :which-key "Eval lisp")
     "n n"   '(linum-mode                     :which-key "Show line numbers")
-    "p"     '(:keymap projectile-command-map :which-key "Projectile prefix")
+    "s s"   '(sudo-this                      :which-key "Open file in current buffer as sudo")
+    ;; "p"     '(:keymap projectile-command-map :which-key "Projectile prefix")
     "z"     '(suspend-frame                  :which-key "Suspend frame")
     "q"     '(save-buffers-kill-terminal     :which-key "Quit")
     ;;d

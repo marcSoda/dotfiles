@@ -1,21 +1,53 @@
 #!/bin/bash
 function send_notification {
-    artist=`playerctl metadata artist`
-    song=`playerctl metadata title`
-    album=`playerctl metadata album`
-    dunstify -r 1701 -t 2000 "$artist" "$song\n$album"
+	artist=$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotifyd /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/artist/{getline; getline; split($0,a,"\""); print a[2]}')
+	song=$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotifyd /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/title/{getline; split($0,a,"\""); print a[2]}')
+    dunstify -r 1701 -t 2000 "$artist" "$song"
 }
 
 case $1 in
-  play-pause)
-      playerctl play-pause
+    play-pause)
+        ACTION=PlayPause
 	;;
-  next)
-      playerctl next
-      send_notification
+    next)
+        ACTION=Next
+        send_notification
 	;;
-  previous)
-      playerctl previous
-      send_notification
-	;;
+    previous)
+        ACTION=Previous
+        send_notification
+    ;;
 esac
+
+exec dbus-send                                \
+--print-reply                                 \
+--dest="org.mpris.MediaPlayer2.spotifyd"      \
+/org/mpris/MediaPlayer2                       \
+"org.mpris.MediaPlayer2.Player.$ACTION"
+
+# # Old Script: worked great for ncspot. had to update for spotify-tui
+# # Reason: when using spotifyd, playerctl takes a super long time to resolve.
+# # The solution is to use dbus-send which is much faster, but more cumbersome
+# # Old script:
+
+# #!/bin/bash
+# function send_notification {
+#     artist=`playerctl metadata artist`
+#     song=`playerctl metadata title`
+#     album=`playerctl metadata album`
+#     dunstify -r 1701 -t 2000 "$artist" "$song\n$album"
+# }
+
+# case $1 in
+#     play-pause)
+#         playerctl play-pause
+#     ;;
+#     next)
+#         playerctl next
+#         send_notification
+# 	;;
+#     previous)
+#         playerctl previous
+#         send_notification
+# 	;;
+# esac

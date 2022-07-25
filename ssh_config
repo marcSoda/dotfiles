@@ -33,3 +33,8 @@ Host electron
 Host rtm
      HostName 147.182.135.192
      User marc
+
+Host ancilla
+     HostName 10.78.80.22
+     User marc
+

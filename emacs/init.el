@@ -20,6 +20,7 @@
 (setq bookmark-save-flag 1)                                      ;bookmarks save automatically
 (add-to-list 'term-file-aliases '("alacritty" . "xterm"))        ;make emacs-nox fully featured in alacritty
 (setq xterm-extra-capabilities nil)                              ;fixes slow startup from above command
+(setq python-shell-interpreter "/usr/bin/python")
 (setq browse-url-browser-function                                ;default browser qutebrowser
       'browse-url-generic browse-url-generic-program "qutebrowser")
 
@@ -63,8 +64,7 @@
   (setq dashboard-center-content t)
   (setq dashboard-footer-messages nil)
   (setq dashboard-set-init-info nil)
-  (setq dashboard-items '((projects  . 5)
-			              (bookmarks . 5)
+  (setq dashboard-items '((bookmarks . 5)
                           (recents   . 5)))
   (setq initial-buffer-choice (lambda () ;refresh and display dashboard buffer on emacsclient open
       (ignore-errors (org-agenda-exit))  ;close auto-opened org-agenda buffers
@@ -191,6 +191,7 @@
                                 (name . "^\\*Python")
                                 (name . "^\\*clang")
                                 (name . "^\\*tramp")
+                                (name . "^\\*gopls")
                                 (name . "^\\*Shell")))))))
     (add-hook 'ibuffer-mode-hook
         '(lambda () (ibuffer-switch-to-saved-filter-groups "main"))))
@@ -198,20 +199,6 @@
 ;;RAINBOW-DELIMITERS
 (use-package rainbow-delimiters
     :init (progn (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
-
-;;PROJECTILE
-(use-package projectile
-    :diminish projectile-mode
-    :config
-    (projectile-mode)
-    (setq projectile-track-known-projects-automatically nil)
-    :custom ((projectile-completion-system 'ivy))
-    :init
-    (when (file-directory-p "~/working/dev")
-      (setq projectile-project-search-path '("~/working/dev")))
-    (setq projectile-switch-project-action #'projectile-dired))
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
 
 (use-package treemacs
 	     :init
@@ -244,6 +231,15 @@
   scroll-conservatively 10000
   scroll-preserve-screen-position 1)
 
+;; open file in current buffer with sudo
+(defun sudo-this ()
+  (interactive)
+  (if buffer-file-name
+      (let ((to-close (current-buffer)))
+       (find-file (s-concat "/sudo:root@localhost:" buffer-file-name))
+       (kill-buffer to-close))
+    (message "No file!")))
+
 ;;WICH-KEY
 (use-package which-key :config (which-key-mode))
 
@@ -261,7 +257,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode counsel-projectile company ccls all-the-icons)))
+   '(counsel-tramp helm-tramp org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode company ccls all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

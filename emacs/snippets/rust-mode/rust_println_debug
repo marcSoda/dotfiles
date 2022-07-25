@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: rust_println_debug
+# key: >rpd
+# --
+println!("$1: {:?}", $1);

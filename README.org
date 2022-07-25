@@ -2,14 +2,7 @@
 #+AUTHOR: Marc Soda Jr.
 #+EMAIL: m@soda.fm
 
-* config.fish
-- location: `~/.config/fish/config.fish`
-- e:
-  - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
-- pass:
-  - Tool that syncs pass with ios pass through a private git repo
-- there are several other useful functions that are self explanatory
-* .bashrc (replaced by fish)
+* .bashrc
 - e:
   - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
 - pass:
@@ -23,17 +16,17 @@
 - config file for dunst
 * emacs
 - config files for emacs
-* ncspot.toml
-- proper location and name ~/.config/ncspot/config.toml
-- config file for ncspot
 * rofi.rasi
-- proper location and name ~/.config/ncspot/config.rasi
+- proper location and name ~/.config/rofi/config.rasi
 - rofi config file
-* scripts
-- bash scripts used by xmonad and xmobar
+* scripts:
+- lock.sh
+  - locks the screen and unlocks via password or fingerprint
+  - when the fingerprint is properly entered, the script kills itself, revealing the desktop
 - battery_status
   - used by xmobar
 - brightness
+  - controlls brightness and outputs to dunst
   - keybound by xmonad
 - pacupdate
   - used by xmobar
@@ -41,18 +34,19 @@
   - allows xmobar keybinding to play/pause vlc.
   - windows opened later are given priority
 - volume
+  - controlls volume and outputs to dunst
   - keybound by xmonad
 - .xinitrc
   - x11 config
+* spotify-tui.yml
+- proper location and name: ~/.config/spotify-tui/client.yml
+- config file for spotify-tui
+* spotifyd.conf
+- proper location and name: ~/.config/spotifyd/spotifyd.conf
+- config file for spotifyd
 * ssh_config
 - proper location and name ~/.ssh/config
 - config file for ssh
-* xmobarrc
-- xmobar config
-* xmonad.hs
-- xmonad config
-* unlock_gpg_on_startup
-- Read the readme in the directory for details.
 * qutebrowser:
 - config.py:
   - qutebrowser config
@@ -61,3 +55,7 @@
   - greasmonkey script to block youtube ads
   - RUN `:greasemonkey-reload` to refresh!!!
   - path: `~/.local/share/qutebrowser/greasemonkey/yt-adblock.py`
+* xmobarrc
+- xmobar config
+* xmonad.hs
+- xmonad config

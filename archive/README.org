@@ -1,0 +1,10 @@
+* ncspot.toml (replaced by spotify-tui)
+- proper location and name ~/.config/ncspot/config.toml
+- config file for ncspot
+* config.fish
+- location: `~/.config/fish/config.fish`
+- e:
+  - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
+- pass:
+  - Tool that syncs pass with ios pass through a private git repo
+- there are several other useful functions that are self explanatory

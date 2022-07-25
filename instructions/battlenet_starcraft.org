@@ -1,0 +1,17 @@
+* instructions [[https://www.youtube.com/watch?v=edznzS4MgW4&t=354s][here]]
+- download battlenet exe from blizzard
+- sudo pacman -Syu wine-staging samba winetricks lib32-libldap lib32-gnutls
+- winetricks corefonts
+- winetricks dxvk
+- winecfg
+  - select windows7 in the "windows version" dropdown
+  - select the "libraries" menu from the top
+  - enter "urctbase" in the "new override for library" field
+  - click add
+  - click apply
+  - click cancel
+- navigate to downloads
+- wine battlenet.exe or whatever its called
+- follow install instructions
+- install star craft
+- donzo
