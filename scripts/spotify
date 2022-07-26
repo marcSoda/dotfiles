@@ -1,29 +1,47 @@
 #!/bin/bash
+
 function send_notification {
-	artist=$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotifyd /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/artist/{getline; getline; split($0,a,"\""); print a[2]}')
-	song=$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotifyd /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/title/{getline; split($0,a,"\""); print a[2]}')
+	artist=$(dbus-send                              \
+             --print-reply                          \
+             --dest=org.mpris.MediaPlayer2.spotifyd \
+             /org/mpris/MediaPlayer2                \
+             org.freedesktop.DBus.Properties.Get    \
+             string:'org.mpris.MediaPlayer2.Player' \
+             string:'Metadata'                      \
+             | awk '/artist/{getline; getline; split($0,a,"\""); print a[2]}')
+	song=$(dbus-send                               \
+           --print-reply                           \
+           --dest=org.mpris.MediaPlayer2.spotifyd  \
+           /org/mpris/MediaPlayer2                 \
+           org.freedesktop.DBus.Properties.Get     \
+           string:'org.mpris.MediaPlayer2.Player'  \
+           string:'Metadata'                       \
+           | awk '/title/{getline; split($0,a,"\""); print a[2]}')
     dunstify -r 1701 -t 2000 "$artist" "$song"
+}
+
+function send_command {
+    $(dbus-send                                       \
+        --print-reply                                 \
+        --dest="org.mpris.MediaPlayer2.spotifyd"      \
+        /org/mpris/MediaPlayer2                       \
+        "org.mpris.MediaPlayer2.Player.$1")
 }
 
 case $1 in
     play-pause)
-        ACTION=PlayPause
+        send_command "PlayPause"
 	;;
     next)
-        ACTION=Next
+        send_command "Next"
         send_notification
 	;;
     previous)
-        ACTION=Previous
+        send_command "Previous"
         send_notification
     ;;
 esac
 
-exec dbus-send                                \
---print-reply                                 \
---dest="org.mpris.MediaPlayer2.spotifyd"      \
-/org/mpris/MediaPlayer2                       \
-"org.mpris.MediaPlayer2.Player.$ACTION"
 
 # # Old Script: worked great for ncspot. had to update for spotify-tui
 # # Reason: when using spotifyd, playerctl takes a super long time to resolve.
