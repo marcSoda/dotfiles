@@ -1,0 +1,21 @@
+* To create a table of contents for an ebook using calibre
+- download a pdf
+- add it to calibre
+- convert it to epub
+- right click book
+- click edit book
+- click tools
+- click table of contents
+- click edit table of contents
+- click generate toc from xpath
+  - xpath is a way to select html elements. in this case, you want to select all of the tags that correspond to the beginning of a new chapter. examine the html of the book if you need too
+- after generating the list will populate with the elements that xpath detected. once you are satisfied, click OK till you get back to the edit book menu
+  - now, a toc.ncx file will be created
+- click tools
+- click table of contents
+- click insert inline table of contents
+  - this will generate a toc.xhtml from the toc.ncx file
+- make sure everything saves
+- now plug in kindle
+- on linux, it should detect automatically with no issue.
+- upload to device and you're good to go
