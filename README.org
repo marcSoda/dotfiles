@@ -14,8 +14,12 @@
 - there are several other useful functions that are self explanatory
 * dunstrc
 - config file for dunst
+- belongs in ~/.config/dunst
 * emacs
 - config files for emacs
+* picom.conf
+- config file for picom
+- belongs in ~/.config
 * rofi.rasi
 - proper location and name ~/.config/rofi/config.rasi
 - rofi config file
