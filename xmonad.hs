@@ -56,7 +56,7 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "bash /home/marc/working/dotfiles/backgrounds/feh.sh &"
-    spawnOnce "picom --backend glx --fade-in-step=1 --fade-out-step=1 --fade-delta=0 &" --fade workaround because --no-fading-openclose was not working
+    spawnOnce "picom &"
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
@@ -100,13 +100,13 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnSpt   = myTerminal ++ " -t 'spt Scratchpad' -e bash -c 'spotifyd --no-daemon > /dev/null & spt'"
+        spawnSpt   = myTerminal ++ " -o window.opacity=1 -t 'spt Scratchpad' -e bash -c 'spotifyd --no-daemon > /dev/null & spt'"
         findSpt    = title =? "spt Scratchpad"
         manageSpt  = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
         spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
         findEmacsClient   = title =? "emacs-scratch"
-        manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+        manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.96
 
         spawnNcpamixer  = myTerminal ++ " -t 'ncpamixer Scratchpad' -e ncpamixer"
         findNcpamixer   = title =? "ncpamixer Scratchpad"
