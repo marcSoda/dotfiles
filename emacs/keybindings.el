@@ -84,6 +84,7 @@
     "o r d T" '(org-roam-dailies-goto-tomorrow       :which-key "Roam Dailies Goto Tomorrow")
     "o r d t" '(org-roam-dailies-capture-tomorrow    :which-key "Roam Dailies Capture Tomorrow")
     "o r d d" '(org-roam-dailies-goto-date           :which-key "Roam Dailies Goto Date")
+    "o r u i" '(org-roam-ui-open                     :which-key "Open org-roam-ui in browser")
     "o A"     '(org-agenda                           :which-key "Org agenda")
     "o a s"   '(org-todo                             :which-key "Org change state")
     "o a d s" '(org-schedule                         :which-key "Org schedule")

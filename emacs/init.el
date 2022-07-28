@@ -143,21 +143,28 @@
             "* %?"
             :target (file+head "%<%Y-%m-%d>.org.gpg"
                                 "#+title: %<%Y-%m-%d>\n")))))
+;; ORG-ROAM-UI
+(use-package org-roam-ui
+    :after org-roam
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow nil
+          org-roam-ui-update-on-save t))
 
 ;;EVIL-ORG
 (use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init (add-hook 'org-mode-hook 'evil-org-mode))
+    :commands evil-org-mode
+    :after org
+    :init (add-hook 'org-mode-hook 'evil-org-mode))
 (use-package org-tempo)
 
 ;;SPELLCHECK NOTE: to install the dictionary: pacman -S hunspell-en_us
 (use-package flyspell
-  :config
-  (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
-  (setq ispell-dictionary "english")
-  (setq ispell-local-dictionary-alist
-    '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8))))
+    :config
+    (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
+    (setq ispell-dictionary "english")
+    (setq ispell-local-dictionary-alist
+        '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8))))
 
 ;;MAGIT
 (use-package magit)
@@ -169,10 +176,11 @@
 ;;IBUFFER setup
 (use-package ibuf-ext)
 (use-package ibuffer
-  :config
-    (setq ibuffer-expert t)    ;;don't ask for confirmation when deleting buffers
+    :config
+    (setq ibuffer-expert t))    ;;don't ask for confirmation when deleting buffers
+
     (setq ibuffer-saved-filter-groups
-            (quote (("main"
+            (quote (("Default"
                     ("other" (or
                                 (name . "^\\*scratch\\*$")
                                 (name . "^\\*Messages\\*$")
@@ -192,9 +200,13 @@
                                 (name . "^\\*clang")
                                 (name . "^\\*tramp")
                                 (name . "^\\*gopls")
+                                (name . "^\\*httpd*")
                                 (name . "^\\*Shell")))))))
+
     (add-hook 'ibuffer-mode-hook
-        '(lambda () (ibuffer-switch-to-saved-filter-groups "main"))))
+        '(lambda ()
+            (ibuffer-switch-to-saved-filter-groups "Default")
+            (setq ibuffer-hidden-filter-groups (list "other"))))
 
 ;;RAINBOW-DELIMITERS
 (use-package rainbow-delimiters
@@ -257,7 +269,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(counsel-tramp helm-tramp org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode company ccls all-the-icons)))
+   '(ibuffer org-roam-ui counsel-tramp helm-tramp org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode company ccls all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
