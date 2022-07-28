@@ -56,8 +56,9 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "bash /home/marc/working/dotfiles/backgrounds/feh.sh &"
-    spawnOnce "picom &"
+    spawnOnce "picom --backend glx &"
     spawnOnce "dunst &"
+    spawnOnce "spotifyd &"
     spawnOnce "dropbox start &"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
     spawnOnce "xsetroot -cursor_name left_ptr" --set cursor shape
@@ -100,7 +101,7 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnSpt   = myTerminal ++ " -o window.opacity=1 -t 'spt Scratchpad' -e bash -c 'spotifyd --no-daemon > /dev/null & spt'"
+        spawnSpt   = myTerminal ++ " -o window.opacity=1 -t 'spt Scratchpad' -e spt"
         findSpt    = title =? "spt Scratchpad"
         manageSpt  = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
