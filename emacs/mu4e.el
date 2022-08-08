@@ -28,14 +28,13 @@
         :match-func
         (lambda (msg)
           (when msg
-            (string-prefix-p "/msoda412-gmail" (mu4e-message-field msg :maildir))))
+            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
         :vars '((user-mail-address . "m.soda412@gmail.com")
                 (user-full-name    . "Marc Soda Jr.")
-                (mu4e-drafts-folder  . "/msoda412-gmail/drafts")
-                (mu4e-sent-folder  . "/msoda412-gmail/sent")
-                (mu4e-refile-folder  . "/msoda412-gmail/all")
-                (mu4e-trash-folder  . "/msoda412-gmail/trash")
-
+                (mu4e-drafts-folder  . "/gmail/[Gmail]/Drafts")
+                (mu4e-sent-folder  . "/gmail/[Gmail]/Sent Mail")
+                (mu4e-refile-folder  . "/gmail/[Gmail]/All Mail")
+                (mu4e-trash-folder  . "/gmail/[Gmail]/Trash")
                 (message-send-mail-function . smtpmail-send-it)
                 (starttls-use-gnutls . t)
                 (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
@@ -49,13 +48,13 @@
         :match-func
         (lambda (msg)
           (when msg
-            (string-prefix-p "/masa20-lehigh" (mu4e-message-field msg :maildir))))
+            (string-prefix-p "/lehigh" (mu4e-message-field msg :maildir))))
         :vars '((user-mail-address . "masa20@lehigh.edu")
                 (user-full-name    . "Marc Soda Jr.")
-                (mu4e-drafts-folder  . "/masa20-lehigh/drafts")
-                (mu4e-sent-folder  . "/masa20-lehigh/sent")
-                (mu4e-refile-folder  . "/masa20-lehigh/all")
-                (mu4e-trash-folder  . "/masa20-lehigh/trash")
+                (mu4e-drafts-folder  . "/lehigh/[Gmail]/Drafts")
+                (mu4e-sent-folder  . "/lehigh/[Gmail]/Sent Mail")
+                (mu4e-refile-folder  . "/lehigh/[Gmail]/All Mail")
+                (mu4e-trash-folder  . "/lehigh/[Gmail]/Trash")
 
                 (message-send-mail-function . smtpmail-send-it)
                 (starttls-use-gnutls . t)
@@ -64,20 +63,19 @@
                 (smtpmail-default-smtp-server . "smtp.gmail.com")
                 (smtpmail-smtp-server ."smtp.gmail.com")
                 (smtpmail-smtp-service . 587)))
-        ;; taken out because I am no longer using protonmail with mu4e indefinitely
         ;;protonmail
         (make-mu4e-context
           :name "protonmail"
           :match-func
           (lambda (msg)
             (when msg
-              (string-prefix-p "/m-soda-protonmail" (mu4e-message-field msg :maildir))))
+              (string-prefix-p "/proton" (mu4e-message-field msg :maildir))))
           :vars '((user-mail-address . "m@soda.fm")
             (user-full-name    . "Marc Soda Jr.")
-            (mu4e-drafts-folder  . "/m-soda-protonmail/drafts")
-            (mu4e-sent-folder  . "/m-soda-protonmail/sent")
-            (mu4e-refile-folder  . "/m-soda-protonmail/all")
-            (mu4e-trash-folder  . "/m-soda-protonmail/trash")
+            (mu4e-drafts-folder  . "/proton/Drafts")
+            (mu4e-sent-folder  . "/proton/Sent")
+            (mu4e-refile-folder  . "/proton/All Mail")
+            (mu4e-trash-folder  . "/proton/Trash")
 
             (message-send-mail-function . smtpmail-send-it)
             (smtpmail-auth-credentials . "~/.authinfo.gpg")
