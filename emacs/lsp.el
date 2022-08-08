@@ -18,21 +18,6 @@
                         :major-modes '(go-mode)
                         :remote? t
                         :server-id 'electron.soda.fm))
-    ;; (lsp-register-client
-    ;; (make-lsp-client :new-connection (lsp-tramp-connection "pyright")
-    ;;                     :major-modes '(python-mode)
-    ;;                     :remote? t
-    ;;                     :server-id 'eltanin.dept.lehigh.edu)))
-    ;; (lsp-register-client
-    ;; (make-lsp-client :new-connection (lsp-tramp-connection "pyright")
-    ;;                     :major-modes '(python-mode)
-    ;;                     :remote? t
-    ;;                     :server-id 'eltanin.dept.lehigh.edu))
-    ;; (lsp-register-client
-    ;; (make-lsp-client :new-connection (lsp-tramp-connection "/scp:das:/home/masa20/working/backend/venv/bin/pyright")
-    ;;                     :major-modes '(python-mode)
-    ;;                     :remote? t
-    ;;                     :server-id 'das-lab.org)))
   ;; :config
   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
@@ -59,14 +44,10 @@
   (yas-reload-all)
   (add-hook 'prog-mode-hook 'yas-minor-mode)
   (yas-minor-mode))
-  ;; (yas-global-mode 1))
 
 
 ;; PYTHON
 (use-package lsp-pyright)
-  ;; :hook (python-mode . (lambda ()
-  ;;                         (require 'lsp-pyright)
-  ;;                         (lsp-deferred))))
 
 (use-package python-mode
   :mode "//.py//'")
@@ -79,6 +60,7 @@
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
   (setq lsp-rust-analyzer-proc-macro-enable t)
   (setq lsp-eldoc-render-all nil)
+  (setq-default lsp-rust-analyzer-proc-macro-enable nil)
   (setq compilation-scroll-output t))
 
 ;;C++
@@ -104,14 +86,7 @@
 (setq company-idle-delay 0)
 (setq company-minimum-prefix-length 1)
 
-;; Go
-;; (defun lsp-go-install-save-hooks ()
-;;     (add-hook 'before-save-hook #'lsp-format-buffer t t)
-;;     (add-hook 'before-save-hook #'lsp-organize-imports t t))
-;; (use-package go-mode
-;;     (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
-;;     (add-hook 'go-mode-hook #'lsp-deferred)
-;;     (add-hook 'go-mode-hook #'yas-minor-mode))
+;; Go Mode
 (use-package go-mode
   :config
   ;(add-hook 'before-save-hook 'gofmt-before-save)
