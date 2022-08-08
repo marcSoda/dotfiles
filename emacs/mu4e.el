@@ -65,25 +65,24 @@
                 (smtpmail-smtp-server ."smtp.gmail.com")
                 (smtpmail-smtp-service . 587)))
         ;; taken out because I am no longer using protonmail with mu4e indefinitely
-        ;; ;;protonmail
-        ;; (make-mu4e-context
-        ;;   :name "protonmail"
-        ;;   :match-func
-        ;;   (lambda (msg)
-        ;;     (when msg
-        ;;       (string-prefix-p "/m-soda-protonmail" (mu4e-message-field msg :maildir))))
-        ;;   :vars '((user-mail-address . "m@soda.fm")
-        ;;     (user-full-name    . "Marc Soda Jr.")
-        ;;     (mu4e-drafts-folder  . "/m-soda-protonmail/drafts")
-        ;;     (mu4e-sent-folder  . "/m-soda-protonmail/sent")
-        ;;     (mu4e-refile-folder  . "/m-soda-protonmail/all")
-        ;;     (mu4e-trash-folder  . "/m-soda-protonmail/trash")
+        ;;protonmail
+        (make-mu4e-context
+          :name "protonmail"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/m-soda-protonmail" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "m@soda.fm")
+            (user-full-name    . "Marc Soda Jr.")
+            (mu4e-drafts-folder  . "/m-soda-protonmail/drafts")
+            (mu4e-sent-folder  . "/m-soda-protonmail/sent")
+            (mu4e-refile-folder  . "/m-soda-protonmail/all")
+            (mu4e-trash-folder  . "/m-soda-protonmail/trash")
 
-        ;;     (message-send-mail-function . smtpmail-send-it)
-        ;;     (smtpmail-auth-credentials . "~/.authinfo.gpg")
-        ;;     (smtpmail-smtp-server . "127.0.0.1")
-        ;;     (smtpmail-stream-type . starttls)
-        ;;     (smtpmail-smtp-service . 1025))))))
-	)))
+            (message-send-mail-function . smtpmail-send-it)
+            (smtpmail-auth-credentials . "~/.authinfo.gpg")
+            (smtpmail-smtp-server . "127.0.0.1")
+            (smtpmail-stream-type . starttls)
+            (smtpmail-smtp-service . 1025))))))
 
 ;; keybindings defined in keybindings.el
