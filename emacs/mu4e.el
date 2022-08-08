@@ -2,7 +2,7 @@
 (use-package mu4e
   :ensure nil
   :config
-  (setq mu4e-get-mail-command "mbsync -c ~/.config/mu4e/mbsyncrc -a")
+  (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-main-view-hide-addresses t)
   (setq mu4e-compose-complete-only-personal nil)
   (setq mu4e-attachment-dir "~/working/downloads")

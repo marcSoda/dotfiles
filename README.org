@@ -17,6 +17,9 @@
 - belongs in ~/.config/dunst
 * emacs
 - config files for emacs
+* mu4e
+- see README in mu4e directory
+- belings in ~/.mbsyncrc
 * picom.conf
 - config file for picom
 - belongs in ~/.config
