@@ -12,6 +12,11 @@ Host sunlab
      User masa20
      ProxyJump gateway
 
+Host edgar1
+     HostName edgar1.cse.lehigh.edu
+     User masa20
+     ProxyJump gateway
+
 Host eltanin
      HostName eltanin.dept.lehigh.edu
      User masa20
