@@ -29,6 +29,9 @@ export EDITOR=vim
 #set .lesshst location
 export LESSHISTFILE=-
 
+#error with weird java windows:
+export _JAVA_AWT_WM_NONREPARENTING=1
+
 #set external display NOTE: I don't think I use this anymore
 export EXTERNAL_DISPLAY=DP1
 export PROJECTOR_PORT=DP3
@@ -52,6 +55,10 @@ alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
+
+#temporary
+alias sqldev='ssh -L 1521:localhost:1521 -N -f edgar1 && bash /opt/sqldeveloper/sqldeveloper.sh & disown'
+
 
 
 #bluetooth
