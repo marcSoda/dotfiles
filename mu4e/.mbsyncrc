@@ -1,27 +1,3 @@
-IMAPAccount gmail
-Host imap.gmail.com
-User m.soda412@gmail.com
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep m.soda412@gmail.com | awk '{print $8}'"
-SSLType IMAPS
-CertificateFile /etc/ssl/certs/ca-certificates.crt
-
-IMAPStore gmail-remote
-Account gmail
-
-MaildirStore gmail-local
-SubFolders Verbatim
-Path ~/.mail/gmail/
-Inbox ~/.mail/gmail/inbox
-
-Channel gmail
-Master :gmail-remote:
-Slave :gmail-local:
-Patterns *
-Create Both
-SyncState *
-
-#===================================================================
-
 IMAPAccount lehigh
 Host imap.gmail.com
 User masa20@lehigh.edu
@@ -70,3 +46,28 @@ Slave :proton-local:
 Patterns *
 Create Both
 SyncState *
+
+#----------------------------------------------------------------------------------------------------------
+#NOTE: the following config works but I no longer use m.soda412@gmail.com
+
+# IMAPAccount gmail
+# Host imap.gmail.com
+# User m.soda412@gmail.com
+# PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.config/mu4e/.authinfo.gpg | grep m.soda412@gmail.com | awk '{print $8}'"
+# SSLType IMAPS
+# CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+# IMAPStore gmail-remote
+# Account gmail
+
+# MaildirStore gmail-local
+# SubFolders Verbatim
+# Path ~/.mail/gmail/
+# Inbox ~/.mail/gmail/inbox
+
+# Channel gmail
+# Master :gmail-remote:
+# Slave :gmail-local:
+# Patterns *
+# Create Both
+# SyncState *
