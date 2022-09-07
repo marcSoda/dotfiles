@@ -92,7 +92,7 @@ myManageHook = composeAll
 --Scratchpads
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
-                , NS "sptScratch" spawnSpt findSpt manageSpt
+                , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
                 , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient]
     where
@@ -100,10 +100,9 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnSpt   = myTerminal ++ " -o window.opacity=1 -t 'spt Scratchpad' -e bash -c 'spotifyd --no-daemon > /dev/null & spt'"
-
-        findSpt    = title =? "spt Scratchpad"
-        manageSpt  = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+        spawnNcspot  = myTerminal ++ " -t 'ncspot Scratchpad' -e ncspot"
+        findNcspot   = title =? "ncspot Scratchpad"
+        manageNcspot = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
         spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
         findEmacsClient   = title =? "emacs-scratch"
@@ -139,7 +138,7 @@ myKeys =
         , ("M-l", sendMessage Expand)                -- Expand horiz window width
     -- Scratchpads
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
-        , ("M-m", namedScratchpadAction myScratchpads "sptScratch")
+        , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
     -- Multimedia Keys
