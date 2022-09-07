@@ -9,39 +9,28 @@
   (setq mu4e-headers-skip-duplicates t)
   (setq mu4e-headers-include-related nil)
   (setq mu4e-change-filenames-when-moving t)
+  (setq message-kill-buffer-on-exit t)
+  (setq mu4e-view-show-images t)
+  (setq mu4e-view-show-addresses t)
+  (setq mu4e-headers-auto-update t)
+  (setq mu4e-view-prefer-html t)
+  (setq starttls-use-gnutls t)
+  (setq smtpmail-stream-type 'starttls)
   (setq mu4e-context-policy 'pick-first)
   (setq mu4e-compose-context-policy 'always-ask)
-  (setq user-mail-address "masa20@lehigh.edu")
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-  (setq message-send-mail-function 'smtpmail-send-it
-	smtpmail-auth-credentials "~/.authinfo.gpg"
-	smtpmail-smtp-server "127.0.0.1"
-  smtpmail-stream-type 'starttls
-	smtpmail-smtp-service 1025)
+  ;; (setq mu4e-context-policy 'pick-first)
+  ;; (setq mu4e-compose-context-policy 'always-ask)
+  ;; (setq user-mail-address "masa20@lehigh.edu")
+  ;; (setq message-send-mail-function 'smtpmail-send-it
+  ;;   smtpmail-auth-credentials "~/.authinfo.gpg"
+  ;;   smtpmail-smtp-server "127.0.0.1"
+  ;; smtpmail-stream-type 'starttls
+  ;;   smtpmail-smtp-service 1025)
   (require 'mu4e-context)
 
   (setq mu4e-contexts
     (list
-      ;; gmail account
-      (make-mu4e-context
-        :name "gmail"
-        :match-func
-        (lambda (msg)
-          (when msg
-            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-        :vars '((user-mail-address . "m.soda412@gmail.com")
-                (user-full-name    . "Marc Soda Jr.")
-                (mu4e-drafts-folder  . "/gmail/[Gmail]/Drafts")
-                (mu4e-sent-folder  . "/gmail/[Gmail]/Sent Mail")
-                (mu4e-refile-folder  . "/gmail/[Gmail]/All Mail")
-                (mu4e-trash-folder  . "/gmail/[Gmail]/Trash")
-                (message-send-mail-function . smtpmail-send-it)
-                (starttls-use-gnutls . t)
-                (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
-                (smtpmail-auth-credentials . "~/.authinfo.gpg")
-                (smtpmail-default-smtp-server . "smtp.gmail.com")
-                (smtpmail-smtp-server ."smtp.gmail.com")
-                (smtpmail-smtp-service . 587)))
       ;; lehigh account
       (make-mu4e-context
         :name "lehigh"
@@ -84,3 +73,26 @@
             (smtpmail-smtp-service . 1025))))))
 
 ;; keybindings defined in keybindings.el
+
+
+;;GMAIL CONTEXT THAT I NO LONGER USE, but still works
+      ;; ;; gmail account
+      ;; (make-mu4e-context
+      ;;   :name "gmail"
+      ;;   :match-func
+      ;;   (lambda (msg)
+      ;;     (when msg
+      ;;       (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+      ;;   :vars '((user-mail-address . "m.soda412@gmail.com")
+      ;;           (user-full-name    . "Marc Soda Jr.")
+      ;;           (mu4e-drafts-folder  . "/gmail/[Gmail]/Drafts")
+      ;;           (mu4e-sent-folder  . "/gmail/[Gmail]/Sent Mail")
+      ;;           (mu4e-refile-folder  . "/gmail/[Gmail]/All Mail")
+      ;;           (mu4e-trash-folder  . "/gmail/[Gmail]/Trash")
+      ;;           (message-send-mail-function . smtpmail-send-it)
+      ;;           (starttls-use-gnutls . t)
+      ;;           (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
+      ;;           (smtpmail-auth-credentials . "~/.authinfo.gpg")
+      ;;           (smtpmail-default-smtp-server . "smtp.gmail.com")
+      ;;           (smtpmail-smtp-server ."smtp.gmail.com")
+      ;;           (smtpmail-smtp-service . 587)))

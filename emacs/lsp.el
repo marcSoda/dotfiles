@@ -8,18 +8,16 @@
     (lsp-signature-render-documentation nil)
     (lsp-lens-enable nil)
     :config
-    ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
     (if (boundp 'tramp-remote-path)
         (progn
             (add-to-list 'tramp-remote-path "/home/marc/go/bin")
             (add-to-list 'tramp-remote-path 'tramp-own-remote-path)))
     (lsp-register-client
-    (make-lsp-client :new-connection (lsp-tramp-connection "gopls")
-                        :major-modes '(go-mode)
-                        :remote? t
-                        :server-id 'electron.soda.fm))
-  ;; :config
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+        (make-lsp-client :new-connection (lsp-tramp-connection "gopls")
+                         :major-modes '(go-mode)
+                         :remote? t
+                         :server-id 'electron.soda.fm))
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 (use-package lsp-ui
   :ensure
