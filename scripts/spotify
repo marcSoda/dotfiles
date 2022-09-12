@@ -1,71 +1,68 @@
 #!/bin/bash
-
 function send_notification {
-	artist=$(dbus-send                              \
-             --print-reply                          \
-             --dest=org.mpris.MediaPlayer2.spotifyd \
-             /org/mpris/MediaPlayer2                \
-             org.freedesktop.DBus.Properties.Get    \
-             string:'org.mpris.MediaPlayer2.Player' \
-             string:'Metadata'                      \
-             | awk '/artist/{getline; getline; split($0,a,"\""); print a[2]}')
-	song=$(dbus-send                               \
-           --print-reply                           \
-           --dest=org.mpris.MediaPlayer2.spotifyd  \
-           /org/mpris/MediaPlayer2                 \
-           org.freedesktop.DBus.Properties.Get     \
-           string:'org.mpris.MediaPlayer2.Player'  \
-           string:'Metadata'                       \
-           | awk '/title/{getline; split($0,a,"\""); print a[2]}')
-    dunstify -r 1701 -t 2000 "$artist" "$song"
-}
-
-function send_command {
-    $(dbus-send                                       \
-        --print-reply                                 \
-        --dest="org.mpris.MediaPlayer2.spotifyd"      \
-        /org/mpris/MediaPlayer2                       \
-        "org.mpris.MediaPlayer2.Player.$1")
+    artist=`playerctl metadata artist`
+    song=`playerctl metadata title`
+    album=`playerctl metadata album`
+    dunstify -r 1701 -t 2000 "$artist" "$song\n$album"
 }
 
 case $1 in
     play-pause)
-        send_command "PlayPause"
-	;;
+        playerctl play-pause
+    ;;
     next)
-        send_command "Next"
+        playerctl next
         send_notification
 	;;
     previous)
-        send_command "Previous"
+        playerctl previous
         send_notification
-    ;;
+	;;
 esac
 
 
-# # Old Script: worked great for ncspot. had to update for spotify-tui
-# # Reason: when using spotifyd, playerctl takes a super long time to resolve.
-# # The solution is to use dbus-send which is much faster, but more cumbersome
-# # Old script:
-
+#THIS SCRIPT IS FOR USE WITH MY OLD SPOTIFY_TUI SETUP
+# Reason why above script does not work for spotify_tui: when using spotifyd, playerctl takes a super long time to resolve.
+# The solution is to use dbus-send which is much faster, but more cumbersome
 # #!/bin/bash
 # function send_notification {
-#     artist=`playerctl metadata artist`
-#     song=`playerctl metadata title`
-#     album=`playerctl metadata album`
-#     dunstify -r 1701 -t 2000 "$artist" "$song\n$album"
+# 	artist=$(dbus-send                              \
+#              --print-reply                          \
+#              --dest=org.mpris.MediaPlayer2.spotifyd \
+#              /org/mpris/MediaPlayer2                \
+#              org.freedesktop.DBus.Properties.Get    \
+#              string:'org.mpris.MediaPlayer2.Player' \
+#              string:'Metadata'                      \
+#              | awk '/artist/{getline; getline; split($0,a,"\""); print a[2]}')
+# 	song=$(dbus-send                               \
+#            --print-reply                           \
+#            --dest=org.mpris.MediaPlayer2.spotifyd  \
+#            /org/mpris/MediaPlayer2                 \
+#            org.freedesktop.DBus.Properties.Get     \
+#            string:'org.mpris.MediaPlayer2.Player'  \
+#            string:'Metadata'                       \
+#            | awk '/title/{getline; split($0,a,"\""); print a[2]}')
+#     dunstify -r 1701 -t 2000 "$artist" "$song"
+# }
+
+# function send_command {
+#     $(dbus-send                                       \
+#         --print-reply                                 \
+#         --dest="org.mpris.MediaPlayer2.spotifyd"      \
+#         /org/mpris/MediaPlayer2                       \
+#         "org.mpris.MediaPlayer2.Player.$1")
 # }
 
 # case $1 in
 #     play-pause)
-#         playerctl play-pause
-#     ;;
+#         send_command "PlayPause"
+# 	;;
 #     next)
-#         playerctl next
+#         send_command "Next"
 #         send_notification
 # 	;;
 #     previous)
-#         playerctl previous
+#         send_command "Previous"
 #         send_notification
-# 	;;
+#     ;;
 # esac
