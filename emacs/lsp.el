@@ -43,7 +43,6 @@
   (add-hook 'prog-mode-hook 'yas-minor-mode)
   (yas-minor-mode))
 
-
 ;; PYTHON
 (use-package lsp-pyright)
 
@@ -91,6 +90,9 @@
   (add-hook 'go-mode-hook #'lsp-deferred)
   :custom
   (gofmt-command "goimports"))
+
+;; Java Mode
+(add-hook 'java-mode-hook #'lsp-deferred)
 
 ;; Start LSP Mode and YASnippet mode
 

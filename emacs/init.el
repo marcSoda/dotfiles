@@ -201,6 +201,7 @@
                                 (name . "^\\*tramp")
                                 (name . "^\\*gopls")
                                 (name . "^\\*httpd*")
+                                (name . "^\\*jdtls*")
                                 (name . "^\\*Shell")))))))
 
     (add-hook 'ibuffer-mode-hook
@@ -269,7 +270,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ibuffer org-roam-ui counsel-tramp helm-tramp org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode company ccls all-the-icons)))
+   '(java-mode lsp-java php-mode ibuffer org-roam-ui counsel-tramp helm-tramp org yasnippet-classic-snippets yaml-mode xclip which-key web-mode vterm use-package unity smex rustic rainbow-delimiters python-mode org-roam org-bullets magit lsp-ui lsp-pyright lsp-ivy humanoid-themes haskell-mode handlebars-mode go-mode general flycheck evil-surround evil-org evil-collection doom-themes doom-modeline docker-tramp dashboard dap-mode csharp-mode company ccls all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

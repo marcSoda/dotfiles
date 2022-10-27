@@ -17,6 +17,7 @@
 - Install goimapnotify
 - Each goimapnotify config (should be one config per email) runs with a separate goimapnotify daemon. They are user processes (ie systemctl --user)
 - To use, create imapnotify systemd services (one per email) with `systemctl --user edit goimapnotify@<email>.service
+  - where <email> is either gmail, protonmail, or lehigh (as of 2022)
 - example config:
     #+BEGIN_SRC
     [Unit]

@@ -135,7 +135,7 @@ za() {
 #tmux
 tm() {
     if [[ $# = 0 ]]; then
-        /usr/bin/tmux -f /home/marc/working/dotfiles/.tmux.conf
+        /usr/bin/tmux
     elif [[ $1 = "-a" ]]; then
         /usr/bin/tmux attach-session -t $2
     elif [[ $1 = "-k" ]]; then
@@ -159,3 +159,5 @@ pass() {
         /usr/bin/pass "$@"
     fi
 }
+
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh

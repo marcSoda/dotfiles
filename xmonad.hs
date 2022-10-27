@@ -59,6 +59,7 @@ myStartupHook = do
     spawnOnce "picom --backend glx &"
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
+    spawnOnce "tmux new-session -d"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
     spawnOnce "xsetroot -cursor_name left_ptr" --set cursor shape
     spawnOnce "xset r rate 220 40" --keyboard speed
@@ -94,9 +95,10 @@ myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
                 , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
-                , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient]
+                , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
+                , NS "thunderScratch" spawnThunderScratch findThunderScratch manageThunderScratch]
     where
-        spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad'"
+        spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad' -e tmux attach-session -t 0"
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
@@ -112,13 +114,17 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findNcpamixer   = title =? "ncpamixer Scratchpad"
         manageNcpamixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
+        spawnThunderScratch  = "thunderbird"
+        findThunderScratch   = className =? "thunderbird"
+        manageThunderScratch = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+
 --Keybindings
 myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
         [ ("M-S-q", io exitSuccess)         -- Quit xmonad
     -- Applications
-        , ("M-S-<Return>", spawn (myTerminal))
+        , ("M-S-<Return>", spawn (myTerminal ++ " -e tmux attach-session -t 0"))
         , ("M-S-b", spawn (myBrowser))
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
@@ -141,6 +147,7 @@ myKeys =
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
+        , ("M-e", namedScratchpadAction myScratchpads "thunderScratch")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))
