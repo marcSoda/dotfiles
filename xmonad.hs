@@ -137,7 +137,7 @@ myKeys =
         , ("M-S-m", windows W.swapMaster) -- Swap the focused window and the master window
     -- Layouts
         , ("M-<Space>", sendMessage NextLayout)      -- Switch to next layout
-        , ("M-b", sendMessage ToggleStruts)          -- Toggles noborder
+        , ("M-x", sendMessage ToggleStruts)          -- Toggles noborder
         , ("M-t", withFocused $ windows . W.sink)    -- Push floating window back to tile
     -- Window resizing
         , ("M-h", sendMessage Shrink)                -- Shrink horiz window width
