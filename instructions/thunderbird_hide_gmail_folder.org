@@ -1,0 +1,5 @@
+1. right click on the gmail account folder in the tree to the left
+2. settings
+3. server settings
+4. advanced
+5. set `IMAP Server Directory` to `[Gmail]` without the ticks
