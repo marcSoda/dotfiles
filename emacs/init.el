@@ -48,7 +48,7 @@
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(magit dashboard vterm dired ibuffer mu4e))
+  (setq evil-collection-mode-list '(magit dashboard vterm dired ibuffer))
   (evil-collection-init))
 
 ;;EVIL-SURROUND
@@ -261,7 +261,6 @@
 ;;   )
 
 ;;LOAD FILES
-(load-file (expand-file-name "mu4e.el" user-emacs-directory))
 (load-file (expand-file-name "keybindings.el" user-emacs-directory))
 (load-file (expand-file-name "lsp.el" user-emacs-directory))
 (custom-set-variables

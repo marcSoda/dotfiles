@@ -17,9 +17,6 @@
 ;;S-j/k to navigate faster
 (define-key evil-normal-state-map (kbd "J") 'evil-forward-paragraph)
 (define-key evil-normal-state-map (kbd "K") 'evil-backward-paragraph)
-;;M-j/k move up and down in mu4e-view-mode-map
-(define-key mu4e-view-mode-map (kbd "M-j") 'mu4e-view-headers-next)
-(define-key mu4e-view-mode-map (kbd "M-k") 'mu4e-view-headers-prev)
 ;;make yas not interfere with autocomplete
 (define-key yas-minor-mode-map (kbd "<tab>") nil)
 (define-key yas-minor-mode-map (kbd "TAB") nil)
@@ -99,8 +96,6 @@
     "m g"   '(magit-status             :which-key "magit")
     "m c"   '(with-editor-finish       :which-key "with-editor-finish")
     "m k"   '(with-editor-cancel       :which-key "with-editor-cancel")
-    "m u"   '(mu4e                     :which-key "mu4e")
-    "m r"   '(mu4e-update-index        :which-key "mu4e-update-index")
     ;; t
     "t t"   '(treemacs-select-window    :which-key "treemacs-select-window")
     "t E"   '(treemacs-edit-workspaces  :which-key "treemacs-edit-workspaces")
@@ -117,28 +112,3 @@
     "w k"   '(evil-window-up           :which-key "Window up")
     "w l"   '(evil-window-right        :which-key "Window right")
     "w w"   '(save-buffer              :which-key "Save buffer"))
-
-;MU4E KEYBINDINGS
-(general-define-key
-    :states 'normal
-    :keymaps '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-compose-mode-map)
-    :prefix "SPC"
-    "" nil
-    "p i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/proton/INBOX"))   :which-key "Protonmail Inbox")
-    "p a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/proton/All Mail"))     :which-key "Protonmail All Mail")
-    "p s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/proton/Sent"))    :which-key "Protonmail Sent")
-    "p d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/proton/Drafts"))  :which-key "Protonmail Drafts")
-    ;; "p f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/proton/Starred")) :which-key "Protonmail Starred")
-    "p t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/proton/Trash"))   :which-key "Protonmail Trash")
-    "l i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/lehigh/inbox"))   :which-key "Lehigh Inbox")
-    "l a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/lehigh/[Gmail]/All Mail"))     :which-key "Lehigh All")
-    "l s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/lehigh/[Gmail]/Sent Mail"))    :which-key "Lehigh Sent")
-    "l d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/lehigh/[Gmail]/Drafts"))  :which-key "Lehigh Drafts")
-    "l f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/lehigh/[Gmail]/Starred")) :which-key "Lehigh Starred")
-    "l t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/lehigh/[Gmail]/Trash"))   :which-key "Lehigh Trash"))
-    ;; "g i" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/gmail/inbox"))   :which-key "Gmail Inbox")
-    ;; "g a" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/gmail/[Gmail]/All Mail"))     :which-key "Gmail All Mail")
-    ;; "g s" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/gmail/[Gmail]/Sent Mail"))    :which-key "Gmail Sent")
-    ;; "g d" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/gmail/[Gmail]/Drafts"))  :which-key "Gmail Drafts")
-    ;; "g f" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/gmail/[Gmail]/Starred")) :which-key "Gmail Starred")
-    ;; "g t" '((lambda() (interactive) (mu4e~headers-jump-to-maildir "/gmail/[Gmail]/Trash"))   :which-key "Gmail Trash"))
