@@ -142,6 +142,8 @@ tm() {
         /usr/bin/tmux kill-session -t $2
     elif [[ $1 = "-l" ]]; then
         /usr/bin/tmux list-sessions
+    elif [[ $1 = "-c" ]]; then
+        /usr/bin/tmux new-session $2
     fi
 }
 
@@ -161,3 +163,6 @@ pass() {
 }
 
 [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+
+#enable starship prompt
+eval "$(starship init bash)"

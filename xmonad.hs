@@ -59,7 +59,7 @@ myStartupHook = do
     spawnOnce "picom --backend glx &"
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
-    spawnOnce "tmux new-session -d"
+    spawnOnce "tmux new-session -t main"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
     spawnOnce "xsetroot -cursor_name left_ptr" --set cursor shape
     spawnOnce "xset r rate 220 40" --keyboard speed
@@ -98,7 +98,7 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
                 , NS "thunderScratch" spawnThunderScratch findThunderScratch manageThunderScratch]
     where
-        spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad' -e tmux attach-session -t 0"
+        spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad' -e tmux new-session -t main"
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
@@ -124,7 +124,7 @@ myKeys =
     -- Xmonad
         [ ("M-S-q", io exitSuccess)         -- Quit xmonad
     -- Applications
-        , ("M-S-<Return>", spawn (myTerminal ++ " -e tmux attach-session -t 0"))
+        , ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
         , ("M-S-b", spawn (myBrowser))
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
@@ -147,7 +147,7 @@ myKeys =
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
-        , ("M-e", namedScratchpadAction myScratchpads "thunderScratch")
+        , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))
