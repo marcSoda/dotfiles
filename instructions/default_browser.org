@@ -1,0 +1,18 @@
+* this will change the default browser using xdg
+- works for thunderbird and slack and probably a lot of other stuff
+* steps
+1. create a .desktop entry for the browser (qutebrowser in this example) as ~/.local/share/applications/{name}.desktop
+    #+BEGIN-SRC
+    [Desktop Entry]
+    Encoding=UTF-8
+    Version=1.0
+    Type=Application
+    NoDisplay=true
+    Exec=/usr/bin/qutebrowser %u
+    Name=Qutebrowser
+    Comment=Custom definition for Qutebrowser
+    #+END-SRC
+2. Run these in bash
+   - xdg-mime default qutebrowser.desktop x-scheme-handler/http
+   - xdg-mime default qutebrowser.desktop x-scheme-handler/https
+3. Should work now
