@@ -57,11 +57,6 @@ alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/0
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
 
-#temporary
-alias sqldev='ssh -L 1521:localhost:1521 -N -f edgar1 && bash /opt/sqldeveloper/sqldeveloper.sh & disown'
-
-
-
 #bluetooth
 alias btc='bluetoothctl'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'

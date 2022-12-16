@@ -5,6 +5,8 @@
 - pass:
   - Tool that syncs pass with ios pass through a private git repo
 - there are several other useful functions that are self explanatory
+* MU4E
+- has its own README in its directory
 * spotify-tui.yml (rereplaced by ncspot)
 - proper location and name: ~/.config/spotify-tui/client.yml
 - config file for spotify-tui

@@ -1,5 +1,6 @@
-* .authinfo belongs in ~/.authinfo
+* .authinfo.gpg belongs in ~/.authinfo.gpg
 * mbsyncrc is the config file for isync
+- symliked as ~/.mbsyncrc
 * GPG Stuff:
 ** To encrypt a new password, the command is:
 *** gpg2 -e -r <key> file
@@ -35,3 +36,4 @@
     #+END_SRC
 - enable.
 - every time one of the accounts gets an email, mbsync runs for that account
+* the emacs mu4e config file is in the emacs gnu directory
