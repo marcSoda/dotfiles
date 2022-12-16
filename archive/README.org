@@ -1,6 +1,3 @@
-* ncspot.toml (replaced by spotify-tui)
-- proper location and name ~/.config/ncspot/config.toml
-- config file for ncspot
 * config.fish
 - location: `~/.config/fish/config.fish`
 - e:
@@ -8,3 +5,9 @@
 - pass:
   - Tool that syncs pass with ios pass through a private git repo
 - there are several other useful functions that are self explanatory
+* spotify-tui.yml (rereplaced by ncspot)
+- proper location and name: ~/.config/spotify-tui/client.yml
+- config file for spotify-tui
+* spotifyd.conf (required by spotify-tui above)
+- proper location and name: ~/.config/spotifyd/spotifyd.conf
+- config file for spotifyd

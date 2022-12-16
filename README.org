@@ -2,6 +2,9 @@
 #+AUTHOR: Marc Soda Jr.
 #+EMAIL: m@soda.fm
 
+* archive
+- a director full of stuff that I've stopped using
+- their usages are included in the README in archive
 * .bashrc
 - e:
   - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
@@ -28,6 +31,9 @@
 * mu4e
 - see README in mu4e directory
 - belongs in ~/.mbsyncrc
+* ncspot.toml
+- proper location and name ~/.config/ncspot/config.toml
+- config file for ncspot
 * picom.conf
 - config file for picom
 - belongs in ~/.config
@@ -53,12 +59,6 @@
   - keybound by xmonad
 - .xinitrc
   - x11 config
-* spotify-tui.yml
-- proper location and name: ~/.config/spotify-tui/client.yml
-- config file for spotify-tui
-* spotifyd.conf
-- proper location and name: ~/.config/spotifyd/spotifyd.conf
-- config file for spotifyd
 * ssh_config
 - proper location and name ~/.ssh/config
 - config file for ssh
