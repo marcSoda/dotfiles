@@ -16,10 +16,18 @@
 - config file for dunst
 - belongs in ~/.config/dunst
 * emacs
-- config files for emacs
+** doom
+- config files for doom
+- symlink them all in ~/.doom.d
+- make sure to symlink the snippits dir in ~/.doom.d also
+** gnu
+- config files for gnu emacs
+- symlink in .emacs.d
+** remote
+- config files for a lite gnu emacs designed for remote development
 * mu4e
 - see README in mu4e directory
-- belings in ~/.mbsyncrc
+- belongs in ~/.mbsyncrc
 * picom.conf
 - config file for picom
 - belongs in ~/.config
