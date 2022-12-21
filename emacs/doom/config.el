@@ -65,21 +65,21 @@
     org-todo-keywords '((sequence "URG(u)" "PROG(p)" "TODO(t)" "MEET(m)" "NEXT(n)" "DATE(D)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
-(after! org-roam
-    (setq org-roam-directory "~/working/org/roam")
-    (setq org-roam-completion-everywhere t)
-    ;; (org-roam-db-autosync-enable)
-    (setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
-    (setq epa-file-select-keys 1)                                ;;don't prompt which key to use
-    (setq org-roam-capture-templates '(("d" "default" plain "%?" ;;encrypt all org roam files
-        :target (file+head "${slug}.org.gpg"
-            "#+title: ${title}\n")
-        :unnarrowed t)))
-    (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-            "* %?"
-            :target (file+head "%<%Y-%m-%d>.org.gpg"
-                "#+title: %<%Y-%m-%d>\n")))))
+(setq org-roam-directory "~/working/org/roam")
+(setq org-roam-completion-everywhere t)
+(org-roam-db-autosync-enable)
+(setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
+(setq epa-file-select-keys 1)                                ;;don't prompt which key to use
+(setq org-roam-capture-templates '(("d" "default" plain "%?" ;;encrypt all org roam files
+:target (file+head "${slug}.org.gpg"
+        "#+title: ${title}\n")
+:unnarrowed t)))
+(setq org-roam-dailies-capture-templates
+'(("d" "default" entry
+        "* %?"
+        :target (file+head "%<%Y-%m-%d>.org.gpg"
+        "#+title: %<%Y-%m-%d>\n"))))
+
 ;; ORG-ROAM-UI
 (after! org-roam-ui
     (setq org-roam-ui-sync-theme t
@@ -119,6 +119,7 @@
 (after! ibuffer
     (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-toggle-filter-group))
 (after! ivy
+    (define-key ivy-minibuffer-map (kbd "<escape>") 'keyboard-escape-quit)
     (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
     (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line))
 (after! company
@@ -141,9 +142,10 @@
     (:prefix ("f". "file")
         :desc "find file as sudo"      "s" #'doom/sudo-find-file
         :desc "open this file as sudo" "S" #'doom/sudo-this-file)
-    (:prefix ("n". "notes")
-        (:prefix ("r". "roam")
-            :desc "org roam find" "f" #'org-roam-node-find))
+    (:prefix ("r". "roam")
+        :desc "find node"                 "f" #'org-roam-node-find
+        :desc "insert link to node"       "i" #'org-roam-node-insert
+        :desc "view all links for a node" "v" #'org-roam-buffer-display-dedicated)
     (:prefix ("p". "project")
         :desc "search project" "/" #'+default/search-project)
     (:prefix ("t". "toggle/treemacs")
@@ -154,3 +156,5 @@
     (:prefix ("w". "window")
         :desc "window-only" "o" #'delete-other-windows
         :desc "save"        "w" #'save-buffer))
+
+(load-file "~/working/dev/rust/lightc/misc/light-mode.el")

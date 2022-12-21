@@ -54,6 +54,5 @@
 (package! lsp-mode) ;;because lsp in init doesn't work
 (package! lsp-ui) ;;because lsp in init doesn't work
 (package! swiper)
-(package! org-roam)
-(package! org-roam-ui)
 (package! rand-theme)
+(package! org-roam-ui)
