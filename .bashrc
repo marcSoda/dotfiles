@@ -132,14 +132,18 @@ za() {
 tm() {
     if [[ $# = 0 ]]; then
         /usr/bin/tmux
-    elif [[ $1 = "-a" ]]; then
+    elif [[ $1 = "-a" ]]; then #attach
         /usr/bin/tmux attach-session -t $2
-    elif [[ $1 = "-k" ]]; then
+    elif [[ $1 = "-k" ]]; then #kill
         /usr/bin/tmux kill-session -t $2
-    elif [[ $1 = "-l" ]]; then
+    elif [[ $1 = "-l" ]]; then #list
         /usr/bin/tmux list-sessions
-    elif [[ $1 = "-c" ]]; then
-        /usr/bin/tmux new-session $2
+    elif [[ $1 = "-c" ]]; then #connect to a session (windows share exact same properties, but NOT physical state)
+        /usr/bin/tmux new-session -t $2
+    elif [[ $1 = "-p" ]]; then #purge non-attached sessions created by -c
+        tmux list-sessions | grep -v "(attached)" | cut -d: -f1 | while read s; do
+            tmux kill-session -t $s
+        done
     fi
 }
 
