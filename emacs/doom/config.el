@@ -141,11 +141,12 @@
         :desc "flycheck-prev-error" "p" #'flycheck-previous-error)
     (:prefix ("f". "file")
         :desc "find file as sudo"      "s" #'doom/sudo-find-file
-        :desc "open this file as sudo" "S" #'doom/sudo-this-file)
-    (:prefix ("r". "roam")
-        :desc "find node"                 "f" #'org-roam-node-find
-        :desc "insert link to node"       "i" #'org-roam-node-insert
-        :desc "view all links for a node" "v" #'org-roam-buffer-display-dedicated)
+        :desc "open this file as sudo" "S" #'doom/sudo-this-file
+        :desc "find in dotfiles" "d" (lambda () (interactive)(doom-project-find-file "~/working/dotfiles")))
+    (:prefix ("n". "notes")
+        (:prefix ("r". "roam")
+        :desc "list all links for a node" "l" #'org-roam-buffer-display-dedicated
+        :desc "open roam UI" "u" #'org-roam-ui-open))
     (:prefix ("p". "project")
         :desc "search project" "/" #'+default/search-project)
     (:prefix ("t". "toggle/treemacs")
