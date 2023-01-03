@@ -33,10 +33,6 @@ export LESSHISTFILE=-
 #error with weird java windows:
 export _JAVA_AWT_WM_NONREPARENTING=1
 
-#set external display NOTE: I don't think I use this anymore
-export EXTERNAL_DISPLAY=DP1
-export PROJECTOR_PORT=DP3
-
 #aliases:
 
 #system
@@ -55,7 +51,9 @@ alias htop='bpytop'
 alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
+alias ftb='prime-run /home/marc/FTBA/FTBApp > /dev/null & disown'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
+alias pg='ping google.com'
 
 #bluetooth
 alias btc='bluetoothctl'
