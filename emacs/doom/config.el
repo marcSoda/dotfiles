@@ -49,8 +49,8 @@
 
 ;;RAND-THEME
 (after! rand-theme
-    (setq rand-theme-wanted '(doom-henna doom-xcode doom-monokai-classic doom-1337)))
-    (rand-theme) ;;for some reason, this does not work when I put it in the block
+    (setq rand-theme-wanted '(doom-henna doom-xcode doom-1337)))
+(rand-theme) ;;for some reason, this does not work when I put it in the block
 
 ;;ORG
 (after! org
@@ -60,8 +60,8 @@
     org-agenda-files '("/home/marc/Dropbox/org")
     org-agenda-window-setup 'only-window
     org-hide-emphasis-markers t
-    org-src-tab-acts-natively t
-    org-capture-bookmark nil
+    ;; org-src-tab-acts-natively t
+    ;; org-capture-bookmark nil
     org-todo-keywords '((sequence "URG(u)" "PROG(p)" "TODO(t)" "MEET(m)" "NEXT(n)" "DATE(D)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
@@ -114,8 +114,23 @@
 (define-key evil-normal-state-map (kbd "K") 'evil-backward-paragraph)
 (define-key minibuffer-mode-map   (kbd "M-j") 'next-line)
 (define-key minibuffer-mode-map   (kbd "M-k") 'previous-line)
+(after! evil-org
+    (evil-define-key 'normal evil-org-mode-map
+        (kbd "M-o") '+org/insert-item-below
+        (kbd "M-O") '+org/insert-item-above))
 (after! org-agenda
-    (define-key org-agenda-mode-map   (kbd "q") 'org-agenda-exit))
+    (define-key org-agenda-mode-map   (kbd "q") 'org-agenda-exit)
+    (setq org-fancy-priorities-list '("[A]" "[B]" "[C]")
+    org-priority-faces
+    '((?A :foreground "#FF6C6B" :weight bold)
+      (?B :foreground "#98BE65" :weight bold)
+      (?C :foreground "#C678DD" :weight bold)))
+    (setq org-agenda-custom-commands
+        '(("b" "Better agenda view"
+            ((agenda "")
+            ;;List all agenda items without timestamps
+            (alltodo ""
+                ((org-agenda-todo-ignore-with-date t))))))))
 (after! ibuffer
     (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-toggle-filter-group))
 (after! ivy
