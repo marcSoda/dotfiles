@@ -63,6 +63,13 @@ alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
+
+#sshfs
+alias fsh1='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h1 /mnt/remote/475h1'
+alias fstuib='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/temp/tuib /mnt/remote/tuib'
+alias unfsh1='fusermount -u /mnt/remote/475h1'
+alias unfstuib='fusermount -u /mnt/remote/tuib'
+
 br() {
     killall -9 pulseaudio
     pulseaudio --start -v
@@ -121,9 +128,9 @@ lay() {
     bash ~/.screenlayout/$1.bash
 }
 
-#zathura
-za() {
-    zathura $1 & disown
+#sioyek
+sio() {
+    sioyek $1 > /dev/null 2>&1 & disown
 }
 
 #tmux

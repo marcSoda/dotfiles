@@ -49,10 +49,10 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 (package! humanoid-themes)
-(package! lsp-pyright) ;;because (python +lsp) does not work because the included URL for mspls is invalid
+;; (package! lsp-pyright) ;;because (python +lsp) does not work because the included URL for mspls is invalid
 ;; (package! dap-mode)
-(package! lsp-mode) ;;because lsp in init doesn't work
-(package! lsp-ui) ;;because lsp in init doesn't work
+;; (package! lsp-mode) ;;because lsp in init doesn't work
+;; (package! lsp-ui) ;;because lsp in init doesn't work
 (package! swiper)
 (package! rand-theme)
 (package! org-roam-ui)

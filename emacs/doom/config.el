@@ -5,6 +5,8 @@
 ;; MISC
 (advice-remove 'evil-open-below #'+evil--insert-newline-below-and-respect-comments-a)
 (advice-remove 'evil-open-above #'+evil--insert-newline-above-and-respect-comments-a)
+(setq tab-width 4)
+(setq evil-shift-width 4)
 
 ;; FONT
 (setq doom-font (font-spec :family "Iosevka" :size 25)
@@ -47,6 +49,33 @@
 ;;LINE NUMBERS
 (setq display-line-numbers-type 'nil)
 
+;;LSP
+(after! lsp-mode
+    (if (boundp 'tramp-remote-path)
+        (progn
+            (add-to-list 'tramp-remote-path "~/go/bin")
+            (add-to-list 'tramp-remote-path "/usr/bin/clangd")
+            (add-to-list 'tramp-remote-path 'tramp-own-remote-path)))
+    (lsp-register-client
+        (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
+                :major-modes '(c++-mode)
+                :remote? t
+                :server-id 'cpp-server))
+    (lsp-register-client
+        (make-lsp-client :new-connection (lsp-tramp-connection "gopls")
+                :major-modes '(go-mode)
+                :remote? t
+                :server-id 'go-server))
+    (lsp-register-client
+        (make-lsp-client :new-connection (lsp-tramp-connection "rust-analyzer")
+                :major-modes '(rust-mode rustic-mode)
+                :remote? t
+                :server-id 'rust-server)))
+(after! lsp-ui
+    (setq lsp-ui-doc-enable t)
+    (setq lsp-headerline-breadcrumb-enable t)
+    (setq lsp-ui-doc-show-with-mouse t))
+
 ;;RAND-THEME
 (after! rand-theme
     (setq rand-theme-wanted '(doom-henna doom-xcode doom-1337)))
@@ -60,8 +89,6 @@
     org-agenda-files '("/home/marc/Dropbox/org")
     org-agenda-window-setup 'only-window
     org-hide-emphasis-markers t
-    ;; org-src-tab-acts-natively t
-    ;; org-capture-bookmark nil
     org-todo-keywords '((sequence "URG(u)" "PROG(p)" "TODO(t)" "MEET(m)" "NEXT(n)" "DATE(D)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
@@ -86,11 +113,19 @@
           org-roam-ui-follow nil
           org-roam-ui-update-on-save t))
 
+
 ;;TREEMACS
 (after! treemacs
+    (defun treemacs-ignore-filter (name path)
+        (string-match-p ".*\\.pyc$" name)
+        (string-match-p ".*\\.class$" name))
     (setq treemacs-width 25)
+    (setq treemacs-width-is-locked nil)
+    (setq treemacs-width-is-initially-locked nil)
     (setq treemacs-find-workspace-method 'find-for-file-or-manually-select)
-    (setq treemacs-is-never-other-window t))
+    (setq treemacs-is-never-other-window t)
+    (add-to-list 'treemacs-ignored-file-predicates #'treemacs-ignore-filter))
+
 
 ;;SMOOTH SCROLLING
 (setq scroll-margin 10
@@ -98,20 +133,34 @@
   scroll-conservatively 10000
   scroll-preserve-screen-position 1)
 
-;;WHITESPACE: show whitespace and remove it on save
+;;whitespace: show whitespace and remove it on save
 (after! whitespace
     (setq-default show-trailing-whitespace t)
     (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
     (add-hook 'before-save-hook 'delete-trailing-whitespace))
 
-;;LSP
-(add-hook 'c++-mode-hook #'lsp-deferred)
-(add-hook 'go-mode-hook #'lsp-deferred)
+(fset 'mac-treemacs-up
+   (kmacro-lambda-form [?  ?t ?t ?k ?  ?t ?t] 0 "%d"))
+(fset 'mac-treemacs-down
+   (kmacro-lambda-form [?  ?t ?t ?j ?  ?t ?t] 0 "%d"))
+(fset 'mac-treemacs-ret
+   (kmacro-lambda-form [?  ?t ?t return ?  ?t ?t] 0 "%d"))
+(fset 'mac-treemacs-resize-left
+   (kmacro-lambda-form [?  ?t ?t ?\C-x ?\{ ?  ?t ?t] 0 "%d"))
+(fset 'mac-treemacs-resize-right
+   (kmacro-lambda-form [?  ?t ?t ?\C-x ?\} ?  ?t ?t] 0 "%d"))
 
-;;KEYBINDINGS
+;;keybindings
+(define-key evil-normal-state-map (kbd "M-j") 'mac-treemacs-down)
+(define-key evil-normal-state-map (kbd "M-k") 'mac-treemacs-up)
+(define-key evil-normal-state-map (kbd "M-RET") 'mac-treemacs-ret)
+(define-key evil-normal-state-map (kbd "M-h") 'mac-treemacs-resize-left)
+(define-key evil-normal-state-map (kbd "M-l") 'mac-treemacs-resize-right)
 (define-key evil-normal-state-map (kbd "/") 'swiper)
 (define-key evil-normal-state-map (kbd "J") 'evil-forward-paragraph)
 (define-key evil-normal-state-map (kbd "K") 'evil-backward-paragraph)
+(define-key evil-visual-state-map (kbd "J") 'evil-forward-paragraph)
+(define-key evil-visual-state-map (kbd "K") 'evil-backward-paragraph)
 (define-key minibuffer-mode-map   (kbd "M-j") 'next-line)
 (define-key minibuffer-mode-map   (kbd "M-k") 'previous-line)
 (after! evil-org
@@ -119,12 +168,7 @@
         (kbd "M-o") '+org/insert-item-below
         (kbd "M-O") '+org/insert-item-above))
 (after! org-agenda
-    (define-key org-agenda-mode-map   (kbd "q") 'org-agenda-exit)
-    (setq org-fancy-priorities-list '("[A]" "[B]" "[C]")
-    org-priority-faces
-    '((?A :foreground "#FF6C6B" :weight bold)
-      (?B :foreground "#98BE65" :weight bold)
-      (?C :foreground "#C678DD" :weight bold)))
+    (define-key org-agenda-mode-map (kbd "q") 'org-agenda-exit)
     (setq org-agenda-custom-commands
         '(("b" "Better agenda view"
             ((agenda "")
@@ -157,7 +201,8 @@
     (:prefix ("f". "file")
         :desc "find file as sudo"      "s" #'doom/sudo-find-file
         :desc "open this file as sudo" "S" #'doom/sudo-this-file
-        :desc "find in dotfiles" "d" (lambda () (interactive)(doom-project-find-file "~/working/dotfiles")))
+        :desc "find in dotfiles" "d" (lambda () (interactive)(doom-project-browse "~/working/dotfiles/"))
+        :desc "find in org" "o" (lambda () (interactive)(doom-project-browse "~/working/org/")))
     (:prefix ("n". "notes")
         (:prefix ("r". "roam")
         :desc "list all links for a node" "l" #'org-roam-buffer-display-dedicated

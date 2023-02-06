@@ -69,7 +69,7 @@
        :emacs
        dired             ; making dired pretty [functional]
        electric          ; smarter, keyword-based electric-indent
-       ;;ibuffer           ; interactive buffer management --IF I UNCOMMENT THIS, IT OVERWRITES MY IBUFFER CONFIG
+       ibuffer           ; interactive buffer management --IF I UNCOMMENT THIS, IT OVERWRITES MY IBUFFER CONFIG
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
@@ -95,8 +95,9 @@
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
-       ;;lsp                 ; M-x vscode --NOT USING THIS BECAUSE IT DOESN'T WORK RIGHT. LSP WORKS, BUT THERE IS NO UI. NOT SURE IF BUG
-       magit             ; a git porcelain for Emacs
+       ;; (lsp +eglot)        ; M-x vscode
+       (lsp)        ; M-x vscode
+       magit               ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
