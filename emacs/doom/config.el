@@ -144,7 +144,7 @@
 (fset 'mac-treemacs-down
    (kmacro-lambda-form [?  ?t ?t ?j ?  ?t ?t] 0 "%d"))
 (fset 'mac-treemacs-ret
-   (kmacro-lambda-form [?  ?t ?t return ?  ?t ?t] 0 "%d"))
+   (kmacro-lambda-form [?  ?t ?t return ?  ?w ?l] 0 "%d"))
 (fset 'mac-treemacs-resize-left
    (kmacro-lambda-form [?  ?t ?t ?\C-x ?\{ ?  ?t ?t] 0 "%d"))
 (fset 'mac-treemacs-resize-right

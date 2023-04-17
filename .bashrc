@@ -55,6 +55,13 @@ alias ftb='prime-run /home/marc/FTBA/FTBApp > /dev/null & disown'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
 alias pg='ping google.com'
 
+#taskwarrior
+alias t='task $1'
+alias ta='task add $1'
+alias te='task edit $1'
+alias tc='task mod $1'
+alias td='task done $1'
+
 #bluetooth
 alias btc='bluetoothctl'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
@@ -66,9 +73,11 @@ alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
 
 #sshfs
 alias fsh1='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h1 /mnt/remote/475h1'
-alias fstuib='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/temp/tuib /mnt/remote/tuib'
+alias fsh2='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h2 /mnt/remote/475h2'
+alias fsh3='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h3 /mnt/remote/475h3'
 alias unfsh1='fusermount -u /mnt/remote/475h1'
-alias unfstuib='fusermount -u /mnt/remote/tuib'
+alias unfsh2='fusermount -u /mnt/remote/475h2'
+alias unfsh3='fusermount -u /mnt/remote/475h3'
 
 br() {
     killall -9 pulseaudio
@@ -78,10 +87,6 @@ br() {
     btc power off
     btc power on
 }
-
-#c
-alias mg='gcc -g -Wall -Wextra -Wwrite-strings'
-alias mg+='g++ -g -Wall -Wextra -Wwrite-strings'
 
 #lehigh vpn
 alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
@@ -128,9 +133,12 @@ lay() {
     bash ~/.screenlayout/$1.bash
 }
 
-#sioyek
-sio() {
-    sioyek $1 > /dev/null 2>&1 & disown
+##sioyek
+#sio() {
+#    sioyek --new-window $1 > /dev/null 2>&1 & disown
+#}
+za() {
+    zathura $1 > /dev/null 2>&1 & disown
 }
 
 #tmux

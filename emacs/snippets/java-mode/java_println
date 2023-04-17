@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: java_println
-# key: >pl
+# key: p
 # --
 System.out.println($1);
