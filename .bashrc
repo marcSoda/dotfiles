@@ -85,6 +85,7 @@ alias unfsh3='fusermount -u /mnt/remote/475h3'
 
 #git
 alias gs='git status -s'
+alias gst='git status'
 alias ga='git add'
 alias gd='git diff'
 alias gck='git checkout'
