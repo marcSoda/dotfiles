@@ -56,3 +56,5 @@
 (package! swiper)
 (package! rand-theme)
 (package! org-roam-ui)
+
+(package! lsp-docker)
