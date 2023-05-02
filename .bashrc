@@ -97,9 +97,10 @@ gc() {
 }
 
 #nav
+alias cw='cd ~/working'
 alias cleh='cd ~/working/dev/lehigh'
 alias cdev='cd ~/working/dev'
-alias cdot='cd ~/working/dotfile'
+alias cdot='cd ~/working/dotfiles'
 alias ctem='cd ~/working/temp'
 alias cdow='cd ~/working/downloads'
 alias cmis='cd ~/working/misc'
