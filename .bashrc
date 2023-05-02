@@ -17,24 +17,27 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#path
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
-#set editor
 export EDITOR=vim
-
-#set .lesshst location
 export LESSHISTFILE=-
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_STATE_HOME=$HOME/.local/state
+export XDG_CACHE_HOME=$HOME/.cache
+export _JAVA_AWT_WM_NONREPARENTING=1 # issue  with weird java windows:
+export HISTFILE="${XDG_STATE_HOME}"/bash/history
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
+export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export GOPATH="$XDG_DATA_HOME"/go
+export WINEPREFIX="$XDG_DATA_HOME"/wine
 
-#error with weird java windows:
-export _JAVA_AWT_WM_NONREPARENTING=1
 
 #aliases:
-
 #system
 alias x='startx'
 alias c='clear'
@@ -47,13 +50,14 @@ alias peg='ps -aux | grep $1'
 alias grep='grep --color=auto'
 alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
-alias htop='bpytop'
+alias top='gotop'
 alias ks='xset r rate 220 40'
 alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
 alias ftb='prime-run /home/marc/FTBA/FTBApp > /dev/null & disown'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
 alias pg='ping google.com'
+alias wget='wget --no-hsts'
 
 #taskwarrior
 alias t='task $1'
@@ -78,6 +82,23 @@ alias fsh3='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o s
 alias unfsh1='fusermount -u /mnt/remote/475h1'
 alias unfsh2='fusermount -u /mnt/remote/475h2'
 alias unfsh3='fusermount -u /mnt/remote/475h3'
+
+#git
+alias gs='git status -s'
+alias ga='git add'
+alias gd='git diff'
+alias gc='git commit -m "$*"'
+alias gck='git checkout'
+alias gb='git branch'
+alias gl='git log'
+
+#nav
+alias cleh='cd ~/working/dev/lehigh'
+alias cdev='cd ~/working/dev'
+alias cdot='cd ~/working/dotfile'
+alias ctem='cd ~/working/temp'
+alias cdow='cd ~/working/downloads'
+alias cmis='cd ~/working/misc'
 
 br() {
     killall -9 pulseaudio
