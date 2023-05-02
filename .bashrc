@@ -87,10 +87,12 @@ alias unfsh3='fusermount -u /mnt/remote/475h3'
 alias gs='git status -s'
 alias ga='git add'
 alias gd='git diff'
-alias gc='git commit -m "$*"'
 alias gck='git checkout'
 alias gb='git branch'
 alias gl='git log'
+gc() {
+    git commit -m "$*"
+}
 
 #nav
 alias cleh='cd ~/working/dev/lehigh'
