@@ -19,6 +19,7 @@ fi
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH=""$XDG_DATA_HOME"/cargo/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin

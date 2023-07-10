@@ -2,9 +2,9 @@ Host *
     HostKeyAlgorithms +ssh-rsa
     PubkeyAcceptedKeyTypes +ssh-rsa
 
-Host seed
-     HostName 128.180.123.88
-     User seed
+Host 431
+     HostName 128.180.123.126
+     User cseuser
      ProxyJump gateway
 
 Host sunlab
