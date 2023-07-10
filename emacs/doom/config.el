@@ -80,9 +80,10 @@
     (setq lsp-ui-doc-show-with-mouse t))
 
 ;;RAND-THEME
-(after! rand-theme
-    (setq rand-theme-wanted '(doom-henna doom-xcode doom-1337)))
-(rand-theme) ;;for some reason, this does not work when I put it in the block
+;; (after! rand-theme
+;;     (setq rand-theme-wanted '(doom-henna doom-xcode doom-1337 doom-dark+)))
+;; (rand-theme) ;;for some reason, this does not work when I put it in the block
+(load-theme 'humanoid-dark t nil)
 
 ;;ORG
 (after! org

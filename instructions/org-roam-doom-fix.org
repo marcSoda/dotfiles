@@ -1,6 +1,6 @@
 #+title: Org Roam Doom Fix
 * Symptoms:
-- org roam database is incorrect (empty probalbu)
+- org roam database is incorrect (empty probalby)
 * Solution
 - delete `/home/marc/.emacs.d/.local/cache/org-roam.db`
 - run  `(org-roam-db-clear-all)`
