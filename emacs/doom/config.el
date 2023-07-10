@@ -51,6 +51,9 @@
 
 ;;LSP
 (after! lsp-mode
+    (after! lsp-pyright
+        (setq lsp-pyright-venv-path "/home/marc/working/dev/lehigh/431/kmm/venv"))
+    ;; tramp remote stuff
     (if (boundp 'tramp-remote-path)
         (progn
             (add-to-list 'tramp-remote-path "~/go/bin")
