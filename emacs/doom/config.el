@@ -117,6 +117,8 @@
           org-roam-ui-follow nil
           org-roam-ui-update-on-save t))
 
+;;TRANSPARENCY
+(add-to-list 'default-frame-alist '(alpha-background . 92))
 
 ;;TREEMACS
 (after! treemacs
