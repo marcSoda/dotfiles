@@ -47,13 +47,14 @@ alias pacman='sudo pacman'
 alias pacup='sudo pacman -Syu'
 alias pacin='sudo pacman -S $1'
 alias pacrm='sudo pacman -R $1'
-alias peg='ps -aux | grep $1'
+alias peg='procs'
+# alias peg='ps -aux | grep $1'
 alias grep='grep --color=auto'
 alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias top='gotop'
 alias ks='xset r rate 220 40'
-alias fehr='feh --no-fehbg --bg-scale "/home/marc/working/dotfiles/backgrounds/05.jpg"'
+alias fehr='bash /home/marc/working/dotfiles/backgrounds/feh.sh &'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
 alias ftb='prime-run /home/marc/FTBA/FTBApp > /dev/null & disown'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
@@ -133,6 +134,13 @@ alias das='e d /ssh:das:working/'
 alias electron='e t /ssh:electron:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
+
+
+ftl() {
+    cd /home/marc/.local/share/Steam/steamapps/common/FTL\ Faster\ Than\ Light
+    ./FTL 2>&1>&0 > /dev/null & disown
+    cd -
+}
 
 
 #emacsclient named workspaces

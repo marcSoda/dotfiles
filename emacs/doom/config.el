@@ -169,6 +169,12 @@
 (define-key evil-visual-state-map (kbd "K") 'evil-backward-paragraph)
 (define-key minibuffer-mode-map   (kbd "M-j") 'next-line)
 (define-key minibuffer-mode-map   (kbd "M-k") 'previous-line)
+
+(evil-define-key 'normal peep-dired-mode-map
+  (kbd "j") 'peep-dired-next-file
+  (kbd "k") 'peep-dired-prev-file)
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+
 (after! evil-org
     (evil-define-key 'normal evil-org-mode-map
         (kbd "M-o") '+org/insert-item-below
@@ -204,6 +210,10 @@
     (:prefix ("c". "code")
         :desc "flycheck-next-error" "n" #'flycheck-next-error
         :desc "flycheck-prev-error" "p" #'flycheck-previous-error)
+    (:prefix ("d". "dired")
+        :desc "dired" "d" #'dired
+        :desc "dired jump to current" "j" #'dired-jump
+        :desc "peep-dired" "p" #'peep-dired)
     (:prefix ("f". "file")
         :desc "find file as sudo"      "s" #'doom/sudo-find-file
         :desc "open this file as sudo" "S" #'doom/sudo-this-file

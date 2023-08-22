@@ -2,11 +2,6 @@ Host *
     HostKeyAlgorithms +ssh-rsa
     PubkeyAcceptedKeyTypes +ssh-rsa
 
-Host 431
-     HostName 128.180.123.126
-     User cseuser
-     ProxyJump gateway
-
 Host sunlab
      HostName sunlab.cse.lehigh.edu
      User masa20
