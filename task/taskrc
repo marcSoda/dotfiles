@@ -1,0 +1,35 @@
+# Files
+data.location=$DOTFILES/task
+
+hooks.location=$DOTFILES/task/hooks
+
+# Color theme (uncomment one to use)
+#include light-16.theme
+#include light-256.theme
+#include dark-16.theme
+include dark-256.theme
+#include dark-red-256.theme
+#include dark-green-256.theme
+#include dark-blue-256.theme
+#include dark-violets-256.theme
+#include dark-yellow-green.theme
+#include dark-gray-256.theme
+#include dark-gray-blue-256.theme
+#include solarized-dark-256.theme
+#include solarized-light-256.theme
+#include no-color.theme
+
+news.version=2.6.0
+# date.formatted displays the abbreviated month (b) and the day (d)
+dateformat=a b d
+report.next.columns=id,start.age,depends,priority,project,tags,recur,scheduled.countdown,due.formatted,until.remaining,description,urgency
+report.next.labels=ID,Active,Deps,P,Project,Tag,Recur,S,Due,Until,Description,Urg
+urgency.user.tag.meet.coefficient=-100
+color.tag.meet=blue
+taskd.certificate=$DOTFILES/task/marc.cert.pem
+taskd.key=$DOTFILES/task/marc.key.pem
+taskd.ca=$DOTFILES/task/ca.cert.pem
+taskd.credentials=taskorg\/marc\/48dbd60c-67d6-4dc0-bfc0-972007a081c7
+taskd.server=electron.soda.fm:1701
+verbose=blank,footnote,label,new-id,affected,edit,special,project,sync,unwait
+

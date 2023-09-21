@@ -2,13 +2,14 @@ Host *
     HostKeyAlgorithms +ssh-rsa
     PubkeyAcceptedKeyTypes +ssh-rsa
 
+# Allows me to access gitlab.cse.lehigh.edu through a proxyjump to gateway because gitlab.cse.lehigh.edu can only be accessed via lehigh network
+Host gitlab.cse.lehigh.edu
+    Hostname gitlab.cse.lehigh.edu
+    Port 22
+    ProxyJump gateway 
+
 Host sunlab
      HostName sunlab.cse.lehigh.edu
-     User masa20
-     ProxyJump gateway
-
-Host edgar1
-     HostName edgar1.cse.lehigh.edu
      User masa20
      ProxyJump gateway
 
@@ -28,6 +29,11 @@ Host das
 Host electron
      HostName electron.soda.fm
      User marc
+     Port 7022
+
+Host git.electron.soda.fm
+     User git
+     Hostname electron.soda.fm
      Port 7022
 
 Host rtm

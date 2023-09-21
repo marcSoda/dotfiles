@@ -1,0 +1,7 @@
+#+title: Taskd
+* https://gothenburgbitfactory.github.io/taskserver-setup/
+* setup previously done on electron
+* setup
+- $TASKDDATA is /home/marc/working/taskd-1.1.0/taskddata
+- this is a huge pain in the ass
+- this video is helpful https://www.youtube.com/watch?v=6Ci_JyvVIaI&t=1756s

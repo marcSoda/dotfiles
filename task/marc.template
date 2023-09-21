@@ -1,0 +1,6 @@
+organization = Marc Soda
+cn = electron.soda.fm
+expiration_days = 100000
+tls_www_client
+encryption_key
+signing_key
