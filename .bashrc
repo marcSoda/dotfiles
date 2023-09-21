@@ -17,12 +17,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH=""$XDG_DATA_HOME"/cargo/bin:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
+export DOTFILES=~/working/dotfiles
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export EDITOR=vim
 export LESSHISTFILE=-
 export XDG_DATA_HOME=$HOME/.local/share
@@ -37,6 +33,12 @@ export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
 export WINEPREFIX="$XDG_DATA_HOME"/wine
 
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH=""$XDG_DATA_HOME"/cargo/bin:$PATH"
+export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+
 
 #aliases:
 #system
@@ -48,13 +50,13 @@ alias pacup='sudo pacman -Syu'
 alias pacin='sudo pacman -S $1'
 alias pacrm='sudo pacman -R $1'
 alias peg='procs'
-# alias peg='ps -aux | grep $1'
 alias grep='grep --color=auto'
+alias gerp='grep -rnIi $1 $2 --color'
 alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias top='gotop'
 alias ks='xset r rate 220 40'
-alias fehr='bash /home/marc/working/dotfiles/backgrounds/feh.sh &'
+alias fehr='bash $DOTFILES/backgrounds/feh.sh &'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
 alias ftb='prime-run /home/marc/FTBA/FTBApp > /dev/null & disown'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
@@ -62,11 +64,13 @@ alias pg='ping google.com'
 alias wget='wget --no-hsts'
 
 #taskwarrior
+export TASKRC=$DOTFILES/task/taskrc
 alias t='task $1'
 alias ta='task add $1'
 alias te='task edit $1'
 alias tc='task mod $1'
 alias td='task done $1'
+alias ts='task sync'
 
 #bluetooth
 alias btc='bluetoothctl'
@@ -103,7 +107,7 @@ gc() {
 alias cw='cd ~/working'
 alias cleh='cd ~/working/dev/lehigh'
 alias cdev='cd ~/working/dev'
-alias cdot='cd ~/working/dotfiles'
+alias cdot='cd $DOTFILES'
 alias ctem='cd ~/working/temp'
 alias cdow='cd ~/working/downloads'
 alias cmis='cd ~/working/misc'
@@ -119,6 +123,8 @@ br() {
 
 #lehigh vpn
 alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
+#tunnel from localhost:9090 to gateway gitlab.cse.lehigh.edu:80 because gitlab.cse.lehigh.edu can only be accessed via lehigh network
+alias tun411='ssh -L 9090:gitlab.cse.lehigh.edu:80 -N -f gateway'
 
 #network
 alias lehigh='sudo netctl stop-all && sudo netctl start lehigh'

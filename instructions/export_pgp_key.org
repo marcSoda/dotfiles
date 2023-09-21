@@ -1,0 +1,28 @@
+#+title: Export Pgp Key
+
+* there are many reasons to export a gpg/pgp key
+* pass for ios:
+- this gives me a headache every time the key expires.
+- note that they need to be exported in ascii format for the pass ios app. that's what the --armor flag does
+- to export public key:
+  - gpg --armor --export YOUR_KEY_ID > public-key.asc
+- to export private key:
+  - gpg --armor --export-secret-keys YOUR_KEY_ID > private-key.asc
+- then add them to dropbox
+- go to phone
+- go to dropbox
+- share
+- download each key to the device (iphone)
+- they can then be accessed through the pass for ios app
+- be sure to delete the keys from the filesystem when done
+* export to a secondary device in case the primary gets destroyed
+- if I lost my laptop, my keys would be gone and I would never be able to view my passwords again
+- I stored them on electron
+- export public:
+  - gpg --export YOUR_KEY_ID_OR_EMAIL > public-key.gpg
+- export private:
+  - gpg --export-secret-keys YOUR_KEY_ID_OR_EMAIL > private-key.gpg
+- import public on another machine:
+  - gpg --import public-key.gpg
+- import private on another machine:
+  - gpg --import private-key.gpg

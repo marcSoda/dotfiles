@@ -1,0 +1,4 @@
+#+title: Private Git Repo
+- currently, you have a private git repo for your pass repo on the electron server
+- great video instruction: https://www.youtube.com/watch?v=ju9loeXNVW0
+- great text instruction: https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server
