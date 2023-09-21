@@ -70,6 +70,7 @@ alias ta='task add $1'
 alias te='task edit $1'
 alias tc='task mod $1'
 alias td='task done $1'
+alias tdel='task delete $1'
 alias ts='task sync'
 
 #bluetooth
