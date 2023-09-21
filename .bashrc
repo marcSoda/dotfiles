@@ -58,10 +58,10 @@ alias top='gotop'
 alias ks='xset r rate 220 40'
 alias fehr='bash $DOTFILES/backgrounds/feh.sh &'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
-alias ftb='prime-run /home/marc/FTBA/FTBApp > /dev/null & disown'
 alias wr='sudo systemctl restart netctl-auto@wlan0.service'
 alias pg='ping google.com'
 alias wget='wget --no-hsts'
+alias duh='du -ah --max-depth=1 . | sort -rh'
 
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc
@@ -81,7 +81,7 @@ alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:83'
 alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
 
-#sshfs
+#sshfs | this is not used anymore, but I'm keeping it in here to serve as an example
 alias fsh1='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h1 /mnt/remote/475h1'
 alias fsh2='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h2 /mnt/remote/475h2'
 alias fsh3='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h3 /mnt/remote/475h3'
@@ -134,6 +134,13 @@ alias home='sudo netctl stop-all && sudo netctl start OldManDing'
 #minecwaft
 alias mine='prime-run minecraft-launcher & disown'
 
+
+ftl() {
+    cd /home/marc/.local/share/Steam/steamapps/common/FTL\ Faster\ Than\ Light
+    ./FTL 2>&1>&0 > /dev/null & disown
+    cd -
+}
+
 #emacs remote dev using named workspaces
 alias eltanin='e e "/ssh:gateway|ssh:eltanin:working/"'
 alias seed='e n "/ssh:gateway|ssh:seed:working/"'
@@ -142,15 +149,7 @@ alias electron='e t /ssh:electron:working/'
 alias ancilla='e a /ssh:ancilla:working/'
 alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
 
-
-ftl() {
-    cd /home/marc/.local/share/Steam/steamapps/common/FTL\ Faster\ Than\ Light
-    ./FTL 2>&1>&0 > /dev/null & disown
-    cd -
-}
-
-
-#emacsclient named workspaces
+#emacsclient named workspaces | this isn't used anymore, but you may want to update it now that you use GUI emacs
 e() {
     if [[ $1 = "-k" ]]; then
         /usr/bin/emacsclient -s $2 -e '(kill-emacs)'
@@ -175,10 +174,6 @@ lay() {
     bash ~/.screenlayout/$1.bash
 }
 
-##sioyek
-#sio() {
-#    sioyek --new-window $1 > /dev/null 2>&1 & disown
-#}
 za() {
     zathura $1 > /dev/null 2>&1 & disown
 }
