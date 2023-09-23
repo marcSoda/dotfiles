@@ -208,6 +208,7 @@ pass() {
     if [ "$1" = "sync" ]; then
         cd ~/.password-store
         git pull --rebase  && git push
+	cd -
     else
         /usr/bin/pass "$@"
     fi
