@@ -18,7 +18,6 @@ if ! shopt -oq posix; then
 fi
 
 export DOTFILES=~/working/dotfiles
-export GOPATH=$HOME/go
 export EDITOR=vim
 export LESSHISTFILE=-
 export XDG_DATA_HOME=$HOME/.local/share
@@ -44,6 +43,7 @@ export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 #system
 alias x='startx'
 alias c='clear'
+alias sb='source ~/.bashrc'
 alias hb='systemctl hibernate'
 alias pacman='sudo pacman'
 alias pacup='sudo pacman -Syu'
@@ -71,6 +71,7 @@ alias te='task edit $1'
 alias tc='task mod $1'
 alias td='task done $1'
 alias tdel='task delete $1'
+alias tdaily='function _tdaily() { task add recur:daily due:2:00 wait:5:00 "$*" +daily; }; _tdaily'
 alias ts='task sync'
 
 #bluetooth
@@ -177,6 +178,10 @@ lay() {
 
 za() {
     zathura $1 > /dev/null 2>&1 & disown
+}
+
+lo() {
+    command libreoffice "$1" &>/dev/null & disown
 }
 
 #tmux
