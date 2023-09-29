@@ -1,0 +1,31 @@
+#+title: Python Lsp Venv Emacs
+
+- Written 9/29/23 Dell XPS 15 9510 Arch Linux
+- By default, doom emacs lsp pyright will not use python local venvs. Here's how to make it respect venvs.
+- ensure this line is in `init.el`. this enables python lsp support with pyright
+  - `(python +lsp +pyright)`
+- Install `direnv` on local machine
+  - `pacman -S direnv`
+- Install `direnv` emacs package by adding this line to
+  - `(package! direnv)`
+- Add this to config.el
+  #+BEGIN_SRC elisp
+  (after! direnv
+  :config
+  (direnv-mode))
+  #+END_SRC
+- Create a `.envrc` in each local repo with the contents:
+  #+BEGIN_SRC bash
+  source .venv/bin/activate
+  #+END_SRC
+  - This will cause pyright to source the necessary env vars for the venv
+  - In the python project directory, type `direnv allow` to allow emacs direnv to read the file. Not sure why this is necessary but it is.
+- That is all the configuration required to get the lsp server to work with venvs as expected, but there is additional configuration that is useful to make pyright not be stupid:
+  - in the project root, create a file called `pyrightconfig.json` with contents:
+  #+BEGIN_SRC json
+    {
+        "reportOptionalSubscript": false,
+        "reportGeneralTypeIssues": false
+    }
+  #+END_SRC
+  - this will remove some annoying syntax highlighting that is not necessary for python. python sucks.
