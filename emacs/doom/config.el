@@ -51,8 +51,8 @@
 
 ;;LSP
 (after! lsp-mode
-    (after! lsp-pyright
-        (setq lsp-pyright-venv-path "/home/marc/working/dev/lehigh/431/kmm/venv"))
+    ;; (after! lsp-pyright
+    ;;     (setq lsp-pyright-venv-path "/home/marc/working/dev/lehigh/431/kmm/venv"))
     ;; tramp remote stuff
     (if (boundp 'tramp-remote-path)
         (progn
@@ -78,6 +78,11 @@
     (setq lsp-ui-doc-enable t)
     (setq lsp-headerline-breadcrumb-enable t)
     (setq lsp-ui-doc-show-with-mouse t))
+
+;; direnv. for now, this mode just allows pyright to use python venvs. Check instructions for more details
+(after! direnv
+  :config
+  (direnv-mode))
 
 ;;RAND-THEME
 ;; (after! rand-theme
