@@ -6,7 +6,13 @@ Host *
 Host gitlab.cse.lehigh.edu
     Hostname gitlab.cse.lehigh.edu
     Port 22
-    ProxyJump gateway 
+    ProxyJump gateway
+
+Host gitlab.com-solar
+    HostName gitlab.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_1
+    IdentitiesOnly yes
 
 Host sunlab
      HostName sunlab.cse.lehigh.edu
@@ -35,16 +41,3 @@ Host git.electron.soda.fm
      User git
      Hostname electron.soda.fm
      Port 7022
-
-Host rtm
-     HostName 147.182.135.192
-     User marc
-
-     #Host ancilla
-     #HostName 10.78.80.22
-     #User marc
-     
-Host ancilla
-     HostName 192.168.7.120
-     User marc
-
