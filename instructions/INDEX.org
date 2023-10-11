@@ -2,12 +2,15 @@
 
 * arch_install
 - arch installation instructions and tips
+- manual boot entry for windows grub. lots of grub stuff
 * auto_type_username
 - this will make it so you do not have to type your username to login to the tty, it will go straight to the password prompt (or fingerprint if that is properly setup)
 * battlenet_starcraft
 - how to install starcraft using wine
 * bluetooth_bug
 - fixes some kind of bluetooth bug. I don't remember
+* bluetooth
+- how to setup bluetooth
 * calibre_create_table_of_contents
 - how to use calibre to generate a table of contents for a kindle book
 * default_browser

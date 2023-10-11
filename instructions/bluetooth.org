@@ -1,0 +1,4 @@
+#+title: Bluetooth
+
+- install bluez and bluez utils
+- `sudo systemctl start/enable bluetooth`
