@@ -16,7 +16,7 @@
 - they can then be accessed through the pass for ios app
 - be sure to delete the keys from the filesystem when done
 * export to a secondary device in case the primary gets destroyed
-- if I lost my laptop, my keys would be gone and I would never be able to view my passwords again
+- if I lost my laptop, my keys would be gone and I would never be able to view my passwords or org roam stuff again
 - I stored them on electron
 - export public:
   - gpg --export YOUR_KEY_ID_OR_EMAIL > public-key.gpg
