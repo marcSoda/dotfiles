@@ -1,7 +1,24 @@
+* setup nvidia
+- make sure you are NOT using the LTS kernel
+  - if you are, it's easy to switch. just install the non lts kernel with `pacman -S linux`, delete `linux-lts`, and `sudo update-grub`
+- instructions [[https://github.com/korvahannu/arch-nvidia-drivers-installation-guide][here]]
+- enable multilib repos
+  - in `/etc/pacman.conf`
+    - uncomment the lines that have [multilib ...] (and the line directly below them)
+    - uncomment Include = /etc/pacman.d/mirrorlist
+  - run `paru/yay -Syu` and `pamcan -Syu`
+  - install `nvidia`, `nvidia-utils`, `lib32-nvidia-utils`(from multilib), and `nvidia-settings`
+    - ensure these are the correct ones for your gpu, they will typically be for the latest GPUs
+  - open `/etc/default/grub`
+    - append `nvidia-drm.modeset=1` to `GRUB_CMDLINE_LINUX_DEFAULT`
+  - `sudo update-grub`
+  - reboot
+  - note that there's a bunch of other stuff in there that involves editing the `mkinitcpio.conf` and adding a pacman hook. I don't think they're necessary, but you may want to consider. not exactly sure what these do
 * This method uses prime-run to disable the GPU until you run `prime-run <app-name>` to specifically turn on the GPU to run said application.
 * Follow steps [[https://wiki.archlinux.org/title/PRIME][here]] under PRIME render offload.
 ** steps as of 01/22
-- install nvidia, nvidia-utils, and nvidia-prime
+- run `pacman -Fy`
+- install nvidia, nvidia-utils, mesa-demos and nvidia-prime
   - running `prime-run glxinfo | grep "OpenGL renderer"` should output the nvidia card and running `glxinfo | grep "OpenGL renderer"` should output the intel integrated card.
   - If the above is not true, there is something wrong.
 - Add to `/etc/udev/rules.d/80-nvidia-pm.rules`
@@ -18,7 +35,8 @@ ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0302
   #+BEGIN_SRC
 options nvidia "NVreg_DynamicPowerManagement=0x02"
   #+END_SRC
-- run `sudo systemctl enable nvidia-presistenced`
+- run `sudo systemctl enable nvidia-persistenced.service`
+- reboot
 
 * If you run `nvidia-smi`, you may notice that the card is running xorg. To disable this, remove /usr/lib64/xorg/modules/drivers/nvidia_drv.so
 - You should notice that nvidia-smi reveals that there are no running processes found. If this is not the case, there is an issue
@@ -29,5 +47,5 @@ options nvidia "NVreg_DynamicPowerManagement=0x02"
   - Regardless of the program, the current  should jump up to 2-4A and settle somewhere comparativelyt  lower. This indicates that is working.
   - If you chose a resource intensive program, you should notice that the process appears in nvidia-smi.
 - Games should run better when using prime-run
-* Trouble shooting
+* Troubleshooting
 [[https://bbs.archlinux.org/viewtopic.php?pid=2013482#p201348h][this]] may be helpful.
