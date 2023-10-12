@@ -1,0 +1,61 @@
+#+title: Index
+
+* arch_install
+- arch installation instructions and tips
+* auto_type_username
+- this will make it so you do not have to type your username to login to the tty, it will go straight to the password prompt (or fingerprint if that is properly setup)
+* battlenet_starcraft
+- how to install starcraft using wine
+* bluetooth_bug
+- fixes some kind of bluetooth bug. I don't remember
+* calibre_create_table_of_contents
+- how to use calibre to generate a table of contents for a kindle book
+* default_browser
+- how to set default browser. lets you open emacs, thunderbird, slack, etc links
+* export_pgp_key
+- how to export and import gpg and pgp keys
+- I do this so I can store them somewhere else in case I lose them
+- it also talks about how to export and import them in passforios so I can get my passwords on iphone
+* face_login
+- how to login to the machine with face instead of password or fingerprint
+* gpg_agent_config
+- teaches you how to set the gpg agent, which is the password prompt for gpg keys
+- currently uses pinentry-rofi
+* hibernate
+- how to setup hibernation
+* keychron_fn_key
+- how to make the keychron fn key work
+* ly_display_manager
+- how to setup the ly display manager
+* multi_touch_click_natrual_scrolling
+- how to make the touch pad fully functional
+* nvidia
+- how to install and configure nvidia
+- how to setup prime-run
+- nvidia power management
+* org-roam-doom-fix
+- how to do a manual sync to fix org-roam files in doom emacs
+* printers
+- how to setup cups daemon for printing
+* private_git_repo
+- how to create and access a private git repo on a private server
+* protonmail-bridge
+- how to get protonmail-bridge working to setup an email server for email clients like thunderbird
+* protonvpn
+- protonvpn setup stuff. I don't think it fully works like I want
+* python_lsp_venv_emacs
+- how to make emacs python lsp server respect venvs
+* screen_tearing
+- how to fix screen tearing. this was only an issue on the XPS13 9380
+* startx_keysum_errors
+- when you X11 fails to start on boot, you need to recompile xmonad
+* system_time
+- how to set system time to correct timezone
+* taskd
+- how to install and configure a taskwarrior taskserver
+* thunderbird_hide_gmail_folder
+- hide the gmail folder in thunderbird
+* treemacs-workspace-copy
+- how to sync the treemacs workspace project file with another computer
+* zoom_fixes
+- make zoom tolerable in xmonad. could be better
