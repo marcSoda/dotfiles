@@ -84,12 +84,13 @@
   :config
   (direnv-mode))
 
-;;RAND-THEME
-;; (after! rand-theme
-;;     (setq rand-theme-wanted '(doom-henna doom-xcode doom-1337 doom-dark+)))
-;; (rand-theme) ;;for some reason, this does not work when I put it in the block
-
+;; theme
 (load-theme 'humanoid-dark t nil)
+;; I have to do this for the named scratchpad to load the theme right. It's only necessary when using humanoid-dark
+(defun apply-my-theme (frame)
+  (select-frame frame)
+  (load-theme 'humanoid-dark t))
+(add-hook 'after-make-frame-functions 'apply-my-theme)
 
 ;;ORG
 (after! org

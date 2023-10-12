@@ -1,0 +1,27 @@
+#+title: Protonmail Bridge
+
+- install `protonmail-bridge-nokeychain` from the aur
+  - the reason why we need the nokeychain variant is because the regular protonmail-bridge uses pass to store some passwords, which means it needs to decrypt those passwords with my gpg key, which means that I will be prompted for my password each time I start the machine. this is not ideal. nokeychain bypasses this, I'm sure there's some nominal security implications, but I don't care.
+- install `bridge-utils`
+- run `protonmail-bridge --cli`
+  - `login`
+    - follow the prompts
+  - `info`
+    - this is your authentication for thunderbird or whatever mail client you're using
+- create systemd unit file for bridge so it starts on boot
+  ~/.config/systemd/user/protonmail-bridge.service
+    #+BEGIN_SRC
+    [Unit]
+    Description=ProtonMail Bridge
+    After=network.target
+
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/protonmail-bridge --noninteractive
+    Restart=on-failure
+    RestartSec=5
+
+    [Install]
+    WantedBy=default.target
+    #+END_SRC
+    - enable it with systemctl --user protonmail-bridge.service
