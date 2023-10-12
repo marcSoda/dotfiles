@@ -16,6 +16,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+complete -cf sudo
 
 export DOTFILES=~/working/dotfiles
 export EDITOR=vim

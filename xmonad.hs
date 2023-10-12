@@ -21,7 +21,8 @@ import XMonad.Util.SpawnOnce
 import XMonad.Util.NamedScratchpad
 
 myFont :: String
-myFont = "xft:SauceCodePro Nerd Font Mono:regular:size=9:antialias=true:hinting=true"
+-- myFont = "xft:SauceCodePro Nerd Font Mono:regular:size=9:antialias=true:hinting=true"
+myFont = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true"
 
 myModMask :: KeyMask
 myModMask = mod4Mask
