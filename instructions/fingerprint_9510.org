@@ -74,4 +74,5 @@ polkit.addRule(function (action, subject) {
 - my origional issue: https://bbs.archlinux.org/viewtopic.php?pid=2045316#p2045316
 - found this script in this discussion: https://github.com/i3/i3lock/issues/210
 * unlock with fingerprint at startup.
-** you'll have to use pam-fprintd and add a pam rule. look it up, it's super easy
+- open `/etc/pam.d/system-local-login`
+- add `auth      sufficient      pam_fprintd.so` to the TOP of the file

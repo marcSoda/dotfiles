@@ -88,6 +88,7 @@
 ;; (after! rand-theme
 ;;     (setq rand-theme-wanted '(doom-henna doom-xcode doom-1337 doom-dark+)))
 ;; (rand-theme) ;;for some reason, this does not work when I put it in the block
+
 (load-theme 'humanoid-dark t nil)
 
 ;;ORG
@@ -238,5 +239,3 @@
     (:prefix ("w". "window")
         :desc "window-only" "o" #'delete-other-windows
         :desc "save"        "w" #'save-buffer))
-
-(load-file "~/working/dev/rust/lightc/misc/light-mode.el")

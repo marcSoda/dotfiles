@@ -176,7 +176,7 @@ myKeys =
 
 main :: IO ()
 main = do
-    xmproc <- spawnPipe "xmobar -x 0 /home/marc/.config/xmobar/xmobarrc"
+    xmproc <- spawnPipe "xmobar -x 0 /home/marc/working/dotfiles/xmobarrc"
     xmonad $ docks $ def
         -- { manageHook         = myManageHook <+> manageDocks
         { manageHook         = myManageHook
