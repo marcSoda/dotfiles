@@ -1,0 +1,201 @@
+#+title: Arch Install
+* Instructions are for Dell XPS15 9530, but should be fairly general.
+* These are dual boot unstructions. You should be able to extrapolate if you want to delete windows.
+* bios stuff
+- turn off secure boot
+** switch from RAID to AHCI (only required for dual booting, I think)
+- if you do this, you will not be able to boot into windows without some prior configuration. here are the steps
+- instructions [[https://superuser.com/questions/1280141/switch-raid-to-ahci-without-reinstalling-windows-10][here]]
+- note that if you screw this up, you could be stuck in windows safe mode forever. so be careful and double check
+- run `cmd` as admin
+- type `bcdedit /set {current} safeboot minimal'
+  - this will put windows into safe mode on next boot
+- go to UEFI and switch from RAID to AHCI
+- boot windows. since it will boot into safe mode, the AHCI drivers will be enabled
+- disable safe mode with `bcdedit /deletevalue {current} safeboot'
+- restart and you should be in windows with safe mode off and AHCI on
+* create bootable disk
+- download arch iso
+- insert usb drive
+- run `lsblk` to list drives
+- I will pretend it is /dev/sda for this, but it could be different
+** burn it to a disk
+#+BEGIN_SRC bash
+sudo mkfs.vfat /dev/sda -I # format the drive to fat32
+sudo su
+cat arch.iso > /dev/sda # burns iso to drive
+#+END_SRC
+* windows partition stuff
+** delete unnecessary partitions
+- there will be one or several recovery partitions that are stupid and annoying. delete them
+- before doing so, you should create a bootable recovery drive with a flash drive this is super easy
+  - instructions [[https://support.microsoft.com/en-us/windows/create-a-recovery-drive-abb4691b-5324-6d4a-8766-73fab304c246#:~:text=To create a recovery drive in Windows 10%3A,selected and then select Next.][here]]
+  - all you need to do is search for "create a recovery drive" in the windows search thingy and select the "Create a recovery drive" option
+  - then insert a drive, select it, and follow the prompts.
+  - Physically label the drive so you know which one it is
+    - for the Solar XPS15 9530, the recovery drive I made is the old bright blue plastic broken-looking one
+- to delete the drives
+  - be sure to double check shit. this can screw stuff up
+  - in the windows search thingy, type `diskpart.exe` and open it as admin
+    #+BEGIN_SRC
+    list disk
+    select disk <num>
+    list partition
+    select partition <num>
+    delete partition override
+    #+END_SRC
+  - you may need to move some partitions around for locality, for example, if the recovery partition is between the EFI and C partitions
+    - thankfully I didn't need to do that, but if you need to in the future, you'll have to figure it out. I believe in you
+    - [[https://www.youtube.com/watch?v=-5kf7UhQWKc][this might help, although, I didn't watch it]]
+** free space for linux
+- open windows partition manager as admin
+- if all the partitions look good (ideally, there should only be EFI and C unles you chose to keep recovery (for some dumb reason))
+- right click on C drive
+- click shrink
+- enter the amount you want to shrink
+- there should now be unallocated space for linux
+* arch install
+- boot into arch installation medium (turn on then mash F12 (probably))
+- select disk drive. if it's not there, look into the bios settings and troubleshoot (probably)
+** setup wifi for installation (see other wifi setup for making it work after install)
+#+BEGIN_SRC bash
+iwctl
+# starts wictl cli
+    device list # should show wlan0 (or other), if not, restart, if it still doesn't show, you'll have to troubleshoot
+    station wlan0 scan #should output nothing
+    station wlan0 get-networks # should output network list
+    station wlan0 conenct <SSID>
+        # type password then try  to ping
+#+END_SRC
+*** potential bug fix
+- on the XPS15 9530, after successfully connecting to the internet, a few minutes later I would get something like "Microcode SW error detected"
+  - it would then hang for a while and I would never be able to conenct again.
+  - it has something to do with network drivers I think
+- it appears to only happen on 5ghz networks.
+- this is the fix I found on reddit that seems to have worked. only do it if you have the same issue
+#+BEGIN_SRC bash
+sudo modprobe -r iwlmvm
+sudo modprobe -r iwlwifi
+sudo modprobe iwlwifi lar_disable=1
+iw reg set FR
+#+END_SRC
+** setup ssh for arch linux install
+- it will be easier to do this over ssh, but it's not necessary.
+#+BEGIN_SRC bash
+setfont ter-132n # will make the font bigger
+passwd # arch root password is not set, needs to be set for ssh to work
+systemctl start sshd.service
+vim /etc/ssh/sshd_config
+# append `PermitRootLogin yes` to bottom of above file then exit vim
+ip addr # get ip address
+#+END_SRC
+- you should now be able to ssh to the machine via `ssh root@<ipv4-addr>`
+- you can even scp your .bashrc over
+** setup timezone
+#+BEGIN_SRC bash
+timedatectl list-timezones # find your timezone
+timedatectl set-timezone America/New_York # or wherever you are now...
+timedatectl status # to verify that it worked
+#+END_SRC
+** partitions
+#+BEGIN_SRC bash
+lsblk # show devices and partitions
+cfdisk <device> #probably nvme0n1
+#+END_SRC
+- make a root partition
+- make a swap partition that is the same size as the amount of RAM you have
+- write changes
+- you MIGHT notice that linux list an additional microsoft partition that windows does not. I'm not sure why, but leave it alone
+** add new user and basic system stuff
+#+BEGIN_SRC bash
+# pacman stuff
+pacman -S pacman-contrib
+pacstrap -i /mnt base base-devel linux linux-lts linux-headers linux-firmware intel-ucode sudo git vim pulseaudio
+# generate file system table
+genfstab -U /mnt >> /mnt/etc/fstab
+cat /mnt/etc/fstab # verify partitions look good
+# chroot to /mnt
+arch-chroot /mnt
+# add user
+useradd -m marc
+passwd marc
+usermod -aG wheel,storage,power,audio marc # add user to groups
+visudo
+    # uncomment `%wheel ALL=(ALL:ALL) NOPASSWD: ALL`
+# misc
+vim /etc/locale.gen
+    # uncomment en_US.UTF-8 UTF-8
+locale-gen
+echo LANG=en_US.UTF-8 > /etc/locale.conf
+export LANG=en_US.UTF-8
+vim /etc/hostname # enter hostname
+ln -sf /usr/share/zoneinfo/America/New_York /etc/localetime # timezone
+#+END_SRC
+- `vim /etc/hosts`
+    #+BEGIN_SRC
+    127.0.0.1   localhost
+    ::1         localhost
+    127.0.0.1   <your_hostname>.localdomain    localhost
+    #+END_SRC
+** GRUB
+#+BEGIN_SRC bash
+mkdir /boot/efi
+mount <EFI partition> /boot/efi # probably /dev/nvme0n1p1
+pacman -S grub efibootmgr dosfstools mtools
+vim /etc/default/grub # uncomment GRUB_DISABLE_OS_PROBER=false # make it so grub can detect windows
+pacman -S os-prober
+grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck # should finish without errors
+grub-mkconfig -o /boot/grub/grub.cfg # make sure this says something about finding the windows bootloader. if it doesn't you can add a manual entry which I will describe below
+#+END_SRC
+*** adding manual windows grub entry
+- instructions [[https://askubuntu.com/questions/1425637/how-can-i-add-windows-11-to-grub-menu][here]]
+- find UUID of EFI partition (probably /dev/nvme0n1p1)
+    #+BEGIN_SRC bash
+    sudo blkid /dev/<device>
+    #+END_SRC
+- make sure you get the UUID, NOT PARTUUID
+    #+BEGIN_SRC bash
+    cd /etc/grub.d
+    sudo vim 40_custom
+    #+END_SRC
+- contents of 40_custom. replace <UUID> with the UUID copied from previous step
+    #+BEGIN_SRC bash
+    menuentry 'Windows 11' {
+        search --fs-uuid --no-floppy --set=root <UUID>
+        chainloader (${root})/EFI/Microsoft/Boot/bootmgfw.efi
+    }
+    #+END_SRC
+- update grub. note that you probably don't have update grub. Instructions on how to make it are below
+    #+BEGIN_SRC bash
+    sudo update-grub
+    #+END_SRC
+- create update-grub
+    #+BEGIN_SRC bash
+    sudo vim /usr/bin/update-grub
+    sudo chmod +x /usr/bin/update-grub
+    #+END_SRC
+  - contents of update-grub
+      #+BEGIN_SRC bash
+      #!/bin/sh
+      set -e
+      exec grub-mkconfig -o /boot/grub/grub.cfg "$@"
+      #+END_SRC
+- when you restart and select Windows 11, it should boot properly. if not, troubleshoot
+** wifi setup
+#+BEGIN_SRC bash
+pacman -S netctl dialog wpa_supplicant dhclient # this will install wifi-menu
+sudo systemctl enable systemd-resolved # this took me a while to figure out and DNS lookup always failed without it
+sudo systemctl start netctl-auto@<network-interface>.service
+sudo systemctl enable netctl-auto@<network-interface>.service # make wifi connect automatically on boot
+sudo wifi-menu # choose SSID
+#+END_SRC
+* don't forget
+- you'll need your gpg and ssh keys from electron. there are instructions on how to do this
+- install xmonad stuff
+  - you can figure it out
+  - make sure you install the right fonts or else it will be unusable
+- get hibernate working
+  - instructions in diff file
+- setup nvidia (instrucrtions are in a different file)
+- install auto-cpufreq
+  - clone and build, don't use aur. install with `auto-cpufreq --install`

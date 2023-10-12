@@ -1,0 +1,22 @@
+#+title: Hibernate
+
+* for: xps 15 9510/9530
+* steps
+- `cat /sys/power/state`
+  - output should be something like "freeze mem disk"
+  - if "disk" appears, your device supports hibernation
+- open `/dev/default/grub` and add the line
+  - `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash mem_sleep_default=deep intel_pstate=disable resume=<SWAP_PARTITION> ibt=off"`
+  - replace <SWAP_PARTITION> with your swap partition. probablt /dev/nvme0n1pX
+  - note that I don't know what any of the other options do. I forget. they are not all necessare, but the resume one definitely is
+- run `sudo update-grub`
+  - if you do not have `update-grub`, instructions on how to get it are in the arch install instructions
+- open `/etc/mkinitcpio.conf`
+  - add `resume` to the `HOOKS` line.
+  - should look something liket this:
+  - `HOOKS=(base udev lvm2 resume autodetect modconf block filesystems keyboard fsck)`
+  - if `resume` is already there, you're good
+  - note that the order of these matters. `resume` should be somewhere after `udev` and before `filesystems`
+- regenerate the initramfs
+  - `sudo mkinitcpio -P`
+- now you should be able to hibernate with `sudo systemctl hibernate`
