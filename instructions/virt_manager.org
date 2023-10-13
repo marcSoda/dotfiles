@@ -1,0 +1,3 @@
+#+title: Virt Manager
+
+- `pacman -S qemu virt-manager virt-viewer bridge-utils libguestfs`
