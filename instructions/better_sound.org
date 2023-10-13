@@ -1,0 +1,30 @@
+#+title: Better Sound
+
+- this is supposed to make the sound more like "windows" aka better. I'm not sure if it actually does anything, but it doesn't hurt
+- [[https://medium.com/@gamunu/enable-high-quality-audio-on-linux-6f16f3fe7e1f][tutorial]]
+- open `~/.config/pulse/daemon.conf`
+#+BEGIN_SRC
+default-sample-format = float32le
+default-sample-rate = 48000
+alternate-sample-rate = 44100
+default-sample-channels = 2
+default-channel-map = front-left,front-right
+default-fragments = 2
+default-fragment-size-msec = 125
+resample-method = soxr-vhq
+enable-lfe-remixing = no
+high-priority = yes
+nice-level = -11
+realtime-scheduling = yes
+realtime-priority = 9
+rlimit-rtprio = 9
+daemonize = no
+#+END_SRC
+- open `/etc/asound.conf`
+#+BEGIN_SRC
+# Use PulseAudio plugin hw
+pcm.!default {
+   type plug
+   slave.pcm hw
+}
+#+END_SRC

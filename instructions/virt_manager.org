@@ -1,3 +1,5 @@
 #+title: Virt Manager
 
 - `pacman -S qemu virt-manager virt-viewer bridge-utils libguestfs`
+- not done https://www.youtube.com/watch?v=bgywPoGRlt4
+  https://www.youtube.com/watch?v=6KqqNsnkDlQ
