@@ -8,7 +8,6 @@
 if [ $1 = "pixel" ]; then
     function send_notification {
         new_pixel_brightness=$( echo "($new_pixel_brightness * 100) / 1" | bc -l | cut -d. -f1)
-        # dunstify -i $(dirname $0)/brightness.png -r 1701 " $new_pixel_brightness%"
         dunstify -i $(dirname $0)/brightness.png -r 1701 -t 1000 -h int:value:$new_pixel_brightness Brightness
     }
     inc=.01

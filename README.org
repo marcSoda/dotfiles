@@ -6,14 +6,12 @@
 - a director full of stuff that I've stopped using
 - their usages are included in the README in archive
 * .bashrc
-- e:
+- e (unused):
   - Tool for efficiently working with named emacs daemons as workspaces. Replacement for tmux.
 - pass:
   - Tool that syncs pass with ios pass through a private git repo
-- doc (unused)
+- doc
   - Tool that configures the display and bluetooth devices when docking.
-- wifi (unused)
-  - Very useful wifi tool aimed at having a nicer interface than netctl. Uses netctl profile files for selecting wifi networks.
 - there are several other useful functions that are self explanatory
 * dunstrc
 - config file for dunst
@@ -21,14 +19,14 @@
 * emacs
 ** doom
 - config files for doom
-- symlink them all in ~/.doom.d
-- make sure to symlink the snippits dir in ~/.doom.d also
-** gnu
+- symlink them all in the doom directory
+- make sure to symlink the snippits dir too
+** gnu (unused)
 - config files for gnu emacs
-- symlink in .emacs.d
-** remote
+- symlink in emacs dir
+** remote (unused)
 - config files for a lite gnu emacs designed for remote development
-* mu4e
+* mu4e (unused)
 - see README in mu4e directory
 - belongs in ~/.mbsyncrc
 * ncspot.toml

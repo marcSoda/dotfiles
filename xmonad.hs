@@ -21,7 +21,7 @@ import XMonad.Util.SpawnOnce
 import XMonad.Util.NamedScratchpad
 
 myFont :: String
-myFont = "xft:SauceCodePro Nerd Font Mono:regular:size=9:antialias=true:hinting=true"
+myFont = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true"
 
 myModMask :: KeyMask
 myModMask = mod4Mask
@@ -176,7 +176,7 @@ myKeys =
 
 main :: IO ()
 main = do
-    xmproc <- spawnPipe "xmobar -x 0 /home/marc/.config/xmobar/xmobarrc"
+    xmproc <- spawnPipe "xmobar -x 0 /home/marc/working/dotfiles/xmobarrc"
     xmonad $ docks $ def
         -- { manageHook         = myManageHook <+> manageDocks
         { manageHook         = myManageHook

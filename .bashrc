@@ -16,6 +16,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+complete -cf sudo
 
 export DOTFILES=~/working/dotfiles
 export EDITOR=vim
@@ -35,7 +36,8 @@ export WINEPREFIX="$XDG_DATA_HOME"/wine
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=""$XDG_DATA_HOME"/cargo/bin:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$HOME/.config/emacs/bin:$PATH"
+
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 
 

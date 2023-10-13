@@ -7,7 +7,7 @@
 #+BEGIN_SRC
     [Service]
     ExecStart=
-    ExecStart=-/sbin/agetty -n -o username %I
+    ExecStart=-/sbin/agetty -n -o <YOUR_UNSERNAME> %I
 #+END_SRC
 - "sudo systemctl daemon-reload"
 - "sudo systemctl enable getty@tty1"

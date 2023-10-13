@@ -1,0 +1,10 @@
+#+title: Readme
+
+* requirements
+- symlink dotfiles/dunstrc to ~/.config/dunst/dunstrc
+- libnotify       #all
+- dunst           #all
+- playerctl       #spotify
+- brightnessctl   #brightness
+- bc              #brightness
+- pacman-contrib  #pacupdate
