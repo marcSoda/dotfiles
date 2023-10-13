@@ -8,7 +8,7 @@
 * battlenet_starcraft
 - how to install starcraft using wine
 * better_sound
-- how to make the sound output more like windows. not sure if this actually does anything, but it doesn't hurt
+- how to make the audio output more like windows. not sure if this actually does anything, but it doesn't hurt
 * bluetooth_bug
 - fixes some kind of bluetooth bug. I don't remember
 * bluetooth
