@@ -23,6 +23,8 @@
 - it also talks about how to export and import them in passforios so I can get my passwords on iphone
 * face_login
 - how to login to the machine with face instead of password or fingerprint
+* fonts
+- fonts required to fun the system after a fresh install
 * gpg_agent_config
 - teaches you how to set the gpg agent, which is the password prompt for gpg keys
 - currently uses pinentry-rofi
