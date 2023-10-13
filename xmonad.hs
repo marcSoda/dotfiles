@@ -56,7 +56,9 @@ myFocusColor  = "#0087D7"   -- Border color of focused windows
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "bash /home/marc/working/dotfiles/backgrounds/feh.sh &"
-    spawnOnce "picom --backend glx &"
+    -- spawnOnce "picom --backend glx &"
+    -- NOTE: YOU NEED TO USE `paru -S picom-arian8j2-git` instead of normal `picom` for window edge radius
+    spawnOnce "picom &"
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "tmux new-session -t main"
@@ -80,6 +82,7 @@ myLayoutHook = avoidStruts
              where
              myDefaultLayout = withBorder myBorderWidth tall
                            ||| noBorders monocle
+
 
 --Workspaces
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]

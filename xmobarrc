@@ -1,7 +1,7 @@
 Config { font    = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true, FontAwesome:size=10"
        , bgColor = "#222222"
        , fgColor = "#eeeeee"
-       , position = Top
+       , position = Static { xpos = 20 , ypos = 5 , width = 1880, height = 30 }
        , lowerOnStart = True
        , hideOnStart = False
        , commands = [Run Date " %a %b %d - %I:%M %p " "date" 60
