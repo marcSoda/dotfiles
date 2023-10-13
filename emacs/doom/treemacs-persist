@@ -1,0 +1,38 @@
+* Remote Mount
+** 475h3
+ - path :: ~/working/remote/475h3
+** 475h2
+ - path :: ~/working/remote/475h2
+** 475h1
+ - path :: ~/working/remote/475h1
+* 411
+** h1
+ - path :: ~/working/dev/lehigh/411/homework-1
+** h2
+ - path :: ~/working/dev/lehigh/411/homework-2
+* Java
+** 431h2
+ - path :: ~/working/dev/lehigh/old/431/h2
+** 431h1
+ - path :: ~/working/dev/lehigh/old/431/h1
+* Javascript
+** Jetlag
+ - path :: ~/working/dev/lehigh/jetlag
+* Rust
+** mech
+ - path :: ~/working/dev/lehigh/old/mech
+** phylogenetic
+ - path :: ~/working/dev/lehigh/old/408/p3
+** alignment
+ - path :: ~/working/dev/lehigh/old/408/p2
+** sbh
+ - path :: ~/working/dev/lehigh/old/408/p1
+** lightc
+ - path :: ~/working/dev/rust/lightc
+** raskman
+ - path :: ~/working/dev/rust/raskman
+** tuib
+ - path :: ~/working/dev/rust/tuib
+* Solar
+** auto
+ - path :: ~/working/dev/solar/auto

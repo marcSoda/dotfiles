@@ -2,3 +2,4 @@
 
 * I can never remember where the treemacs workspace file is stored
 - it's at <emacs-dir>/.local/cache/treemacs-persist
+- there is a file you can symlink at ~/working/dotfiles/emacs/doom
