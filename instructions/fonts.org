@@ -1,0 +1,20 @@
+#+title: Fonts
+
+- output of `pacman -Q | grep ttf`
+  #+BEGIN_SRC
+    ttf-all-the-icons 5.0.0-1
+    ttf-carlito 20230509-1
+    ttf-dejavu 2.37+18+g9b5d1b2f-4
+    ttf-font-awesome 6.4.2-1
+    ttf-font-awesome-4 4.7.0-5
+    ttf-iosevka 27.1.0-1
+    ttf-liberation 2.1.5-1
+    ttf-ubuntu-font-family 1:0.83-1
+    ttf-weather-icons 2.0.12-1
+  #+END_SRC
+  - I'm not sure if all of these are required, but most of them definitely are
+- emacs
+  - emacs recently switched from font awesome to nerd fonts
+  - to make sure they are installed properly, run `M-X nerd-icons-install-fonts`
+    - is used to me `M-X all-the-icons-install-fonts`, but not anymore
+- you may have to run `fc-cache -f -v` which will clear and regenerate the system font cache
