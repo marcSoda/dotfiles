@@ -1,6 +1,0 @@
-* https://wiki.archlinux.org/title/Howdy#Installation
-* steps:
-  - yay install howdy
-  - add "auth sufficient pam_python.so /lib/security/howdy/pam.py" to /etc/pam.d/system-local-login
-  - run "sudo EDITOR=emacs howdy config"
-  - set "device_path" to "/dev/video0"
