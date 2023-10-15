@@ -102,6 +102,7 @@ polkit.addRule(function (action, subject) {
   - the --remember flag needs to be set in the `tuigreet` invocation in `/etc/greetd/config.toml`
   - tuigreet saves the last user to `/var/cache/tuigreet/lastuser`, but there is a bug where it won't create the file itself
   - need to create `/var/cache/tuigreet/lastuser` and chmod 777 lastuser
+- `systemctl disable getty@tty1`
 - `systemctl enable greetd`
 ** hibernate/suspend login
 - uses i3lock with the fingerprint sensor
