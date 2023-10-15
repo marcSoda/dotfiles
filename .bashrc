@@ -18,6 +18,9 @@ if ! shopt -oq posix; then
 fi
 complete -cf sudo
 
+shopt -s histappend
+export PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
+export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export DOTFILES=~/working/dotfiles
 export EDITOR=vim
 export LESSHISTFILE=-
@@ -26,7 +29,6 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CACHE_HOME=$HOME/.cache
 export _JAVA_AWT_WM_NONREPARENTING=1 # issue  with weird java windows:
-export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
