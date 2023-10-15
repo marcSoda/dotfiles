@@ -133,7 +133,7 @@ polkit.addRule(function (action, subject) {
     Type=forking
     Environment=DISPLAY=:0
     # if not using i3lock-fancy, you can just use i3lock but it will be uglier
-    ExecStart=/usr/bin/i3lock-fancy
+    ExecStart=/usr/bin/i3lock-fancy -p -t DIRTYBUBBLE
 
     [Install]
     WantedBy=sleep.target suspend.target hibernate.target hybrid-sleep.target
