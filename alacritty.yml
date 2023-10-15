@@ -30,7 +30,7 @@ colors:
 
 #opacity
 window:
-  opacity: .95
+  opacity: .85
 
 #font
 font:
