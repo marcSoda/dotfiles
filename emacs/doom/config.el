@@ -225,6 +225,7 @@
         :desc "find file as sudo"      "s" #'doom/sudo-find-file
         :desc "open this file as sudo" "S" #'doom/sudo-this-file
         :desc "find in dotfiles" "d" (lambda () (interactive)(doom-project-browse "~/working/dotfiles/"))
+        :desc "find in instructions" "i" (lambda () (interactive)(doom-project-browse "~/working/dotfiles/instructions/"))
         :desc "find in org" "o" (lambda () (interactive)(doom-project-browse "~/working/org/")))
     (:prefix ("n". "notes")
         (:prefix ("r". "roam")

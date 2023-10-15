@@ -181,9 +181,7 @@ main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar -x 0 /home/marc/working/dotfiles/xmobarrc"
     xmonad $ docks $ def
-        -- { manageHook         = myManageHook <+> manageDocks
         { manageHook         = myManageHook
-        -- , handleEventHook    = docks
         , modMask            = myModMask
         , terminal           = myTerminal
         , startupHook        = myStartupHook
