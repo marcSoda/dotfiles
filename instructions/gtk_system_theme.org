@@ -1,0 +1,10 @@
+#+title: GTK System Theme
+
+- some system applications respect the GTK theme that is set.
+- I ran into this issue with `virt-manager`, but I'm sure many others are the same
+- to globally enable a dark GTK theme:
+#+BEGIN_SRC
+sudo pacman -S arc-gtk-theme
+sudo bash -c 'echo "[Settings]" > /etc/gtk-3.0/settings.ini'
+sudo bash -c 'echo "gtk-theme-name=Arc-Dark" >> /etc/gtk-3.0/settings.ini'
+#+END_SRC

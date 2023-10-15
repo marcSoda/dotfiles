@@ -1,0 +1,176 @@
+#+title: Login Stuff
+* fingerprint setup
+** OLD INSTRUCTIONS:
+*** I kept these in here because fprintd is stupid. These USED to be required for xps15 9510
+*** insturctions
+  - https://aur.archlinux.org/packages/libfprint-tod-git/
+*** if link broken:
+  - yay -S libfprint-2-tod1-xps9300-bin
+  - yay -S libfprint-tod-git
+  - git clone https://gitlab.freedesktop.org/3v1n0/libfprint.git
+  - cd libfprint/
+  - git checkout tags/v1.94.1+tod1
+  - meson builddir && cd builddir
+  - meson compile
+  - meson install
+  - sudo cp libfprint/libfprint-2.so.2.0.0 /usr/lib64/
+  - sudo cp libfprint/tod/libfprint-2-tod.so /usr/lib64/
+  - sudo cp libfprint/tod/libfprint-2-tod.so.1 /usr/lib64/
+*** to enroll:
+  - fprintd-enroll
+
+** NEW INSTRUCTIONS
+*** works for xps 15 9510 as of june 2022 and 9530 as of 10/23
+#+BEGIN_SRC
+pacman -S fprintd         #install libfprint and fprintd
+sudo fprintd-enroll <your_user>  #for some reason it doesn't work without sudo
+fprintd-verify <your_user>       #checks to see that enroll worked
+#+END_SRC
+** screenlock on hibernate and suspend with fingerprint (I don't do this anymore but am keeping it here for completion)
+*** install a screen locker. recommend slock or xsecure lock or something minimal like that
+*** place this script in /usr/lib/lock.sh. I'll probably put it in the scripts folder of this repo so it can be symlinked
+#+BEGIN_SRC
+#!/bin/bash
+
+pid=$$
+#xsecurelock &
+slock &
+
+# block until fingerprint is verified
+until ! pidof slock || fprintd-verify marc; do
+    echo "FAILURE"
+done
+
+#kill the pid for the lock and thisPid
+#pkill xsecurelock
+sudo pkill -9 slock
+kill $pid
+#+END_SRC
+*** create systemd service that runs /usr/lib/lock.sh on suspend/hibernate
+  - `sudo vim /usr/lib/systemd/system/lock.service`
+    #+BEGIN_SRC
+    [Unit]
+    Description=User resume actions
+    Before=suspend.target hibernate.target
+
+    [Service]
+    User=marc
+    Type=simple
+    Environment=DISPLAY=:0
+    ExecStart=/usr/bin/lock.sh
+
+    [Install]
+    WantedBy=suspend.target hibernate.target
+    #+END_SRC
+  - `sudo systemctl daemon-reload`
+  - `sudo systemctl enable lock`
+*** create a polkit rule to always allow fprintd to run at /usr/share/polkit-1/rules.d/50-net.reactivated.fprint.device.verify.rules
+#+BEGIN_SRC
+polkit.addRule(function (action, subject) {
+    if (action.id == "net.reactivated.fprint.device.verify") {
+        return polkit.Result.YES
+    }
+})
+#+END_SRC
+- my origional issue: https://bbs.archlinux.org/viewtopic.php?pid=2045316#p2045316
+- found this script in this discussion: https://github.com/i3/i3lock/issues/210
+* optimal setup as of 10/23
+- this is the setup I landed on
+- it uses `greetd` with `tuigreet` for boot lock and i3lock for suspend/hibernate
+- note: for generic hibernation setup (editing grub and stuff) there is a separate instruction file
+** boot login
+- I am using `greetd` with `tuigreet` to login on boot. does not work with hibernate and suspend
+- `pacman -S greetd-tuigreet`
+- `/etc/greetd/config.toml`
+    #+BEGIN_SRC
+    [terminal]
+    # The VT to run the greeter on. Can be "next", "current" or a number
+    # designating the VT.
+    vt = 1
+
+    # The default session, also known as the greeter.
+    [default_session]
+    command = "tuigreet --cmd 'bash --login' --remember"
+
+    # The user to run the command as. The privileges this user must have depends
+    # on the greeter. A graphical greeter may for example require the user to be
+    # in the `video` group.
+    user = "marc"
+    #+END_SRC
+  - the --remember flag makes it so the tuigreet auto types the last entered username on start. however, it needs more configuration due to a bug
+- make `greetd` remember the last authenticated user
+  - the --remember flag needs to be set in the `tuigreet` invocation in `/etc/greetd/config.toml`
+  - tuigreet saves the last user to `/var/cache/tuigreet/lastuser`, but there is a bug where it won't create the file itself
+  - need to create `/var/cache/tuigreet/lastuser` and chmod 777 lastuser
+- `systemctl enable greetd`
+** hibernate/suspend login
+- uses i3lock with the fingerprint sensor
+- note that for some reason, you have to press enter (try to authenticate) and then touch the fingerprint sensor
+- `pacman -S i3lock`
+- enable fingerprint:
+  - add `auth sufficient pam_fprintd.so` to the TOP of `/etc/pam.d/i3lock`
+  - add polkit rule to `/usr/share/polkit-1/rules.d/50-net.reactivated.fprint.device.verify.rules`
+  #+BEGIN_SRC
+    polkit.addRule(function (action, subject) {
+            if (action.id == "net.reactivated.fprint.device.verify") {
+                    return polkit.Result.YES
+            }
+    })
+  #+END_SRC
+- enable hibernate/suspend lock
+  - `/etc/systemd/system/i3lock.service`
+    #+BEGIN_SRC
+    [Unit]
+    Description=i3lock
+    Before=sleep.target suspend.target hibernate.target hybrid-sleep.target
+    After=fprintd.service
+
+    [Service]
+    User=marc
+    Type=forking
+    Environment=DISPLAY=:0
+    ExecStart=/usr/bin/i3lock
+
+    [Install]
+    WantedBy=sleep.target suspend.target hibernate.target hybrid-sleep.target
+    #+END_SRC
+  - `sudo systemctl enable i3lock`
+* TTY login
+- this will make it so you do not have to type your username to login to the tty, it will go straight to the password prompt.
+- works when not using a login manager
+** steps:
+- "sudo systemctl edit getty@tty1"
+#+BEGIN_SRC
+    [Service]
+    ExecStart=
+    ExecStart=-/sbin/agetty -n -o <YOUR_UNSERNAME> %I
+#+END_SRC
+- "sudo systemctl daemon-reload"
+- "sudo systemctl enable getty@tty1"
+- reboot
+- `~/.bash_profile`
+  - will make it so `startx` only runs if you are in tty1 and you have graphical capabilities
+    #+BEGIN_SRC bash
+    [[ -f ~/.bashrc ]] && . ~/.bashrc
+    #Only run startx if on tty1
+    [ -z "$DISPLAY" ] && [ $XDG_VTNR -eq 1 ] && exec startx
+    #+END_SRC
+** enable tty fingerprint
+- open `/etc/pam.d/system-local-login`
+- add `auth sufficient pam_fprintd.so` to the TOP of the file
+- will use fingerprint as primary auth method then default to password
+* face login
+** https://wiki.archlinux.org/title/Howdy#Installation
+** steps:
+  - yay install howdy
+  - add "auth sufficient pam_python.so /lib/security/howdy/pam.py" to /etc/pam.d/system-local-login
+  - run "sudo EDITOR=emacs howdy config"
+  - set "device_path" to "/dev/video0"
+
+
+
+  polkit.addRule(function (action, subject) {
+        if (action.id == "net.reactivated.fprint.device.verify") {
+                return polkit.Result.YES
+        }
+})
