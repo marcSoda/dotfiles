@@ -108,6 +108,8 @@ polkit.addRule(function (action, subject) {
 - uses i3lock with the fingerprint sensor
 - note that for some reason, you have to press enter (try to authenticate) and then touch the fingerprint sensor
 - `pacman -S i3lock`
+- `paru -S i3lock-fancy`
+  - this just makes it look nicer. if it no longer exists, you can ignore
 - enable fingerprint:
   - add `auth sufficient pam_fprintd.so` to the TOP of `/etc/pam.d/i3lock`
   - add polkit rule to `/usr/share/polkit-1/rules.d/50-net.reactivated.fprint.device.verify.rules`
@@ -130,7 +132,8 @@ polkit.addRule(function (action, subject) {
     User=marc
     Type=forking
     Environment=DISPLAY=:0
-    ExecStart=/usr/bin/i3lock
+    # if not using i3lock-fancy, you can just use i3lock but it will be uglier
+    ExecStart=/usr/bin/i3lock-fancy
 
     [Install]
     WantedBy=sleep.target suspend.target hibernate.target hybrid-sleep.target
