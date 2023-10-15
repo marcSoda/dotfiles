@@ -1,0 +1,23 @@
+#+title: Windows Installation
+
+- I had a ton of trouble installing windows on the XPS15 9530. This details some of the advanced things I had todo.
+* Tips
+- definitely, definitely, definitely install windows on a SEPARATE drive from your arch installation. it makes things so much easier
+  - this will also make way easier to boot into it via KVM on linux
+- physically disconnect your main linux disk before the installation to prevent typical windows fuckery
+  - if you do this, you should be able to do a `sudo update-grub` and it should see the windows EFI partition on the second disk
+- I hate windows, kill me
+* Create a bootable usb drive
+- go to https://microsoft.com/en-us/software-download and download
+- the iso of choice.
+- also download the media creation tool
+  - you NEED this to burn the disk. it is not sufficient to simply `sudo cat win.iso > /dev/sdaX` because windows it stupid
+- you can then boot off of the disk from the boot menu
+* Drivers
+- if the installer won't run and say something like "your device is missing required drivers, insert a USB stick with the drivers on it to continue the installation"
+  - you probaly didn't burn the image correctly. again. you can't use `cat`. you NEED to use the windows media creation tool from a separate windows machine
+  - if that is not the case, you can try to go to your manufacturer website and put the drivers on a USB stick. I spent a few long hours trying to do this and could not get it to work no matter how I extracted them. Good luck if this is your issue.
+- I had an issue on the 9530 where I had no wifi, sound, and the trackpad was messed up (and probably some other stuff)
+  - I assume this is because it was so new and the installation media did not have the proper drivers
+  - what I had to do was download all of the drivers (specifically for the XPS9530), put them on a USB disk, complete the Windows installtion via ethernet, and install them once that finished. this fixed the issue for me.
+  - I hate windows

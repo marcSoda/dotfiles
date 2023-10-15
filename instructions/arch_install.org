@@ -1,6 +1,17 @@
 #+title: Arch Install
 * Instructions are for Dell XPS15 9530, but should be fairly general.
 * These are dual boot unstructions. You should be able to extrapolate if you want to delete windows.
+* NOTE: right after setting up dual boot, I realized that it's stupid to dual boot on the same disk. I installed a second m.2 drive into the XPS15 9530 and installed windows on that. THIS IS THE WAY YOU SHOULD ALWAYS DO IT
+- all the steps are pretty much the same. you can extrapolate what would be different. I assume all the bios stuff is the same so be sure to follow that.
+** add a grub entry for windows on a different disk
+- this is easy
+#+BEGIN_SRC bash
+mkdir /mnt/windows_efi
+sudo mnt /dev/nvmeXn1pY /mnt/windows_efi # where X is the windows drive number and Y is the EFI partition, NOT the C: partition
+sudo update-grub
+#+END_SRC
+- This should have grub automatically find and add an entry for windows.
+  - if, for some reason, it doesn't, you can follow the steps below for manually creating a GRUB entry. should be easy
 * bios stuff
 - turn off secure boot
 ** switch from RAID to AHCI (only required for dual booting, I think)

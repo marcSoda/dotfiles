@@ -64,5 +64,8 @@
 - hide the gmail folder in thunderbird
 * treemacs-workspace-copy
 - how to sync the treemacs workspace project file with another computer
+* windows_installation
+- advice to my future self regarding some niche things I had to do when installing windows in the past.
+- I hate windows so much
 * zoom_fixes
 - make zoom tolerable in xmonad. could be better
