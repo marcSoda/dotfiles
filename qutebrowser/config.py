@@ -182,7 +182,7 @@ c.content.blocking.adblock.lists = ['https://easylist.to/easylist/easylist.txt',
 # Bindings for normal mode
 config.unbind('m')
 config.bind('m', 'hint links spawn firefox {hint-url}')
-config.bind('b', 'set-cmd-text -s :tab-select')
+config.bind('b', 'cmd-set-text -s :tab-select')
 config.bind('xx', 'config-cycle statusbar.show always never;; config-cycle tabs.show always never')
 config.bind('>', 'clear-messages;; jseval --quiet document.querySelector("video").playbackRate += 0.1; ;; jseval Math.round(parseFloat(document.querySelector("video").playbackRate) * 10) / 10;')
 config.bind('<', 'clear-messages;; jseval --quiet document.querySelector("video").playbackRate -= 0.1; ;; jseval Math.round(parseFloat(document.querySelector("video").playbackRate) * 10) / 10;')
