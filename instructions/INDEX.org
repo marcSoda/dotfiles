@@ -27,6 +27,8 @@
 * gpg_agent_config
 - teaches you how to set the gpg agent, which is the password prompt for gpg keys
 - currently uses pinentry-rofi
+* grub_theme
+- how to configure a theme for grub
 * hibernate
 - how to setup hibernation
 * keychron_fn_key

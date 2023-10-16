@@ -1,0 +1,21 @@
+#+title: Grub Theme
+
+- go to `https://github.com/AdisonCavani/distro-grub-themes`
+  - take a look at preview directory and find one you like
+  - go to the themes dir and download the theme the corresponds to the preview you liked
+- make a folder and move the tar to it
+- extract it with `tar xvf <theme_name>.tar`
+- navigate to `/boot/efi/EFI/<GRUB_DIR>/`
+  - mkdir themes
+  - cd themes
+  - mkdir <THEME_NAME>> # the name is irrelevant, name it whatever you want
+  - cd <THEME_NAME>
+  - cp <all_extracted_files> .
+  - make a note of the absolute path to the `theme.txt` (or something like that) file in the <theme_name> dir
+- open `/etc/default/grub`
+  - add `GRUB_THEME="/boot/efi/EFI/<GRUB_DIR>/themes/<THEME_NAME>/theme.txt"`
+- if you have a windows installation, mount it so `update-grub` sees it
+  - sudo mount /dev/<WINDOWS_EFI_PARTITION> /mnt/windows_efi
+- sudo update-grub
+- you should notice that the output indicates that the theme was found in the path you specified. if it wansn't you did something wrong
+- reboot
