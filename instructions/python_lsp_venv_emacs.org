@@ -2,6 +2,8 @@
 
 - Written 9/29/23 Dell XPS 15 9510 Arch Linux
 - By default, doom emacs lsp pyright will not use python local venvs. Here's how to make it respect venvs.
+- install npm so emacs can automatically instal pyright
+  - `pacman -S npm`
 - ensure this line is in `init.el`. this enables python lsp support with pyright
   - `(python +lsp +pyright)`
 - Install `direnv` on local machine

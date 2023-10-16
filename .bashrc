@@ -189,6 +189,11 @@ lo() {
     command libreoffice "$1" &>/dev/null & disown
 }
 
+# note that the following only works with relative paths
+oo() {
+    command onlyoffice-desktopeditors ./"$1" &>/dev/null & disown
+}
+
 #tmux
 tm() {
     if [[ $# = 0 ]]; then
