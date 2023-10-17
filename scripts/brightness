@@ -10,7 +10,7 @@ if [ $1 = "pixel" ]; then
         new_pixel_brightness=$( echo "($new_pixel_brightness * 100) / 1" | bc -l | cut -d. -f1)
         dunstify -i $(dirname $0)/brightness.png -r 1701 -t 1000 -h int:value:$new_pixel_brightness Brightness
     }
-    inc=.01
+    inc=.05
     pixel_brightness=$(xrandr --verbose | grep -w -A 5 $2 | grep Brightness | awk '{print $2}')
     if [ $3 = "up" ]; then
         if (( $(echo "$pixel_brightness >= 1.0" | bc -l) )); then

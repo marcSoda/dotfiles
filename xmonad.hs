@@ -87,10 +87,11 @@ myLayoutHook = avoidStruts
 --Workspaces
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
-     [ className =? "zoom"                   --> doShift(myWorkspaces !! 6)
-     , className =? "Slack"                  --> doShift(myWorkspaces !! 7)
-     , className =? "firefox"                --> doShift(myWorkspaces !! 8)
-     , className =? "vlc"                    --> doShift(myWorkspaces !! 8)
+     [ className =? "zoom"                       --> doShift(myWorkspaces !! 6)
+     , className =? "Microsoft Teams - Preview"  --> doShift(myWorkspaces !! 6)
+     , className =? "Slack"                      --> doShift(myWorkspaces !! 7)
+     , className =? "firefox"                    --> doShift(myWorkspaces !! 8)
+     , className =? "vlc"                        --> doShift(myWorkspaces !! 8)
      ] <+> namedScratchpadManageHook myScratchpads
 
 --Scratchpads
@@ -131,7 +132,7 @@ myKeys =
         , ("M-S-b", spawn (myBrowser))
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
-        , ("M-S-c", spawn "/usr/bin/emacsclient -a='' --no-wait -c -s 0")
+        , ("M-S-c", spawn "emacs")
     -- Kill windows
         , ("M-S-x", kill)                 -- Kill the currently focused client
     -- Windows navigation
@@ -151,6 +152,10 @@ myKeys =
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
         , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
+    -- Power
+        , ("M-S-h", spawn "systemctl hibernate")
+        , ("M-S-o", spawn "systemctl reboot")
+        , ("M-S-l", spawn "systemctl suspend")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))

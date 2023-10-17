@@ -1,11 +1,11 @@
 * audio
 - make sure mic in unmuted and "Analog Stereo Duplex" is selected in the "Configuration" tab of pavucontrol/ncpamixer
-- may have to adjust volume. On the xps15 9510, 20% works good
+- may have to adjust mic volume in the mixer volume. On the xps15 9510, 20% works good
 - set suppress background audio to medium
 * screen sharing
 ** screen really dim:
 - in zoom, go to settings -> share screen -> advanced -> untick show screen border around shared content
-- the green border places an x window over everything that picum mistakenly blurrs
+- the green border places an x window over everything that picom mistakenly blurrs
 ** black boxes
 - settings -> share screen -> tick show my zoom windows to other participants when I am sharing screen
 - when this is unticked, zoom places huge grey bars over the zoom windows that are very distracting
