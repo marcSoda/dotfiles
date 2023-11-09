@@ -1,11 +1,36 @@
 #+title: Python Lsp Venv Emacs
 
-- Written 9/29/23 Dell XPS 15 9510 Arch Linux
+- Written 9/23 Dell XPS 15 9530 Arch Linux
+* current instructions
+- additional info:
+  - currently, I use `lsp-mode` by default. however, pyright does NOT work via tramp over ssh or in docker containers when using lsp-mode, but it works fine when using eglot.
+  - for this use case, the best I was able to come up with was having `lsp-mode` and `eglot` installed. when I want to use `eglot` instead (currently only for python pyright on tramp or in docker containers), I just kill all of the `lsp-mode` buffers and manually run `eglot`. this works fine, but kind of sucks. I can't figure out how to stop `lsp-mode` from running by default when I open a python file because the `+lsp` flag is required in `init.el` for `lsp-mode` to work at all for a given language. oh well...
+  - maybe use `eglot` exclusively? it's not bad, just not as pretty
+  - NOTE: you will need to install `pyright` on whataver machine/container you want to connect to with `npm install -g pyright`. You don't need to use npm, just make sure however you install it, it's on the `PATH`
 - By default, doom emacs lsp pyright will not use python local venvs. Here's how to make it respect venvs.
 - install npm so emacs can automatically instal pyright
   - `pacman -S npm`
 - ensure this line is in `init.el`. this enables python lsp support with pyright
   - `(python +lsp +pyright)`
+- in the project root, create a file called `pyrightconfig.json` with contents:
+  - note, you may want to take a look at a more current `pyrightconfig.json`, because this may be outdated, but it's a good start
+    #+BEGIN_SRC json
+    {
+        "venvPath": ".",
+        "venv": "venv",
+        "reportOptionalSubscript": false,
+        "reportGeneralTypeIssues": false,
+        "reportOptionalMemberAccess": false,
+        "reportOptionalOperand": false,
+        "reportOptionalIterable": false
+    }
+    #+END_SRC
+- `venvPath` and `venv` set the venv directory that pyright should respect. if you are not using virtual envs, this is not necessary
+- the additional lines will remove some annoying syntax highlighting that is not necessary for python. python sucks ass.
+
+* OLD INSTRUCTIONS
+- these old instructions were what I used before I realized that the venv could be set in `pyrightconfig.json`
+  - allows emacs to pickup project-based env vars which pyright will see
 - Install `direnv` on local machine
   - `pacman -S direnv`
 - Install `direnv` emacs package by adding this line to
@@ -22,12 +47,3 @@
   #+END_SRC
   - This will cause pyright to source the necessary env vars for the venv
   - In the python project directory, type `direnv allow` to allow emacs direnv to read the file. Not sure why this is necessary but it is.
-- That is all the configuration required to get the lsp server to work with venvs as expected, but there is additional configuration that is useful to make pyright not be stupid:
-  - in the project root, create a file called `pyrightconfig.json` with contents:
-  #+BEGIN_SRC json
-    {
-        "reportOptionalSubscript": false,
-        "reportGeneralTypeIssues": false
-    }
-  #+END_SRC
-  - this will remove some annoying syntax highlighting that is not necessary for python. python sucks.

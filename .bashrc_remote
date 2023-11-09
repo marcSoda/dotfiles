@@ -1,0 +1,89 @@
+#!/bin/bash
+
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+#Add ls colors
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# enable programmable completion features
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+complete -cf sudo
+
+shopt -s histappend
+export PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
+export DOTFILES=~/working/dotfiles
+export EDITOR=vim
+export LESSHISTFILE=-
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_STATE_HOME=$HOME/.local/state
+export XDG_CACHE_HOME=$HOME/.cache
+export JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
+export _JAVA_AWT_WM_NONREPARENTING=1 # issue  with weird java windows:
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export GOPATH="$XDG_DATA_HOME"/go
+
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$XDG_DATA_HOME/cargo/bin:$PATH"
+export PATH="$HOME/.config/emacs/bin:$PATH"
+export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+
+
+#aliases:
+#system
+alias c='clear'
+alias sb='source ~/.bashrc'
+alias grep='grep --color=auto'
+alias gerp='grep -rnIi $1 $2 --color'
+alias ls='ls -al --color'
+alias rm='rm -v'
+alias pg='ping google.com'
+alias wget='wget --no-hsts'
+alias duh='du -ah --max-depth=1 . | sort -rh'
+
+#git
+alias g='git status'
+alias gs='git status -s'
+alias gp='git push'
+alias gst='git status'
+alias ga='git add'
+alias gd='git diff'
+alias gck='git checkout'
+alias gb='git branch'
+alias gl='git log'
+gc() {
+    git commit -m "$*"
+}
+
+#nav
+alias cw='cd ~/working'
+
+#tmux
+tm() {
+    if [[ $# = 0 ]]; then
+        /usr/bin/tmux
+    elif [[ $1 = "-a" ]]; then #attach
+        /usr/bin/tmux attach-session -t $2
+    elif [[ $1 = "-k" ]]; then #kill
+        /usr/bin/tmux kill-session -t $2
+    elif [[ $1 = "-l" ]]; then #list
+        /usr/bin/tmux list-sessions
+    elif [[ $1 = "-c" ]]; then #connect to a session (windows share exact same properties, but NOT physical state)
+        /usr/bin/tmux new-session -t $2
+    elif [[ $1 = "-p" ]]; then #purge non-attached sessions created by -c
+        tmux list-sessions | grep -v "(attached)" | cut -d: -f1 | while read s; do
+            tmux kill-session -t $s
+        done
+    fi
+}

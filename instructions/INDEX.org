@@ -53,7 +53,7 @@
 * protonvpn
 - protonvpn setup stuff. I don't think it fully works like I want
 * python_lsp_venv_emacs
-- how to make emacs python lsp server respect venvs
+- how to make emacs python lsp server respect venvs. eglot and lsp-mode
 * screen_tearing
 - how to fix screen tearing. this was only an issue on the XPS13 9380
 * startx_keysum_errors

@@ -51,13 +51,12 @@
 
 ;;LSP
 (after! lsp-mode
-    ;; (after! lsp-pyright
-    ;;     (setq lsp-pyright-venv-path "/home/marc/working/dev/lehigh/431/kmm/venv"))
     ;; tramp remote stuff
     (if (boundp 'tramp-remote-path)
         (progn
             (add-to-list 'tramp-remote-path "~/go/bin")
-            (add-to-list 'tramp-remote-path "/usr/bin/clangd")
+            (add-to-list 'tramp-remote-path "/usr/bin")
+            (setq enable-remote-dir-locals t)
             (add-to-list 'tramp-remote-path 'tramp-own-remote-path)))
     (lsp-register-client
         (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
@@ -74,6 +73,7 @@
                 :major-modes '(rust-mode rustic-mode)
                 :remote? t
                 :server-id 'rust-server)))
+
 (after! lsp-ui
     (setq lsp-ui-doc-enable t)
     (setq lsp-headerline-breadcrumb-enable t)

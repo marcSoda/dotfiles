@@ -52,6 +52,4 @@
 (package! swiper)
 (package! rand-theme)
 (package! org-roam-ui)
-(package! lsp-docker)
 (package! peep-dired)
-(package! direnv) ;; allows me to use python lsp with venv. It's language agnostic, but for now I just use it for python

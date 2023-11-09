@@ -153,9 +153,9 @@ myKeys =
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
         , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
     -- Power
-        , ("M-S-h", spawn "systemctl hibernate")
-        , ("M-S-o", spawn "systemctl reboot")
-        , ("M-S-l", spawn "systemctl suspend")
+        -- , ("M-S-h", spawn "systemctl hibernate")
+        -- , ("M-S-o", spawn "systemctl reboot")
+        -- , ("M-S-l", spawn "systemctl suspend")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))
