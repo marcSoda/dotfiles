@@ -130,6 +130,7 @@ myKeys =
     -- Applications
         , ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
         , ("M-S-b", spawn (myBrowser))
+        , ("M-S-f", spawn "firefox")
         , ("M-p", spawn "rofi -show run")
         , ("M-S-p", spawn "rofi-pass")
         , ("M-S-c", spawn "emacs")

@@ -1,0 +1,33 @@
+working_directory = "/home/marc/working"
+
+[colors.bright]
+black = "0x696969"
+blue = "0x007FFF"
+cyan = "0x00CCCC"
+green = "0x03C03C"
+magenta = "0xFF1493"
+red = "0xFF2400"
+white = "0xFFFAFA"
+yellow = "0xFDFF00"
+
+[colors.normal]
+black = "0x10100E"
+blue = "0x0087D7"
+cyan = "0x20B2AA"
+green = "0x00ff84"
+magenta = "0x9A4EAE"
+red = "0xe80000"
+white = "0xC6C6C4"
+yellow = "0xFFD700"
+
+[colors.primary]
+background = "0x1C1C1C"
+foreground = "0xeeeeee"
+
+[font.normal]
+family = "Iosevka"
+#size = 12
+style = "Regular"
+
+[window]
+opacity = 0.85
