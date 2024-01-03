@@ -1,12 +1,12 @@
-    -- Base
+-- Base
 import XMonad
 import System.IO (hPutStrLn)
 import System.Exit (exitSuccess)
 import qualified XMonad.StackSet as W
-    -- Hooks
+-- Hooks
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
 import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
-    -- Layouts and modifiers
+-- Layouts and modifiers
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
@@ -14,13 +14,11 @@ import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBO
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.Spacing
-   -- Utilities
+-- Utilities
 import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.Run (runProcessWithInput, safeSpawn, spawnPipe)
 import XMonad.Util.SpawnOnce
 import XMonad.Util.NamedScratchpad
-
-
 
 myFont :: String
 myFont = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true"
@@ -102,7 +100,6 @@ myLayoutHook = avoidStruts
              myDefaultLayout = withBorder myBorderWidth tall
                            ||| noBorders monocle
 
-
 --Workspaces
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
@@ -118,6 +115,7 @@ myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
                 , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
+                , NS "chatGptScratch" spawnChatGpt findChatGpt manageChatGpt
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
                 , NS "thunderScratch" spawnThunderScratch findThunderScratch manageThunderScratch]
     where
@@ -131,7 +129,7 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
 
         spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
         findEmacsClient   = title =? "emacs-scratch"
-        manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.96
+        manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
         spawnNcpamixer  = myTerminal ++ " -t 'ncpamixer Scratchpad' -e ncpamixer"
         findNcpamixer   = title =? "ncpamixer Scratchpad"
@@ -140,6 +138,10 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         spawnThunderScratch  = "thunderbird"
         findThunderScratch   = className =? "thunderbird"
         manageThunderScratch = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+
+        spawnChatGpt  = "chat-gpt"
+        findChatGpt   = className =? "Chat-gpt"
+        manageChatGpt = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
 --Keybindings
 myKeys :: [(String, X ())]
@@ -172,10 +174,7 @@ myKeys =
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
         , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
-    -- Power
-        -- , ("M-S-h", spawn "systemctl hibernate")
-        -- , ("M-S-o", spawn "systemctl reboot")
-        -- , ("M-S-l", spawn "systemctl suspend")
+        , ("M-f", namedScratchpadAction myScratchpads "chatGptScratch")
     -- Multimedia Keys
         , ("M-s", spawn ("scrot " ++ scrotPath))
         , ("M-S-s", spawn ("scrot -s " ++ scrotPath))
