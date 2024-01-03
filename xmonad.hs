@@ -20,6 +20,8 @@ import XMonad.Util.Run (runProcessWithInput, safeSpawn, spawnPipe)
 import XMonad.Util.SpawnOnce
 import XMonad.Util.NamedScratchpad
 
+
+
 myFont :: String
 myFont = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true"
 
@@ -47,11 +49,28 @@ myBrowser = "qutebrowser "
 myBorderWidth :: Dimension
 myBorderWidth = 2           -- Sets border width for windows
 
-myNormColor :: String
-myNormColor   = "#222222"   -- Border color of normal windows
+-- Colors. Also used in xmobarrc. If you change a color here, you should probably change the corresponding color in xmobarrc to keep theme consistent
+myLightGrey :: String
+myLightGrey = "#666666"
+myDarkGrey  :: String
+myDarkGrey  = "#222222"
+myPurple    :: String
+myPurple    = "#DE02F2"
+myYellow    :: String
+myYellow    = "#fff700"
+myOrange    :: String
+myOrange    = "#FFA500"
+myGreen     :: String
+myGreen     = "#20D68A"
+myWhite     :: String
+myWhite     = "#eeeeee"
+myBlue      :: String
+myBlue      = "#1c90fc"
+myRed       :: String
+myRed       = "#ff0800"
 
-myFocusColor :: String
-myFocusColor  = "#0087D7"   -- Border color of focused windows
+windowCount :: X (Maybe String)
+windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
 
 myStartupHook :: X ()
 myStartupHook = do
@@ -185,7 +204,10 @@ myKeys =
 
 main :: IO ()
 main = do
-    xmproc <- spawnPipe "xmobar -x 0 /home/marc/working/dotfiles/xmobarrc"
+    -- xmproc <- spawnPipe "xmobar -x 0 /home/marc/working/dotfiles/xmobarrc"
+    xmproc0 <- spawnPipe ("xmobar -x 0 /home/marc/working/dotfiles/xmobarrc")
+    xmproc1 <- spawnPipe ("xmobar -x 1 /home/marc/working/dotfiles/xmobarrc")
+    xmproc2 <- spawnPipe ("xmobar -x 2 /home/marc/working/dotfiles/xmobarrc")
     xmonad $ docks $ def
         { manageHook         = myManageHook
         , modMask            = myModMask
@@ -194,17 +216,30 @@ main = do
         , layoutHook         = avoidStruts $ myLayoutHook
         , workspaces         = myWorkspaces
         , borderWidth        = myBorderWidth
-        , normalBorderColor  = myNormColor
-        , focusedBorderColor = myFocusColor
+        , normalBorderColor  = myDarkGrey
+        , focusedBorderColor = myBlue
         , logHook = dynamicLogWithPP $ xmobarPP
-              { ppOutput = hPutStrLn xmproc
-              , ppCurrent = xmobarColor "#0087D7" "" . wrap "[" "]"           -- Current workspace
-              , ppVisible = xmobarColor "#0087D7" ""                          -- Visible but not current workspace
-              , ppHidden = xmobarColor "#a4a4a4" "" . wrap "*" ""             -- Hidden workspaces
-              , ppHiddenNoWindows = xmobarColor "#EEEEEE" ""                  -- Hidden workspaces (no windows)
-              , ppTitle = xmobarColor "#0087D7" "" . shorten 60               -- Title of active window
-              , ppSep =  "<fc=#666666> <fn=1>|</fn> </fc>"                    -- Separator character
-              , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"            -- Urgent workspace
-              , ppOrder  = \(ws:l:t:ex) -> [ws,l]++ex++[t]                    -- order of things in xmobar
-              }
+            { ppOutput = \x -> hPutStrLn xmproc0 x   -- xmobar on monitor 1
+                            >> hPutStrLn xmproc1 x   -- xmobar on monitor 2
+                            >> hPutStrLn xmproc2 x   -- xmobar on monitor 3
+            , ppCurrent = xmobarColor myBlue "" . wrap
+                        ("<box type=Bottom width=2 mb=2 color=" ++ myBlue ++ ">") "</box>"
+            -- Visible but not current workspace
+            , ppVisible = xmobarColor myGreen ""
+            -- Hidden workspace
+            , ppHidden = xmobarColor myPurple "" . wrap
+                        ("<box type=Top width=2 mt=2 color=" ++ myPurple ++ ">") "</box>"
+            -- Hidden workspaces (no windows)
+            , ppHiddenNoWindows = xmobarColor myWhite ""
+            -- Title of active window
+            , ppTitle = xmobarColor myBlue "" . shorten 60
+            -- Separator character
+            , ppSep =  "<fc=" ++ myLightGrey ++ "> <fn=1>|</fn> </fc>" -- revisit. color does nothing
+            -- Urgent workspace. Not when a workspace becomes urgent
+            , ppUrgent = xmobarColor myRed "" . wrap "!" "!"
+            -- Adding # of windows on current workspace to the bar
+            , ppExtras  = [windowCount]
+            -- order of things in xmobar
+            , ppOrder  = \(ws:l:t:ex) -> [ws,l]++ex++[t]
+            }
         } `additionalKeysP` myKeys

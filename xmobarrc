@@ -1,3 +1,4 @@
+-- NOTE: all the colors are defined in xmonad.hs. If you change a color here, you should probably change it in xmobar.hs to keep the theme consistent.
 Config { font    = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true, FontAwesome:size=10"
        , bgColor = "#222222"
        , fgColor = "#eeeeee"
@@ -7,7 +8,7 @@ Config { font    = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=t
        , commands = [Run Date " %a %b %d - %I:%M %p " "date" 30
                     ,Run Cpu ["-t", "  <total>%"] 20
                     ,Run Memory ["-t", "  <usedratio>%"] 20
-                    ,Run Com "/home/marc/working/dotfiles/scripts/protonvpn_status" [] "vpnstatus" 30
+                    ,Run Com "/home/marc/working/dotfiles/scripts/protonvpn_status" [] "vpnstatus" 10
                     ,Run Com "/home/marc/working/dotfiles/scripts/wifi_status" [] "wifistatus" 10
                     ,Run Com "/home/marc/working/dotfiles/scripts/pacupdate" [] "pacupdate" 600
                     ,Run Com "/home/marc/working/dotfiles/scripts/battery_status" [] "bat" 30
