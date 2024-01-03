@@ -51,7 +51,7 @@
 * protonmail-bridge
 - how to get protonmail-bridge working to setup an email server for email clients like thunderbird
 * protonvpn
-- protonvpn setup stuff. I don't think it fully works like I want
+- protonvpn setup stuff. Works great
 * python_lsp_venv_emacs
 - how to make emacs python lsp server respect venvs. eglot and lsp-mode
 * screen_tearing

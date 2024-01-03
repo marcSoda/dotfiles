@@ -1,28 +1,64 @@
-* contains info on how to configure and autostart protonvpn on startup with openvpn
+* new steps
+- written 01/24
+- xps 15 9530
+- check out the [[https://wiki.archlinux.org/title/ProtonVPN][arch protonvpn page]]. it has lots of useful stuff. not all used here
+- install `openvpn`
+- grab credentials
+  - from [[https://account.protonvpn.com/account][here]]
+  - looking for openvpn/ikev2 username and password
+  - you will use these for any protonvpn credentials
+- grab vpn files
+  - from [[https://account.protonvpn.com/downloads][here]] scroll down
+  - find a button that says something like 'download all configurations'
+  - unzip that at `/etc/openvpn/client/`
+- test connection
+  - you can now test this by typing `sudo openvpn /etc/openvpn/client/<configuration_name>`
+  - make sure when it prompts you, you enter the username and password that we got in previous step
+  - test it with 'where is my ip' search
+  - this may be all you need. you can save the authinfo and create a systemd start script to connect to a specific server
+    - although I would like to automatically connect to the fastest server, so I will do the following
+- install `protonvpn-cli-community`
+  - if you want to try out some of the other ones, go for it, but I couldn't get any of them to work. didn't try very hard
+  - hopefully this works, I get the feeling that this will shit out eventually. you may have to troubleshoot
+- test connection
+  - `sudo protonvpn init`
+    - follow the prompts. if it asks what plan you have, I just said the highest one. not sure if it matters or not
+    - type credentials
+    - they save somewhere automatically
+  - `sudo protonvpn connect`
+    - follow prompts
+  - test it with `where is my ip` search
+- I added `sudo protonvpn connect --fastest` as a bash alias
+  - I couldn't figure out how to get it to autostart due to the nature of how the cli works. I could have tried harder
+- Also made a xmobar script that uses `protonvpn status` to display info
+* old steps
+- created sometime in 2022
+- note that I didn't change a thing about this when I added it to the old steps tab
+** contains info on how to configure and autostart protonvpn on startup with openvpn
 - works for xps 15 9510
-* helpful link [[https://wiki.archlinux.org/title/ProtonVPN][here]]
+** helpful link [[https://wiki.archlinux.org/title/ProtonVPN][here]]
 - note that my implementation differs from the above link. read on for what worked for me
-* my steps
-** download all protonvpn server configs by running
+** my steps
+*** download all protonvpn server configs by running
 - yay -S openvpn-protonvpn
 - installs all of the protonvpn server configs to /etc/openvpn/client/
-** save your username and password in a file called /etc/openvpn/auth
+*** save your username and password in a file called /etc/openvpn/auth
 - username and password are found at https://account.protonvpn.com/account
   - OpenVPN/IKEv2 username section
 - username on line 1, password on line 2. that's it
 - according to the top of any .ovpn file in /etc/openvpn/auth if you append +f1+f2+nr to the end of your username, it will add some useful security things. only works for pro users.
-** be sure to enable NetworkManager. Protonvpn requires NetworkManager to run at all
-** necessary steps:
+*** be sure to enable NetworkManager. Protonvpn requires NetworkManager to run at all
+*** necessary steps:
 - run yay -S openvpn-update-systemd-resolved
   - this will create a config file in /usr/bin/update-systemd-resolved
 - run cp /usr/bin/update-systemd-resolved /etc/openvpn/update-resolv-conf
   - this file is referenced in all of the client config files
-** run ln -sf /lib/systemd/system/systemd-resolved.service /etc/systemd/system/dbus-org.freedesktop.resolve1.service
+*** run ln -sf /lib/systemd/system/systemd-resolved.service /etc/systemd/system/dbus-org.freedesktop.resolve1.service
 - I don't remember what told me to do this, but I was getting an error until I did this. not sure if necessary
-* usage
+** usage
 - openvpn --config /etc/openvpn/client/protonvpn.node-us-46.udp.conf --auth-user-pass /etc/openvpn/auth
   - this will start the vpn connected to some server in ny. you may change the server file
-* systemd autostart
+** systemd autostart
 - create a file called /usr/lib/systemd/system/openvpn_marc_defined.service
 - contents
 #+BEGIN_SRC
@@ -55,4 +91,4 @@
 - run systemd daemon-reload
 - enable it
 
-* it is possible that there is more to do. look at the above link and follow error messages. shouldn't be that hard
+** it is possible that there is more to do. look at the above link and follow error messages. shouldn't be that hard

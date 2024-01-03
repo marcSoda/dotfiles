@@ -65,6 +65,8 @@ alias wr='sudo systemctl restart netctl-auto@*'
 alias pg='ping google.com'
 alias wget='wget --no-hsts'
 alias duh='du -ah --max-depth=1 . | sort -rh'
+alias pvc='sudo /usr/bin/protonvpn connect --fastest'
+alias pvd='sudo /usr/bin/protonvpn disconnect'
 
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc

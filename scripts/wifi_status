@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Dynamically find the active Wi-Fi interface
+# We're looking for an interface that has 'state UP' and 'broadcast' in its description
+WIFI_INTERFACE=$(ip link | grep -B1 'state UP' | grep -i 'broadcast' | awk -F': ' '{print $2}' | awk '{print $1}' | head -n 1)
+
+# Check if a Wi-Fi interface was found
+# If not, we are not connected or there is an error
+if [ -z "$WIFI_INTERFACE" ]; then
+    echo ""
+    exit 1
+fi
+
+# Check if the Wi-Fi interface has an IP address
+if ip addr show $WIFI_INTERFACE | grep -q "inet "; then
+    echo ""
+else
+    echo "%"
+fi

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Get the first line of the output from 'protonvpn status'
+status_line=$(protonvpn status | head -n 1)
+
+# Check if the first line contains the word 'Connected'
+if [[ $status_line == *"Connected"* ]]; then
+    echo ""
+else
+    echo ""
+fi
