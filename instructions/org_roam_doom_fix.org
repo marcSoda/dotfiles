@@ -1,8 +1,9 @@
 #+title: Org Roam Doom Fix
-* Symptoms:
-- org roam database is incorrect (empty probalby)
-* Solution
+* org roam database is incorrect (empty probalby)
+** Solution
 - delete `<emacs-dir>/.local/cache/org-roam.db`
 - run  `(org-roam-db-clear-all)`
 - run `(org-roam-db-sync)`
 - should work now.
+* org hangs on save
+- not fixed yet

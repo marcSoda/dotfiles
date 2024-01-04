@@ -68,6 +68,7 @@ alias duh='du -ah --max-depth=1 . | sort -rh'
 alias pvc='sudo /usr/bin/protonvpn connect --fastest'
 alias pvd='sudo /usr/bin/protonvpn disconnect'
 alias pvs='sudo /usr/bin/protonvpn status'
+alias pvr='sudo /usr/bin/protonvpn reconnect'
 
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc

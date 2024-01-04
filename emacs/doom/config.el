@@ -100,7 +100,7 @@
     org-agenda-files '("/home/marc/Dropbox/org")
     org-agenda-window-setup 'only-window
     org-hide-emphasis-markers t
-    org-todo-keywords '((sequence "URG(u)" "PROG(p)" "TODO(t)" "MEET(m)" "NEXT(n)" "DATE(D)" "|" "DONE(d)"))))
+    org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
 (setq org-roam-directory "~/working/org/roam")
@@ -108,21 +108,19 @@
 (org-roam-db-autosync-enable)
 (setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
 (setq epa-file-select-keys 1)                                ;;don't prompt which key to use
-(setq org-roam-capture-templates '(("d" "default" plain "%?" ;;encrypt all org roam files
-:target (file+head "${slug}.org.gpg"
-        "#+title: ${title}\n")
-:unnarrowed t)))
+(setq org-roam-capture-templates '(("d" "default" plain "%?"
+     :target (file+head "${slug}.org.gpg"
+                        "#+title: ${title}\n")
+     :unnarrowed t)))
 (setq org-roam-dailies-capture-templates
-'(("d" "default" entry
-        "* %?"
-        :target (file+head "%<%Y-%m-%d>.org.gpg"
-        "#+title: %<%Y-%m-%d>\n"))))
+    '(("d" "default" entry "* %?"
+    :target (file+head "%<%Y-%m-%d>.org.gpg" "#+title: %<%Y-%m-%d>\n"))))
 
-;; ORG-ROAM-UI
+;;ORG-ROAM-UI
 (after! org-roam-ui
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow nil
-          org-roam-ui-update-on-save t))
+   (setq org-roam-ui-sync-theme t
+         org-roam-ui-follow nil
+         org-roam-ui-update-on-save t))
 
 ;;TRANSPARENCY
 (add-to-list 'default-frame-alist '(alpha-background . 92))
@@ -152,6 +150,7 @@
     (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
     (add-hook 'before-save-hook 'delete-trailing-whitespace))
 
+;; treemacs macros: interact with treemacs without focusing on treemacs buffer
 (fset 'mac-treemacs-up
    (kmacro-lambda-form [?  ?t ?t ?k ?  ?t ?t] 0 "%d"))
 (fset 'mac-treemacs-down
@@ -186,24 +185,37 @@
     (evil-define-key 'normal evil-org-mode-map
         (kbd "M-o") '+org/insert-item-below
         (kbd "M-O") '+org/insert-item-above))
+
 (after! org-agenda
     (define-key org-agenda-mode-map (kbd "q") 'org-agenda-exit)
+    (setq org-highest-priority ?A)
+    (setq org-lowest-priority ?D)
+    (setq org-default-priority ?D)
     (setq org-agenda-custom-commands
-        '(("b" "Better agenda view"
+        '(("a" "Better agenda view"
             ((agenda "")
-            ;;List all agenda items without timestamps
-            (alltodo ""
-                ((org-agenda-todo-ignore-with-date t))))))))
+            (alltodo "" ;; List all agenda items that do not have timestamps
+                ((org-agenda-todo-ignore-with-date t)))
+            (tags-todo "PRIORITY=\"A\""
+                ((org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (tags-todo "PRIORITY=\"B\""
+                ((org-agenda-overriding-header "Medium-priority unfinished tasks:")))
+            (tags-todo "PRIORITY=\"C\""
+                ((org-agenda-overriding-header "Low-priority unfinished tasks:"))))))))
+
 (after! ibuffer
     (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-toggle-filter-group))
+
 (after! ivy
     (define-key ivy-minibuffer-map (kbd "<escape>") 'keyboard-escape-quit)
     (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
     (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line))
+
 (after! company
     (define-key company-active-map (kbd "M-j") #'company-select-next)
     (define-key company-active-map (kbd "M-k") #'company-select-previous)
     (define-key company-active-map (kbd "<tab>") #'company-complete-selection))
+
 (after! yasnippet
     (define-key evil-insert-state-map (kbd "<tab>") nil)
     (define-key evil-insert-state-map (kbd "TAB") nil)
@@ -231,6 +243,8 @@
         (:prefix ("r". "roam")
         :desc "list all links for a node" "l" #'org-roam-buffer-display-dedicated
         :desc "open roam UI" "u" #'org-roam-ui-open))
+    (:prefix ("o". "open")
+        :desc "org agenda" "a" #'org-agenda)
     (:prefix ("p". "project")
         :desc "search project" "/" #'+default/search-project)
     (:prefix ("t". "toggle/treemacs")
