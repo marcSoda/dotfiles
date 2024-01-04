@@ -45,7 +45,6 @@
 * org_roam_doom_fixes
 - how to do a manual sync to fix org-roam files in doom emacs
 - fix org roam hanging forever on save
-  - not fixed yet
 * printers
 - how to setup cups daemon for printing
 * private_git_repo

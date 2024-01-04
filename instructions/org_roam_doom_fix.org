@@ -6,4 +6,6 @@
 - run `(org-roam-db-sync)`
 - should work now.
 * org hangs on save
-- not fixed yet
+- had to downgrade to `gnupg` 2.2.41
+  - confirmed does not work on 2.4.3, or 2.4.1
+  - info found [[https://stackoverflow.com/questions/76388376/emacs-org-encrypt-entry-hangs-when-file-is-modified][here]]
