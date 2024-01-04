@@ -65,10 +65,13 @@ alias wr='sudo systemctl restart netctl-auto@*'
 alias pg='ping google.com'
 alias wget='wget --no-hsts'
 alias duh='du -ah --max-depth=1 . | sort -rh'
+# protonvpn
 alias pvc='sudo /usr/bin/protonvpn connect --fastest'
 alias pvd='sudo /usr/bin/protonvpn disconnect'
 alias pvs='sudo /usr/bin/protonvpn status'
 alias pvr='sudo /usr/bin/protonvpn reconnect'
+alias pvon='echo "on" > /tmp/my_vpn_state' # used in protonvpn_status script
+alias pvoff='echo "off" > /tmp/my_vpn_state' # use in protonvpn_status script
 
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc
