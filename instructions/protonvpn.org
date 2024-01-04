@@ -30,7 +30,8 @@
   - test it with `where is my ip` search
 - I added `sudo protonvpn connect --fastest` as a bash alias
   - I couldn't figure out how to get it to autostart due to the nature of how the cli works. I could have tried harder
-- Also made a xmobar script that uses `protonvpn status` to display info
+- Also made a xmobar script for it
+  - THIS is what makes it autostart
 * old steps
 - created sometime in 2022
 - note that I didn't change a thing about this when I added it to the old steps tab
