@@ -27,11 +27,31 @@
     - they save somewhere automatically
   - `sudo protonvpn connect`
     - follow prompts
-  - test it with `where is my ip` search
-- I added `sudo protonvpn connect --fastest` as a bash alias
-  - I couldn't figure out how to get it to autostart due to the nature of how the cli works. I could have tried harder
-- Also made a xmobar script for it
-  - THIS is what makes it autostart
+  - test it with `what is my ip` search
+- I added `sudo protonvpn -c -f` as a bash alias, which connects to the fastest server with no user input
+- auto start:
+  - add this to `~/.config/systemd/user/auto-protonvpn.service`
+    #+BEGIN_SRC
+    [Unit]
+    Description=ProtonVPN Connection
+    After=network-online.target
+    BindsTo=network-online.target
+
+    [Service]
+    Type=oneshot
+    ExecStart=sudo /usr/bin/protonvpn disconnect ; sudo /usr/bin/protonvpn connect -f
+    ExecStop=sudo /usr/bin/protonvpn disconnect
+    ExecReload=sudo /usr/bin/protonvpn-cli reconnect
+    RemainAfterExit=yes
+    Restart=on-failure
+    RestartSec=2
+
+    [Install]
+    WantedBy=default.target
+    #+END_SRC
+    - note: this is a user service
+    - start and enable with (NOT SUDO) `systemctl --user enable --now auto-protonvpn.service`
+    - should work on boot
 * old steps
 - created sometime in 2022
 - note that I didn't change a thing about this when I added it to the old steps tab
