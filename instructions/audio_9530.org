@@ -1,0 +1,4 @@
+#+title: Audio 9530
+
+* should be fixed in the kernel now.
+* check out [[https://github.com/thesofproject/linux/issues/4624][here]] which is where it got fixed. there is also a discord server in that thread where there is a lot of good info
