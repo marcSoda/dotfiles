@@ -61,16 +61,15 @@ alias ks='xset r rate 220 40'
 alias fehr='bash $DOTFILES/backgrounds/feh.sh &'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
 alias wr='sudo systemctl restart netctl-auto@*'
-alias pg='ping google.com'
+alias pg='ping 8.8.8.8'
 alias wget='wget --no-hsts'
 alias duh='du -ah --max-depth=1 . | sort -rh'
 # protonvpn
+alias pv='sudo /usr/bin/protonvpn'
 alias pvc='sudo /usr/bin/protonvpn connect --fastest'
 alias pvd='sudo /usr/bin/protonvpn disconnect'
 alias pvs='sudo /usr/bin/protonvpn status'
 alias pvr='sudo /usr/bin/protonvpn reconnect'
-alias pvon='echo "on" > /tmp/my_vpn_state' # used in protonvpn_status script
-alias pvoff='echo "off" > /tmp/my_vpn_state' # use in protonvpn_status script
 
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc
