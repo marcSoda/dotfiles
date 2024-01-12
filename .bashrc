@@ -16,7 +16,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-complete -cf sudo
 
 shopt -s histappend
 export PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
