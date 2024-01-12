@@ -78,18 +78,21 @@ iwctl
     station wlan0 conenct <SSID>
         # type password then try  to ping
 #+END_SRC
-*** potential bug fix
+*** potential bug fix:
 - on the XPS15 9530, after successfully connecting to the internet, a few minutes later I would get something like "Microcode SW error detected"
   - it would then hang for a while and I would never be able to conenct again.
   - it has something to do with network drivers I think
 - it appears to only happen on 5ghz networks.
-- this is the fix I found on reddit that seems to have worked. only do it if you have the same issue
-#+BEGIN_SRC bash
-sudo modprobe -r iwlmvm
-sudo modprobe -r iwlwifi
-sudo modprobe iwlwifi lar_disable=1
-iw reg set FR
+- I think this worked: create `/etc/modprobe.d/iwl.conf`
+#+BEGIN_SRC
+options iwlwifi 11n_disable=1 swcrypto=0 bt_coex_active=0 power_save=0
+options iwlmvm power_scheme=1
+options iwlwifi d0i3_disable=1
+options iwlwifi uapsd_disable=1
+options iwlwifi lar_disable=1
 #+END_SRC
+- Note sure exactly what this does or what part is responsible for the fix
+- ONLY DO THIS IF YOU NOTICE THAT YOU HAVE THE SAME ISSUE
 ** setup ssh for arch linux install
 - it will be easier to do this over ssh, but it's not necessary.
 #+BEGIN_SRC bash
@@ -192,7 +195,19 @@ grub-mkconfig -o /boot/grub/grub.cfg # make sure this says something about findi
       exec grub-mkconfig -o /boot/grub/grub.cfg "$@"
       #+END_SRC
 - when you restart and select Windows 11, it should boot properly. if not, troubleshoot
-** wifi setup
+** NEW wifi setup
+- uses networkmanager which works better than netctl which I used to use
+#+BEGIN_SRC bash
+pacman -S networkmanager wpa_supplicant # this will install wifi-menu
+sudo systemctl start systemd-resolved # this took me a while to figure out and DNS lookup always failed without it
+sudo systemctl enable systemd-resolved # this took me a while to figure out and DNS lookup always failed without it
+sudo systemctl start NetworkManager
+sudo systemctl enable NetworkManager
+#+END_SRC
+- use `nmcli` and `nmtui` to interface with NetworkManager (instead of wifi-menu)
+** OLD wifi setup
+- uses netctl which sucks
+  - had to switch because DNS server was not being updated when I switched networks
 #+BEGIN_SRC bash
 pacman -S netctl dialog wpa_supplicant dhclient # this will install wifi-menu
 sudo systemctl enable systemd-resolved # this took me a while to figure out and DNS lookup always failed without it
