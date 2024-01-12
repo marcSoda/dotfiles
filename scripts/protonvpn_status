@@ -9,7 +9,7 @@ vpn_interface="proton0" # you can get this from 'ip link' when vpn is on
 # Function to check if enough time has elapsed since the last reconnect
 # This should help if there are multiple instances of xmobar running (for multi monitor)
 function is_reconnect_allowed() {
-    local interval=10  # interval in seconds
+    local interval=5  # interval in seconds
     local current_time=$(date +%s)
     local last_reconnect_time=0
 
@@ -31,11 +31,8 @@ function is_reconnect_allowed() {
 
 # Function to check if the VPN is connected
 function is_vpn_connected() {
-    if ip link show $vpn_interface &> /dev/null; then
-        return 0  # true, VPN is connected
-    else
-        return 1  # false, VPN is not connected
-    fi
+    # Using pgrep to check if OpenVPN process related to ProtonVPN is running
+    pgrep -af "openvpn.*$vpn_interface" > /dev/null && return 0 || return 1
 }
 
 # File for storing the VPN state
@@ -78,18 +75,20 @@ fi
 
 
 
+
+
+
+
 # #!/bin/bash
 
-# # this script, run by xmobar auto starts and ensures the vpn connection is maintianed. also prints status icons to xmobar
-
 # # File to keep track of the last reconnect attempt
-# last_reconnect_file="/tmp/last_vpn_reconnect"
+# last_reconnect_file="/tmp/my_last_vpn_reconnect"
 
 # # Network interface for vpn
 # vpn_interface="proton0" # you can get this from 'ip link' when vpn is on
 
 # # Function to check if enough time has elapsed since the last reconnect
-# # This should help if there are  multiple instances of xmobar running (for multi monitor)
+# # This should help if there are multiple instances of xmobar running (for multi monitor)
 # function is_reconnect_allowed() {
 #     local interval=10  # interval in seconds
 #     local current_time=$(date +%s)
@@ -120,18 +119,37 @@ fi
 #     fi
 # }
 
-# # Main logic
-# if is_vpn_connected; then
-#     echo ""  # VPN is connected
-# else
-#     if is_reconnect_allowed; then
-#         echo ""
-#         pgrep -f 'protonvpn connect --fastest' | xargs kill # kill reconnect attempts
-#         sudo /usr/bin/protonvpn disconnect
-#         sudo /usr/bin/protonvpn connect --fastest
-#         # Update the last reconnect time
-#         date +%s > "$last_reconnect_file"
+# # File for storing the VPN state
+# vpn_state_file="/tmp/my_vpn_state"
+
+# # Function to get the current VPN state
+# function get_vpn_state() {
+#     if [ -f "$vpn_state_file" ]; then
+#         cat "$vpn_state_file"
 #     else
-#         echo "..." # reconnect is not allowed yet
+#         echo "on"  # Default to 'on' if the file does not exist
 #     fi
+# }
+
+# # Main logic
+# vpn_state=$(get_vpn_state)
+# if [ "$vpn_state" = "on" ]; then
+#     if is_vpn_connected; then
+#         echo ""  # VPN is connected
+#     else
+#         if is_reconnect_allowed; then
+#             echo "" # means there is an issue
+#             pgrep -f 'protonvpn connect --fastest' | grep -q . && pgrep -f 'protonvpn connect --fastest' | xargs kill # kill reconnect attempts
+#             sudo /usr/bin/protonvpn disconnect > /dev/null
+#             sudo /usr/bin/protonvpn connect --fastest > /dev/null
+#             # Update the last reconnect time
+#             date +%s > "$last_reconnect_file"
+#         else # reconnect is not allowed yet
+#             echo "" # means it is waiting
+#         fi
+#     fi
+# elif [ "$vpn_state" = "off" ]; then
+#     pgrep -f 'protonvpn connect --fastest' | grep -q . && pgrep -f 'protonvpn connect --fastest' | xargs kill # kill reconnect attempts
+#     sudo /usr/bin/protonvpn disconnect > /dev/null
+#     echo ""  # VPN is turned off
 # fi
