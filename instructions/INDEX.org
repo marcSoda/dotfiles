@@ -13,6 +13,8 @@
 - how to setup bluetooth
 * calibre_create_table_of_contents
 - how to use calibre to generate a table of contents for a kindle book
+* cleanup_home_folder
+- how to use xdg-ninja to declutter home folder
 * default_browser
 - how to set default browser. lets you open emacs, thunderbird, slack, etc links
 * export_pgp_key

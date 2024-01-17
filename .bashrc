@@ -34,6 +34,7 @@ export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
 export WINEPREFIX="$XDG_DATA_HOME"/wine
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -60,10 +61,12 @@ alias top='gotop'
 alias ks='xset r rate 220 40'
 alias fehr='bash $DOTFILES/backgrounds/feh.sh &'
 alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
-alias wr='sudo systemctl restart netctl-auto@*'
+alias wr='sudo systemctl restart NetworkManager*'
 alias pg='ping 8.8.8.8'
-alias wget='wget --no-hsts'
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 alias duh='du -ah --max-depth=1 . | sort -rh'
+# network
+alias nmc='nmcli'
 # protonvpn
 alias pv='sudo /usr/bin/protonvpn'
 alias pvc='sudo /usr/bin/protonvpn connect --fastest'

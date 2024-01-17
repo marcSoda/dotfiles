@@ -1,11 +1,31 @@
 #!/bin/bash
 
-# Get the status from ProtonVPN CLI
-VPN_STATUS=$(protonvpn status | grep "Status:")
+# cmd to get pub ip
+current_pub_ip_cmd="dig +short myip.opendns.com @resolver1.opendns.com"
+# site to grab public ips of protonvpn connections
+logicals_site="https://api.protonmail.ch/vpn/logicals"
+# path to store public ips of protonvpn connections
+logicals_path="/tmp/protonvpn_logicals"
 
-# Check if the status contains the word 'Connected'
-if [[ $VPN_STATUS == *"Connected"* ]]; then
-    echo ""
+function is_vpn_connected() {
+    # Check if the file exists, if not, populate it
+    if [ ! -f "$logicals_path" ]; then
+        curl -s "$logicals_site" > "$logicals_path"
+    fi
+
+    # Get the current IP address
+    local current_pub_ip=$(eval $current_pub_ip_cmd)
+
+    # Check if the current IP is in the stored file
+    if grep -q "$current_pub_ip" "$logicals_path"; then
+        return 0  # true, IP found in file
+    else
+        return 1  # false, IP not found in file
+    fi
+}
+
+if is_vpn_connected; then
+    echo ""  # VPN is connected
 else
-    echo ""
+    echo ""  # VPN is not connected
 fi
