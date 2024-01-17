@@ -1,0 +1,7 @@
+#+title: Cleanup Home Folder
+
+- install xdg-ninja
+- it will analyze the contents of the home folder and tell you
+  - where you can move certain files
+  - what files should not be moved
+  - what aliases / env vars should be added to move certain files
