@@ -31,6 +31,10 @@
 - currently uses pinentry-rofi
 * grub_theme
 - how to configure a theme for grub
+* iwlwifi-fix
+- symptoms: system starts fine wifi works, but at a random time a ton of stuff stops working for multiple minutes
+- can't run dmesg, can't connect to internet, can't ping, etc
+- after many minutes, everything starts working again. dmesg contains a ton of iwlwifi errors
 * hibernate
 - how to setup hibernation
 * keychron_fn_key

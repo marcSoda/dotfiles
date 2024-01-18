@@ -1,0 +1,14 @@
+- symptoms: system starts fine wifi works, but at a random time a ton of stuff stops working for multiple minutes
+- can't run dmesg, can't connect to internet, can't ping, etc
+- after many minutes, everything starts working again. dmesg contains a ton of iwlwifi errors
+- I have no idea why this happens
+- fix:
+  - create and add to `/etc/modprobe.d/iwl.conf`
+    #+BEGIN_SRC
+    options iwlwifi 11n_disable=1 swcrypto=0 bt_coex_active=0 power_save=0
+    options iwlmvm power_scheme=1
+    options iwlwifi d0i3_disable=1
+    options iwlwifi uapsd_disable=1
+    options iwlwifi lar_disable=1
+    #+END_SRC
+- not sure why this works. not totally sure this is what acually worked. there was a firmware update right after I did this

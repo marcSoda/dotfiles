@@ -69,6 +69,7 @@ alias nmc='nmcli'
 # protonvpn
 alias wgup='sudo systemctl start wg-quick@wg-US-NY-250'
 alias wgdown='sudo systemctl stop wg-quick@wg-US-NY-250'
+alias wgs='sudo wg show'
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc
 alias t='task $1'
@@ -82,6 +83,7 @@ alias ts='task sync'
 
 #bluetooth
 alias btc='bluetoothctl'
+alias btui='bluetuith'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
 alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
