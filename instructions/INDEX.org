@@ -54,7 +54,10 @@
 * protonmail-bridge
 - how to get protonmail-bridge working to setup an email server for email clients like thunderbird
 * protonvpn
-- protonvpn setup stuff. Works great
+- the many many different methods that I tried to get protonvpn to work nicely on arch linux
+- it sucks ass for the most part
+- I ended up using wireguard, but there are steps for openvpn if you wish to reexplore
+- wireguard, protonvpn, rust, openvpn
 * python_lsp_venv_emacs
 - how to make emacs python lsp server respect venvs. eglot and lsp-mode
 * screen_tearing

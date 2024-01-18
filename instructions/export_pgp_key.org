@@ -1,5 +1,6 @@
 #+title: Export Pgp Key
 
+* note: your keys are backed up to electron
 * there are many reasons to export a gpg/pgp key
 * pass for ios:
 - this gives me a headache every time the key expires.

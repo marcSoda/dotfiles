@@ -1,3 +1,40 @@
+* new new new new steps
+- this one trumps them all. it uses wireguard which is much much easier to use, works super nicely with systemd, and doesn't get fucked up when I hibernate, suspend, or lose network connection
+- go [[https://account.protonvpn.com/downloads][here]] and create a new wireguard configuration file. protonvpn does it for you
+  - it uses private and public keys that protonvpn generates for you, they are stored directly in the generated config file
+  - note: protonvpn saves the configuration files so you can always go back and download one that you have previously generated on that same page
+  - note: they keys do expire, so be mindful of that. you may have to create a new one after a year or so which is super easy
+- save the config file (we'll call it wg_conf.conf, but it will be different) to `/etc/wireguard`
+- install `wireguard-tools`
+- that's it. now you can start it with `sudo wg-quick up wg_conf` (omit the .conf) and stop it with `sudo wg-quick down wg_conf`
+- there is also a way to interface with it using `nmcli`, but I didn't look into it because systemd is good enough
+- it also interfaces super nice with systemd by default. you can enable it using `sudo systemctl start wg_conf`
+* new new new steps
+- I created a small rust project (uncomplete) to manage my protonvpn connections.
+- after downloading a bunch .ovpn files from [[https://account.protonvpn.com/downloads][here]], place them in a directory, and point the project at that directoy, it will query protonvpn api, and find the fastest server of the ones you have downloaded, and connect to that server using openvpn
+- It actually works pretty good, but more work needs to be done before it can be used in production
+* new new steps
+- does not use protonvpn client. protonvpn .ovpn files need to be manually added to NetworkManager
+- download ovpn files to a dir from [[https://account.protonvpn.com/downloads][here]]
+- grab username and password from [[https://account.protonvpn.com/account][here]]
+- for each:
+  - `nmcli connection import type openvpn file <fname>.ovpn`
+  - each can be seen via `nmcli con show`
+  - manually edit `/etc/NetworkManager/system-connections/<fname>.nmconnection`
+    - under `[vpn]`
+      - overwrite `password-flags=0`. causes it to not prompt for password
+      - add `user-name=<username>`
+    - append
+    #+BEGIN_SRC
+    [vpn-secrets]
+    password=<password>
+    #+END_SRC
+- you may need to restart `NetworkManager` and/or `systemd-sysctl`
+- now you can start/stop via `nmcli con up <con-name>`
+- todo: systray
+- todo: choose fastest
+- todo: write script to import all
+- todo: autoconnect
 * new steps
 - written 01/24
 - xps 15 9530
@@ -49,6 +86,8 @@
     [Install]
     WantedBy=default.target
     #+END_SRC
+    - make the network-online target available to the user with
+      - `systemctl --user link /usr/lib/systemd/system/network-online.target`
     - note: this is a user service
     - start and enable with (NOT SUDO) `systemctl --user enable --now auto-protonvpn.service`
     - should work on boot

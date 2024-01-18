@@ -34,7 +34,6 @@ export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
 export WINEPREFIX="$XDG_DATA_HOME"/wine
-export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -68,12 +67,8 @@ alias duh='du -ah --max-depth=1 . | sort -rh'
 # network
 alias nmc='nmcli'
 # protonvpn
-alias pv='sudo /usr/bin/protonvpn'
-alias pvc='sudo /usr/bin/protonvpn connect --fastest'
-alias pvd='sudo /usr/bin/protonvpn disconnect'
-alias pvs='sudo /usr/bin/protonvpn status'
-alias pvr='sudo /usr/bin/protonvpn reconnect'
-
+alias wgup='sudo systemctl start wg-quick@wg-US-NY-250'
+alias wgdown='sudo systemctl stop wg-quick@wg-US-NY-250'
 #taskwarrior
 export TASKRC=$DOTFILES/task/taskrc
 alias t='task $1'
