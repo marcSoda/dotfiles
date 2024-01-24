@@ -205,7 +205,7 @@ sudo wifi-menu # choose SSID
 #+END_SRC
 ** audio:
 - I now use pipewire instead of pulseaudio
-- pacman -S pipewire pipewire-pulse pipewire-alsa wire-plumber
+- pacman -S pipewire pipewire-pulse pipewire-alsa wireplumber
 - everything that previously used pulse or alsa should be supported by pipewire
 - systemctl --user start pipewire
 - systemctl --user enable pipewire
