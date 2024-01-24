@@ -12,3 +12,5 @@
     options iwlwifi lar_disable=1
     #+END_SRC
 - not sure why this works. not totally sure this is what acually worked. there was a firmware update right after I did this
+- NOTE: switching from netctl to network manager may have also fixed this. not sure
+- only do this if you notice the error

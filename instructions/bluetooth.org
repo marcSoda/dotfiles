@@ -1,4 +1,4 @@
 #+title: Bluetooth
 
-- install bluez, bluez-utils, and pulseaudio-bluetooth
+- `pacman -S bluez bluez-utils pipewire-pulse`
 - `sudo systemctl start/enable bluetooth`

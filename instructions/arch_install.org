@@ -1,6 +1,6 @@
 #+title: Arch Install
 * Instructions are for Dell XPS15 9530, but should be fairly general.
-* These are dual boot unstructions. You should be able to extrapolate if you want to delete windows.
+* These are dual boot instructions. You should be able to extrapolate if you want to delete windows.
 * NOTE: right after setting up dual boot, I realized that it's stupid to dual boot on the same disk. I installed a second m.2 drive into the XPS15 9530 and installed windows on that. THIS IS THE WAY YOU SHOULD ALWAYS DO IT
 - all the steps are pretty much the same. you can extrapolate what would be different. I assume all the bios stuff is the same so be sure to follow that.
 ** add a grub entry for windows on a different disk
@@ -78,21 +78,6 @@ iwctl
     station wlan0 conenct <SSID>
         # type password then try  to ping
 #+END_SRC
-*** potential bug fix:
-- on the XPS15 9530, after successfully connecting to the internet, a few minutes later I would get something like "Microcode SW error detected"
-  - it would then hang for a while and I would never be able to conenct again.
-  - it has something to do with network drivers I think
-- it appears to only happen on 5ghz networks.
-- I think this worked: create `/etc/modprobe.d/iwl.conf`
-#+BEGIN_SRC
-options iwlwifi 11n_disable=1 swcrypto=0 bt_coex_active=0 power_save=0
-options iwlmvm power_scheme=1
-options iwlwifi d0i3_disable=1
-options iwlwifi uapsd_disable=1
-options iwlwifi lar_disable=1
-#+END_SRC
-- Note sure exactly what this does or what part is responsible for the fix
-- ONLY DO THIS IF YOU NOTICE THAT YOU HAVE THE SAME ISSUE
 ** setup ssh for arch linux install
 - it will be easier to do this over ssh, but it's not necessary.
 #+BEGIN_SRC bash
@@ -124,7 +109,7 @@ cfdisk <device> #probably nvme0n1
 #+BEGIN_SRC bash
 # pacman stuff
 pacman -S pacman-contrib
-pacstrap -i /mnt base base-devel linux linux-lts linux-headers linux-firmware intel-ucode sudo git vim pulseaudio
+pacstrap -i /mnt base base-devel linux linux-lts linux-headers linux-firmware intel-ucode sudo git vim
 # generate file system table
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab # verify partitions look good
@@ -195,7 +180,8 @@ grub-mkconfig -o /boot/grub/grub.cfg # make sure this says something about findi
       exec grub-mkconfig -o /boot/grub/grub.cfg "$@"
       #+END_SRC
 - when you restart and select Windows 11, it should boot properly. if not, troubleshoot
-** NEW wifi setup
+** WIFI
+*** NEW wifi setup
 - uses networkmanager which works better than netctl which I used to use
 #+BEGIN_SRC bash
 pacman -S networkmanager wpa_supplicant # this will install wifi-menu
@@ -205,7 +191,9 @@ sudo systemctl start NetworkManager
 sudo systemctl enable NetworkManager
 #+END_SRC
 - use `nmcli` and `nmtui` to interface with NetworkManager (instead of wifi-menu)
-** OLD wifi setup
+**** potential bug fix for 9530:
+- checkout `9530_iwlwifi-fix.org`
+*** OLD wifi setup
 - uses netctl which sucks
   - had to switch because DNS server was not being updated when I switched networks
 #+BEGIN_SRC bash
@@ -215,6 +203,12 @@ sudo systemctl start netctl-auto@<network-interface>.service
 sudo systemctl enable netctl-auto@<network-interface>.service # make wifi connect automatically on boot
 sudo wifi-menu # choose SSID
 #+END_SRC
+** audio:
+- I now use pipewire instead of pulseaudio
+- pacman -S pipewire pipewire-pulse pipewire-alsa wire-plumber
+- everything that previously used pulse or alsa should be supported by pipewire
+- systemctl --user start pipewire
+- systemctl --user enable pipewire
 * don't forget
 - you'll need your gpg and ssh keys from electron. there are instructions on how to do this
 - install xmonad stuff

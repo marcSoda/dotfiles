@@ -1,14 +1,17 @@
 #+title: Index
 
+* 9530_audio_fix
+- equalizer settings for pipewire to make 9530 audio better
+- info on previous poor support for 9530 audio
+* 9530_iwlwifi-fix
+- symptoms: system starts fine wifi works, but at a random time a ton of stuff stops working for multiple minutes
+- can't run dmesg, can't connect to internet, can't ping, etc
+- after many minutes, everything starts working again. dmesg contains a ton of iwlwifi errors
 * arch_install
 - arch installation instructions and tips
 - manual boot entry for windows grub. lots of grub stuff
 * battlenet_starcraft
 - how to install starcraft using wine
-* better_sound
-- how to make the audio output more like windows. not sure if this actually does anything, but it doesn't hurt
-* bluetooth_bug
-- fixes some kind of bluetooth bug. I don't remember
 * bluetooth
 - how to setup bluetooth
 * calibre_create_table_of_contents
@@ -22,7 +25,7 @@
 - I do this so I can store them somewhere else in case I lose them
 - it also talks about how to export and import them in passforios so I can get my passwords on iphone
 * fonts
-- fonts required to fun the system after a fresh install
+- fonts required to run the system after a fresh install
 * gtk_system_theme
 - help on globally enabling a dark GTK system theme.
 - helps some apps that respect GTK have dark mode by default
@@ -31,10 +34,6 @@
 - currently uses pinentry-rofi
 * grub_theme
 - how to configure a theme for grub
-* iwlwifi-fix
-- symptoms: system starts fine wifi works, but at a random time a ton of stuff stops working for multiple minutes
-- can't run dmesg, can't connect to internet, can't ping, etc
-- after many minutes, everything starts working again. dmesg contains a ton of iwlwifi errors
 * hibernate
 - how to setup hibernation
 * keychron_fn_key
