@@ -85,12 +85,14 @@
   (direnv-mode))
 
 ;; theme
-(load-theme 'humanoid-dark t nil)
-;; I have to do this for the named scratchpad to load the theme right. It's only necessary when using humanoid-dark
-(defun apply-my-theme (frame)
-  (select-frame frame)
-  (load-theme 'humanoid-dark t))
-(add-hook 'after-make-frame-functions 'apply-my-theme)
+(setq rand-theme-wanted '(doom-henna doom-xcode doom-dark+ doom-opera misterioso doom-badger doom-snazzy doom-Iosvkem doom-molokai doom-peacock doom-old-hope humanoid-dark doom-monokai-pro doom-monokai-classic))
+(rand-theme)
+;; (load-theme 'humanoid-dark t nil)
+;; ;; I have to do this for the xmonad named scratchpad to load the theme right. It's only necessary when using humanoid-dark
+;; (defun apply-my-theme (frame)
+;;   (select-frame frame)
+;;   (load-theme 'humanoid-dark t))
+;; (add-hook 'after-make-frame-functions 'apply-my-theme)
 
 ;;ORG
 (after! org
@@ -136,7 +138,6 @@
     (setq treemacs-find-workspace-method 'find-for-file-or-manually-select)
     (setq treemacs-is-never-other-window t)
     (add-to-list 'treemacs-ignored-file-predicates #'treemacs-ignore-filter))
-
 
 ;;SMOOTH SCROLLING
 (setq scroll-margin 10
@@ -187,21 +188,15 @@
         (kbd "M-O") '+org/insert-item-above))
 
 (after! org-agenda
-    (define-key org-agenda-mode-map (kbd "q") 'org-agenda-exit)
-    (setq org-highest-priority ?A)
-    (setq org-lowest-priority ?D)
-    (setq org-default-priority ?D)
-    (setq org-agenda-custom-commands
+  (define-key org-agenda-mode-map (kbd "q") 'org-agenda-exit)
+  (setq org-highest-priority ?A)
+  (setq org-lowest-priority ?D)
+  (setq org-default-priority ?D)
+  (setq org-agenda-custom-commands
         '(("a" "Better agenda view"
             ((agenda "")
-            (alltodo "" ;; List all agenda items that do not have timestamps
-                ((org-agenda-todo-ignore-with-date t)))
-            (tags-todo "PRIORITY=\"A\""
-                ((org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (tags-todo "PRIORITY=\"B\""
-                ((org-agenda-overriding-header "Medium-priority unfinished tasks:")))
-            (tags-todo "PRIORITY=\"C\""
-                ((org-agenda-overriding-header "Low-priority unfinished tasks:"))))))))
+            (tags-todo "solar")
+            (tags-todo "-solar" ((org-agenda-todo-ignore-with-date t))))))))
 
 (after! ibuffer
     (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-toggle-filter-group))
@@ -228,7 +223,8 @@
         :desc "ibuffer" "b" #'ibuffer)
     (:prefix ("c". "code")
         :desc "flycheck-next-error" "n" #'flycheck-next-error
-        :desc "flycheck-prev-error" "p" #'flycheck-previous-error)
+        :desc "flycheck-prev-error" "p" #'flycheck-previous-error
+        :desc "grep" "g" #'rgrep)
     (:prefix ("d". "dired")
         :desc "dired" "d" #'dired
         :desc "dired jump to current" "j" #'dired-jump

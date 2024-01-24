@@ -64,6 +64,7 @@ alias wr='sudo systemctl restart NetworkManager*'
 alias pg='ping 8.8.8.8'
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 alias duh='du -ah --max-depth=1 . | sort -rh'
+alias vim='nvim'
 # network
 alias nmc='nmcli'
 # protonvpn
@@ -124,12 +125,9 @@ alias cdow='cd ~/working/downloads'
 alias cmis='cd ~/working/misc'
 
 br() {
-    killall -9 pulseaudio
-    pulseaudio --start -v
+    systemctl --user restart pipewire
     sudo systemctl stop bluetooth
     sudo systemctl start bluetooth
-    btc power off
-    btc power on
 }
 
 #lehigh vpn
