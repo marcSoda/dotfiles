@@ -1,0 +1,19 @@
+-- NOTE: all the colors are defined in xmonad.hs. If you change a color here, you should probably change it in xmobar.hs to keep the theme consistent.
+Config { font    = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true, FontAwesome:size=10"
+       , bgColor = "#222222"
+       , fgColor = "#eeeeee"
+       , lowerOnStart = True
+       , hideOnStart = False
+       , position = Static { xpos = 20 , ypos = 0 , width = 1880, height = 40 }
+       , commands = [Run Date " %a %b %d - %I:%M %p " "date" 30
+                    ,Run Cpu ["-t", "  <total>%"] 20
+                    ,Run Memory ["-t", "  <usedratio>%"] 20
+                    ,Run Com "/home/marc/working/dotfiles/scripts/protonvpn_status" [] "vpnstatus" 10
+                    ,Run Com "/home/marc/working/dotfiles/scripts/wifi_status" [] "wifistatus" 10
+                    ,Run Com "/home/marc/working/dotfiles/scripts/pacupdate" [] "pacupdate" 600
+                    ,Run Com "/home/marc/working/dotfiles/scripts/battery_status" [] "bat" 30
+                    ,Run StdinReader]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = " %StdinReader% <fc=#666666>|</fc>}{ <fc=#666666>|</fc>  <fc=#1c90fc>%bat%</fc> <fc=#666666>|</fc> <fc=#fff700> %cpu% </fc> <fc=#666666>|</fc> <fc=#ff0800>%memory% </fc> <fc=#666666>|</fc> <fc=#FFA500> %pacupdate%</fc> <fc=#666666>|</fc> <fc=#20D68A>%vpnstatus%</fc> <fc=#666666>|</fc> <fc=#DE02F2>%wifistatus%</fc> <fc=#666666>|</fc> <fc=#eeeeee>%date% </fc>"
+       }

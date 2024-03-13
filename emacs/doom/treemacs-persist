@@ -13,7 +13,7 @@
 ** bright
  - path :: ~/working/dev/rust/bright
 * Solar
-** auto-doc
- - path :: /docker:solar:/working
-** auto-loc
- - path :: ~/working/dev/solar/auto
+** django
+ - path :: ~/working/dev/solar/auto/django
+** react
+ - path :: ~/working/dev/solar/auto/react

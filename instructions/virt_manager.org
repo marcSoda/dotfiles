@@ -1,5 +1,606 @@
 #+title: Virt Manager
 
-- `pacman -S qemu virt-manager virt-viewer bridge-utils libguestfs`
-- not done https://www.youtube.com/watch?v=bgywPoGRlt4
-  https://www.youtube.com/watch?v=6KqqNsnkDlQ
+* Overview
+- created 3/12/24
+- ~XPS 15 9530~
+- unfortunately I have been working on this on and off for months and only writing sparse documentation. you may need to figure some things out on your own
+- as of right now, everything is perfect. GPU and disk passthrough works great. There is 0 latency. I am able to play Halo Reach with max settings with 0 problems. I am able to run solidworks with 0 problems
+- The full XML is pasted at the end
+- Key features (more on all this later):
+  - Windows 10 near native performance (not win11 because I figured it would be less supported. Upgrade to win11 in the future)
+  - GPU passthrough
+  - Windows is installed on an entire separate physical disk
+  - Looking glass
+* Installation
+- ~sudo pacman -S qemu-full virt-manager dnsmasq ovmf spice bridge-utils~
+  - there may be more to install. Play around but I think this is right
+- ~sudo systemctl enable libvirtd~
+- groups
+  - ~sudo useradd -g $user kvm~
+  - ~sudo useradd -g $user libvirt~
+  - ~sudo useradd -g $user libvirt-qumu~
+- You should now be able to run virt-manager and see "QEMU/KVM" has loaded. If not, there is a problem.
+* Create win installation media
+- Download an installation ISO, format a USB, cat the ISO to the USB.
+* Download VirtIO drivers
+- [[https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/][Link]]
+- If that link is dead you will have to find them. This is required
+- Make sure you download an ISO for windows guest
+- Move it to ~/var/lib/libvirt/images/~
+- We will share this with the VM as a CD ROM later
+* Host BIOS:
+- there are some things that you need to be mindful about in the BIOS
+- all the virtualization stuff needs to be enabled. You might have to mess with secure boot.
+- I forget but this should be easy to find online
+- Sorry future Marc.
+* GPU Passthrough
+** [[https://www.youtube.com/watch?v=g--fe8_kEcw][Good video]]
+** Here we pass through a GPU from the host to the guest using VFIO
+- NOTE: The host NEEDS to have 2 gpus
+- In this example, we pass through an NVIDIA GPU, but leave the integrated intel gpu on linux
+- There are ways to do single gpu passthrough and have host and guest share, but that is more complex
+** On Host
+*** Uninstall ALL GPU drivers and packages
+- like e.g. nvidia drivers
+- You are not going to be using the GPU, so you do not need them
+*** Get PCI ID
+- ~lspci -nn | grep -E "NVIDIA"~ (or AMD if AMD gpu)
+- This should give something like this:
+  - Note that it SHOULD output 2 lines. One for GPU and one for GPU audio. For some reason mine only gave the GPU. It will work without the Audio. I am not sure why this happens but it doesn't matter that much.
+        #+BEGIN_SRC
+        01:00.0 3D controller [0302]: NVIDIA Corporation AD107M [GeForce RTX 4050 Max-Q / Mobile] [10de:28a1] (rev a1)
+        #+END_SRC
+- The PCI ID looks like ~10de:28a1~. Save this for later
+*** GRUB: IOMMU
+  - open ~/etc/default/grub~
+  - In The ~GRUB_CMDLINE_DEFAULT~ add these at the end
+    - ~intel_iommu=on iommu=pt vfio-pci.ids=<PCI.ID(S)>~
+    - where ~<PCI.ID(S)>~ is a comma separated list (no spaces) of the PCI ID(s) (found above) for the gpu card and gpu audio device. If you only have the GPU and not the audio device, just put the id of the gpu
+    - change ~intel~ to ~amd~ if you have amd cpu
+  - run ~sudo update-grub~
+  - reboot
+*** Isolate GPU
+- create ~/etc/modprobe.d/vfio.conf~
+        #+BEGIN_SRC
+        options vfio-pci ids=<PCI.ID(S)>
+        softdep nvidia pre: vfio-pci
+        #+END_SRC
+- where ~<PCI_ID(S)>~ is the same as above
+- in the second line, I assume that you can replace ~nvidia~ with ~amd~ if you are using an AMD gpu, but double check this. It is not mentioned
+- Update initramfs
+  - ~sudo update-initramfs -c -k $(uname -r)~
+  - Make sure no errors
+  - Reboot
+- Verify:
+  - ~lspci -k | grep -E "vfio-pci|NVIDIA"~
+  - The listed nvidia gpu should have the line: ~Kernel driver in use: vfio-pci~
+  - So should the audio device if you're passing it through. Optional
+  - If so, all is working. If not, investigate
+*** Power consumption
+**** Observation:
+- after doing that, power consumption when not plugged in was very high
+  - verified by Ruinning ~sensors~
+    - current was 2-3A. I consider this very high. After fixing this, power consumption sat around .7-1.2A (while VM not running) which is considerably better.
+  - presumably because GPU drivers were uninstalled and no longer managing GPU power consumption
+  - GPU is now controlled by VFIO drivers. We need to tell the VFIO driver to manage the power better
+**** Fix
+- Note: this should not affect GPU within VM at all
+- Temporary fix for testing:
+  - run ~echo -n 'auto' > /sys/bus/pci/devices/0000:01:00.0/power/control~
+    - default state is ~'on'~. ~'auto'~ makes GPU turn off when not in use (presumably)
+  - Test by running sensors with ~on~ and with ~auto~ set. When ~auto~ is set, the GPU should consume much less power
+  - If the above appears to work, then add the udev rule. This just sets the value to ~auto~ on boot.
+- add udev rule to tell VFIO driver to be more conservative
+  - ~etc/udev/rules.d/99-gpu-power-management.rules~
+    - BE SURE TO CHANGE ~ATTR{vendor}~ AND ~ATTR{device}~ (see below)
+    #+BEGIN_SRC
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{device}=="0x28a1", ATTR{power/control}="auto"
+    #+END_SRC
+  - Recall that ~<PCI_ID>~ looks something like this:
+    - ~10de:28a1~
+    - Can be broken down like this ~<vendor>:<device>~
+    - In udev rule, make ~ATTR{vendor}==0x<vendor>~
+    - In udev rule, make ~ATTR{device}==0x<device>~
+    - Verify this online, but I think that's how it works
+- Reboot and verify power consumption is as expected when VM is not running
+** VM configuration
+- NOTE: you cannot do this now obviously. Wait until configuring the VM. You can do it BEFORE installing windows, or after. Shouldn't matter
+- You can do this before of after installing VirtIO drivers. Shouldn't matter
+- In virt manager VM configuration
+- 'Add Hardware' > 'PCI Host Device'
+- Select correct entry for your GPU
+- Repeat above for audio device if applicable
+** Guest Drivers
+- within windows
+- install VirtIO drivers
+- Reboot
+- install proprietary GPU drivers from the manufacturer's website.
+  - be sure to pick the right ones
+  - proceed with normal installation
+  - reboot
+  - task manager should show gpu.
+  - do a stress test and see if it is used.
+* Create win VM
+** Note that these are instructions for win10. win11 is a little different, but doable.
+  - Windows 11 requires adding a TPM (easy) and enabling UEFI OVMF with secure boot.
+    - It is easy to figure out specifics online. Be mindful
+- This procedure uses an entire separate physical disk to install win10
+  - The XPS15 has 2 m.2 slots. Linux is on one, Windows is on the other
+  - This allows for complete isolation
+  - It saves me having to fuck around with partitions on my main disk
+  - I think it's probably faster to pass in the whole disk
+- Find your disk by id:
+  - We cannot use the drives in /dev/nvmeXN1 because the names are not consistent
+    - IE Linux is not alwaus nvme0 and windows nvme0. The numbers swap around on reboots sometimes
+    - Obviously this is bad so we have to use disk by id.
+  - The disk by ids are stored in ~/dev/disk/by-id~
+  - Make sure you pick the right one. If the two disks are the same model then you can use the UUID (I think)
+  - The path will look something like this ~/dev/disk/by-id/nvme-KXG60ZNV256G_NVMe_TOSHIBA_256GB_49OF71JRF0AN~
+  - Do not pick one of the partitions
+** VM Creation Start (steps not necessarily in order, order is not important. All can be modified later):
+  - Click the create new vm button in virt manager
+  - Choose 'Import Existing Disk Image'
+  - Specify the full path of the disk by id to "Select or create custom storage". It will error if you give it an invalid location.
+  - Choose CPUs and RAM. You can change this later.
+  - Choose the correct windows version
+  - Tick "Customize installation before install"
+  - Finish
+    - This will allow you to configure the vm before beginning the installation
+** VM Configuration (Customizing installation before installing. Can do all of this after if it boots)
+  - Overview (some of this is different for windows 11. Be mindful):
+    - Hypervisor: KVM
+    - Emulator: /usr/bin/qemu-system-x86_64 (might not have to specify)
+    - Chipset: Q35 (might not have to specify)
+    - Firmware: UEFI
+      - Different for windows 11. You need secure boot option. Look it up.
+  - CPUs:
+    - Use host passthrough.
+    - Topology:
+      - Sockets: number of physical CPUs. Usually 1 unless you are configuring a server
+      - Cores: How many cores do you want to give?
+      - Threads: How many threads per core do you want to give?
+      - Note: I have the max amount (1, 10, 2 for the 9530). It doesn't actually give it all. The host takes priority when using host passthrough
+  - Memory:
+    - enable shared memory
+  - Boot options:
+    - Make it be the main drive. You do not have to have it be the installation media
+  - Main disk (will have different name)
+    - Note: the disk bus needs to be set to SATA at first, but after installing VirtIO drivers (and running a few commands in the guest) we will switch it to VirtIO disk bus because it is faster (apparently). Instructions later
+    - Cache mode: none
+    - Discard mode: unmap
+  - NIC:
+    - VirtIO
+    - You probably have to set it to something else for the initial boot. Change to VirtIO after VirtIO drivers are installed
+  - Sound:
+    - Whatever for now ICHX (where X is a number) will work for now. Eventually you are going to want to pick the better sound device (might have to wait for drivers to install, not sure.) The one I am currently using is AC97, but this might be different for you.
+  - Display: spice
+  - Video:
+    - Note after installing we will use looking glass, so the Video section will eventually be able to be removed entirely
+    - QXL optimally
+      - Might need drivers for it
+      - Just find one that works for the installation and change to QXL after installing
+      - I think QXL is better than VirtIO, but not sure
+  - Add hardware: VirtIO ISO CDROM
+    - Click 'Add Hardware' > 'Storage'
+    - 'Select or create custom storage'
+      - Choose the VirtIO ISO that we downloaded earlier
+    - Device Type: CDROM
+    - Bus Type: SATA
+  - Add hardware: TPM
+    - Not needed to win10, but needed for win11. Look into implications
+    - Should be able to do TPM pass though to ~/dev/tmp0~ or something like that.
+  - GPU Passthrough:
+    - You can follow the instructions above for adding the passthrough device. You may also wait until after installing windows. Shouldn't matter
+  - Should be able to boot now. Click Begin
+** Windows installation
+- Should successfully boot into the windows installation media
+- if not, there is a problem. investigate
+- Activate Windows:
+  - Note: it is possible that neither of these work. you might have to figure this part out yourself
+  - windows activation win11:
+    - key: `VK7JG-NPHTM-C97JM-9MPGT-3V66T`
+    - this is NOT my key. I found this on a youtube video. might not work anymore
+    - might also work for win 10. try it out
+  - windows activation win 10:
+    - [[https://msguides.com/windows-10][guide]]
+    - open cmd as admin
+    - type `slmgr /ipk <WIN_KEY>`
+      - you may get a popup error. ignore it
+      - <WIN_KEY> is a windows key. I think I found one online. The one above might work
+    - type `slmgr /skms kms8.msguides.com`
+    - type `slmgr /ato`
+    - then check to see if windows is activated. it should be
+- What type of installation?
+  - Custom
+- Where do you want to install windows:
+  - IMPORTANT
+  - Click 'load driver'
+  - The VirtIO driver installation SHOULD be detected here
+    - When I did this, I could not figure out how to get the driver to appear in the load driver menu. I have no clue why it didn't. It should be picked up automatically. I spent a fuck ton of time messing with this and eventually had to give up and install VirtIO drivers manually later
+  - If it is:
+    - Install quit the installation, go back and switch the main disk (and all the other stuff I said required drivers above) to VirtIO
+    - Come back to installation. Load and install the driver, then you should be able to select the disk.
+  - If it is not:
+    - windows should still install and you can manually install the drivers once it is installed
+- Finish installation
+- Boot it up and install VirtIO drivers (if not done during installation)
+  - Go back and change the VM config everywhere I made a note that something had to be done after installing VirtIO drivers (if not already done)
+* Windows OS Configuration
+- Make sure VirtIO drivers are installed
+- Take a look at the XML dump below and add the appropriate devices and optimizations that are present there, but not in your config. Do some research. I forget a few small things.
+** WinUtil
+- This is a really great program that automates the removal of many bullshit windows features. Look into it. It is well maintained and EXTREMLY useful for minimizing the windows bloat
+- WinUtil also serves as a very nice package manager. It allows you to manage the installation of a ton of windows programs. Before installing anything check if the program is supported and install it from here.
+- [[https://github.com/ChrisTitusTech/winutil][repo]]
+- The maintianer is a youtuber so he posts lots of updates. Software is under active development. Do some research and figure out best optimizations.
+- Maybe checkout MicroWin, which allows the creation of a micro windows iso that you can install
+** WinToCtrlWin (optional)
+- Disable the windows key
+- Install ~AutoHotkey~ from ~WinUtil~
+- I will give the script. I forget how and where to create it, or how to make it autorun on boot. You can figure it out it's easy
+- I am not 100% sure what the script actually does. It definitely disables the windos key, but some other keys that involve the windows key still work. Not sure why. I also notice that CTRL+ESC opens the windows menu thing. Not sure if this made that happen. Maybe reinvensigate and make a new script
+- Create script
+        #+BEGIN_SRC
+        LWin up::return
+        <!Lwin::
+        send ^{Esc}
+        return
+        <#right::
+        send {end}
+        return
+        #+END_SRC
+
+
+
+
+
+  - share folder between host and guest
+** solidworks crack (optional)
+- [[https://4mirrorlink.com/1986-solidworks-full-premium.html][here]]
+- this probably won't work soon. find a new crack or buy solidworks if you really need it
+* Looking Glass
+- Looking glass is an awesome program for
+- Very low latency. Much better than viewing in virt manager
+- Was kind of a pain in the ass to figure out but once it works it works
+- [[https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Using_Looking_Glass_to_stream_guest_screen_to_the_host][arch wiki instructions]]
+  - these are perfect as of March 2024. Find the looking glass section
+- [[https://www.youtube.com/watch?v=SYPjgfNym18][good video]]
+  - note that the video does not show some important things at the end.
+  - installation is good, but it does not properly explain how you need a dummy plug OR virtual display driver. more on this later
+** In VM Config
+- Manually add XML
+  - Go to Overview > XML
+  - Go to very end
+  - At the end, but still within the and ~device~ section, add these lines
+        #+BEGIN_SRC
+        ...
+        <devices>
+        ...
+        <shmem name='looking-glass'>
+        <model type='ivshmem-plain'/>
+        <size unit='M'>64</size>
+        </shmem>
+        </devices>
+        ...
+        #+END_SRC
+  - Note, the size (~64~) specifies the required size for the looking glass shared memory file. It depends on your display resolution. Consult the arch wiki to figure out right size. I am using ~64~ because my monitor is ~2540x1440~ for a ~1920x1080~ you would use ~32~. Make sure you get it right
+  - Note, if you set the value and the shared memory file is created, you cannot change the size in the VM settings until you delete it. It will error
+  - Apply
+  - Next create a configuration file to create the shared memory file on boot
+        #+BEGIN_SRC /etc/tmpfiles.d/10-looking-glass.conf
+        f	/dev/shm/looking-glass	0660	user	kvm	-
+        #+END_SRC
+  - replace user with your user
+  - reboot host
+  - start windows
+** On Windows
+*** IVSHM Driver Installation
+- Driver:
+  - You need to have dowloaded VirtIO drivers. I recall that the initial VirtIO drivers that I installed did not work for the following procedure. I am not sure why. Try it with them first then try it with the link on the arch wiki. They are different for some reason (in 2024). The ones on the arch wiki are older than the ones I linked above.
+  - The discrepancy MIGHT be because the initial VirtIO drivers were in an ISO and the second ones I downloaded were in a zip. I am not sure. Investigate
+- Go to device manager
+- System Devices
+- Find something like 'PCI Standard RAM Controller'
+  - Note: you will not see this unless you add the shmem section to the VM config file
+- Right click on that
+- "Update driver"
+- "Browse my computer for drivers"
+- "Browse"
+- Find the right path to where the VirtIO drivers have been extracted. You do not need to select the exact driver. Just point it to the right directory where all the drivers are. Something like ~<virtio_unzipped_dir>/win10/amd64~
+- The actual path could be totally different
+- Hit install and it should work
+*** Looking glass linux (client)
+- install ~looking-glass-client~. It was in the AUR. You might have to build from source
+- I do not use a config file
+- I run it like this: ~looking-glass-client -m 100~
+- -m 100 specifies the keycode of the escape key. By default it is the scroll lock key, which my keyboard does not have. In this instance, keycode 100 is my right alt key. So when looking glass is running and I press right alt, it will capture and uncapture my mouse and keyboard.
+- I made a nice function in bashrc called ~win~ for starting and stopping the vm and connecting to looking glass with once command. Check it out.
+*** Looking glass windows (host) installation
+- [[https://looking-glass.io/downloads][download site]]
+- download host application
+  - note that the naming of host vs guest is weird here. In the context of looking glass, windows is the host and linux is the guest. I will not swap the names outside of this section
+- Install it. It should run automatically on boot once we configure the dummy plug / virtual display driver
+- Check the logs if it does not start. It will create a sys tray icon if it is started. Otherwise, check the logs.
+**** Dummy plug / virtual display driver
+- Looking Glass host will not start properly if the GPU is not directly connected to an external display. In our case currently, it is not. There are a few options
+**** Connect GPU directly an external display
+- to me, this defeats the purpose of looking glass entirely
+**** Connect GPU directly to a dummy plug
+- a dummy plug is a very tiny, very cheap HDMI/DP device that you plug in to the computer
+- it makes the machine think that there is a display connected when there really is not
+- Performance wise, this is probably superior to the virtual display driver method below
+- I am going to order one and check it out. Update this section with instructions once you do
+**** Connect GPU to a virtual display driver
+- this method works perfectly for me
+- I believe there are some performance concerns, but I didn't notice any issues
+- https://github.com/itsmikethetech/Virtual-Display-Driver
+- The instructions on there are super easy. Do it all within windows
+- Once the driver is installed, you should be able to see a second display in the windows display manager. Configure it to the proper resolution.
+- Reboot and check if looking glass started. There will be a sys tray for looking glass if it worked. If not, check the logs
+- Try to connect from linux using ~looking-glass-client~. If it works, you can disable the primary display
+  - If there is ever a problem with ~looking-glass~, this might brick the VM. I am not sure.
+**** Connect GPU to a different port on the same monitor that you are using
+- some people have gotten this to work. I think it depends on how the monitor handles multiple inputs. I am not sure. I couldn't figure it out but I didn't try very long
+* Share folder between guest and host
+- See relevant section in XML dump
+- This is not all you have to do. there is additional configuration on the host
+- I forget exactly how I did this. It was a pain in the ass. The next time you do this add proper documentation
+* VM Confg Dump
+- Do not copy and paste this. This represents the final config file of a win10 VM with near native performance. Use it as an example.
+- May be useful to run a diff on this compared to your config file and see what differences are. There are some manually entered optimizations that I forget adding. You should add them. It shows the various devices that I added at some point, but did not write documentation about. (shared folder, verious controllers, stuff like that)
+- Should be useful
+#+BEGIN_SRC xml
+<domain type="kvm">
+  <name>win10</name>
+  <uuid>e61997d3-c948-4956-82ba-044a2ccd5f41</uuid>
+  <metadata>
+    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+      <libosinfo:os id="http://microsoft.com/win/10"/>
+    </libosinfo:libosinfo>
+  </metadata>
+  <memory unit="KiB">16777216</memory>
+  <currentMemory unit="KiB">4194304</currentMemory>
+  <memoryBacking>
+    <source type="memfd"/>
+    <access mode="shared"/>
+  </memoryBacking>
+  <vcpu placement="static">20</vcpu>
+  <os firmware="efi">
+    <type arch="x86_64" machine="pc-q35-8.2">hvm</type>
+    <firmware>
+      <feature enabled="no" name="enrolled-keys"/>
+      <feature enabled="yes" name="secure-boot"/>
+    </firmware>
+    <loader readonly="yes" secure="yes" type="pflash">/usr/share/edk2/x64/OVMF_CODE.secboot.fd</loader>
+    <nvram template="/usr/share/edk2/x64/OVMF_VARS.fd">/var/lib/libvirt/qemu/nvram/win10_VARS.fd</nvram>
+    <boot dev="hd"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv mode="custom">
+      <relaxed state="on"/>
+      <vapic state="on"/>
+      <spinlocks state="on" retries="8191"/>
+      <vpindex state="on"/>
+      <synic state="on"/>
+      <stimer state="on">
+        <direct state="on"/>
+      </stimer>
+      <reset state="on"/>
+      <frequencies state="on"/>
+      <reenlightenment state="on"/>
+      <tlbflush state="on"/>
+      <ipi state="on"/>
+    </hyperv>
+    <vmport state="off"/>
+    <smm state="on"/>
+  </features>
+  <cpu mode="host-passthrough" check="none" migratable="on">
+    <topology sockets="1" dies="1" clusters="1" cores="10" threads="2"/>
+  </cpu>
+  <clock offset="localtime">
+    <timer name="rtc" present="no" tickpolicy="catchup"/>
+    <timer name="pit" present="no" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+    <timer name="kvmclock" present="no"/>
+    <timer name="hypervclock" present="yes"/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled="no"/>
+    <suspend-to-disk enabled="no"/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type="block" device="disk">
+      <driver name="qemu" type="raw" cache="none" io="native" discard="unmap"/>
+      <source dev="/dev/disk/by-id/nvme-KXG60ZNV256G_NVMe_TOSHIBA_256GB_49OF71JRF0AN"/>
+      <target dev="vda" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x09" slot="0x00" function="0x0"/>
+    </disk>
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="/var/lib/libvirt/images/virtio-win-0.1.240.iso"/>
+      <target dev="sde" bus="sata"/>
+      <readonly/>
+      <address type="drive" controller="0" bus="0" target="0" unit="4"/>
+    </disk>
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="/home/marc/working/share/sw/SolidWorks.2022.SP5.0.Premium.DVD.iso"/>
+      <target dev="sdf" bus="sata"/>
+      <readonly/>
+      <address type="drive" controller="0" bus="0" target="0" unit="5"/>
+    </disk>
+    <controller type="usb" index="0" model="qemu-xhci" ports="15">
+      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
+    </controller>
+    <controller type="pci" index="0" model="pcie-root"/>
+    <controller type="pci" index="1" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="1" port="0x10"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0" multifunction="on"/>
+    </controller>
+    <controller type="pci" index="2" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="2" port="0x11"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x1"/>
+    </controller>
+    <controller type="pci" index="3" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="3" port="0x12"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x2"/>
+    </controller>
+    <controller type="pci" index="4" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="4" port="0x13"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x3"/>
+    </controller>
+    <controller type="pci" index="5" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="5" port="0x14"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x4"/>
+    </controller>
+    <controller type="pci" index="6" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="6" port="0x15"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x5"/>
+    </controller>
+    <controller type="pci" index="7" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="7" port="0x16"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x6"/>
+    </controller>
+    <controller type="pci" index="8" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="8" port="0x17"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x7"/>
+    </controller>
+    <controller type="pci" index="9" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="9" port="0x18"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x0" multifunction="on"/>
+    </controller>
+    <controller type="pci" index="10" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="10" port="0x19"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x1"/>
+    </controller>
+    <controller type="pci" index="11" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="11" port="0x1a"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x2"/>
+    </controller>
+    <controller type="pci" index="12" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="12" port="0x1b"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x3"/>
+    </controller>
+    <controller type="pci" index="13" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="13" port="0x1c"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x4"/>
+    </controller>
+    <controller type="pci" index="14" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="14" port="0x1d"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x5"/>
+    </controller>
+    <controller type="pci" index="15" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="15" port="0x1e"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x6"/>
+    </controller>
+    <controller type="pci" index="16" model="pcie-to-pci-bridge">
+      <model name="pcie-pci-bridge"/>
+      <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
+    </controller>
+    <controller type="sata" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1f" function="0x2"/>
+    </controller>
+    <controller type="sata" index="1">
+      <address type="pci" domain="0x0000" bus="0x10" slot="0x02" function="0x0"/>
+    </controller>
+    <controller type="virtio-serial" index="0">
+      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
+    </controller>
+    <filesystem type="mount" accessmode="passthrough">
+      <driver type="virtiofs"/>
+      <source dir="/home/marc/working/share"/>
+      <target dir="linux_share"/>
+      <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
+    </filesystem>
+    <interface type="network">
+      <mac address="52:54:00:3e:61:98"/>
+      <source network="default"/>
+      <model type="virtio"/>
+      <link state="up"/>
+      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+    </interface>
+    <serial type="pty">
+      <target type="isa-serial" port="0">
+        <model name="isa-serial"/>
+      </target>
+    </serial>
+    <console type="pty">
+      <target type="serial" port="0"/>
+    </console>
+    <channel type="spicevmc">
+      <target type="virtio" name="com.redhat.spice.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="1"/>
+    </channel>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
+    <graphics type="spice" autoport="yes">
+      <listen type="address"/>
+      <image compression="off"/>
+    </graphics>
+    <sound model="ac97">
+      <address type="pci" domain="0x0000" bus="0x10" slot="0x03" function="0x0"/>
+    </sound>
+    <audio id="1" type="spice"/>
+    <video>
+      <model type="qxl" ram="65536" vram="65536" vgamem="16384" heads="1" primary="yes"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
+    </video>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+      </source>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
+    </hostdev>
+    <hostdev mode="subsystem" type="usb" managed="yes">
+      <source startupPolicy="optional">
+        <vendor id="0x10f5"/>
+        <product id="0x7008"/>
+      </source>
+      <address type="usb" bus="0" port="4"/>
+    </hostdev>
+    <hostdev mode="subsystem" type="usb" managed="yes">
+      <source startupPolicy="optional">
+        <vendor id="0x1908"/>
+        <product id="0x2070"/>
+      </source>
+      <address type="usb" bus="0" port="5"/>
+    </hostdev>
+    <redirdev bus="usb" type="spicevmc">
+      <address type="usb" bus="0" port="1"/>
+    </redirdev>
+    <redirdev bus="usb" type="spicevmc">
+      <address type="usb" bus="0" port="2"/>
+    </redirdev>
+    <watchdog model="itco" action="reset"/>
+    <memballoon model="virtio">
+      <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
+    </memballoon>
+    <shmem name="looking-glass">
+      <model type="ivshmem-plain"/>
+      <size unit="M">64</size>
+      <address type="pci" domain="0x0000" bus="0x10" slot="0x01" function="0x0"/>
+    </shmem>
+  </devices>
+</domain>
+#+END_SRC

@@ -65,23 +65,23 @@ alias pg='ping 8.8.8.8'
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 alias duh='du -ah --max-depth=1 . | sort -rh'
 alias vim='nvim'
+alias xr='xmonad --recompile && xmonad --restart'
+#nav
+alias cw='cd ~/working'
+alias cdev='cd ~/working/dev'
+alias cleh='cd ~/working/dev/lehigh'
+alias csol='cd ~/working/dev/solar'
+alias cdot='cd $DOTFILES'
+alias ctem='cd ~/working/temp'
+alias cdow='cd ~/working/downloads'
+alias cmis='cd ~/working/misc'
+alias corg='cd ~/working/org'
 # network
 alias nmc='nmcli'
 # protonvpn
 alias wgup='sudo systemctl start wg-quick@wg-US-NY-250'
 alias wgdown='sudo systemctl stop wg-quick@wg-US-NY-250'
 alias wgs='sudo wg show'
-#taskwarrior
-export TASKRC=$DOTFILES/task/taskrc
-alias t='task $1'
-alias ta='task add $1'
-alias te='task edit $1'
-alias tc='task mod $1'
-alias td='task done $1'
-alias tdel='task delete $1'
-alias tdaily='function _tdaily() { task add recur:daily due:2:00 wait:5:00 "$*" +daily; }; _tdaily'
-alias ts='task sync'
-
 #bluetooth
 alias btc='bluetoothctl'
 alias btui='bluetuith'
@@ -91,15 +91,6 @@ alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:89'
 alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
-
-#sshfs | this is not used anymore, but I'm keeping it in here to serve as an example
-alias fsh1='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h1 /mnt/remote/475h1'
-alias fsh2='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h2 /mnt/remote/475h2'
-alias fsh3='sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o sshfs_sync -o compression=yes -o auto_cache -o cache=no -o umask=022 -o allow_other -o IdentityFile=/home/marc/.ssh/id_rsa -o ssh_command="ssh -F /home/marc/.ssh/config" sunlab:/home/masa20/working/475/h3 /mnt/remote/475h3'
-alias unfsh1='fusermount -u /mnt/remote/475h1'
-alias unfsh2='fusermount -u /mnt/remote/475h2'
-alias unfsh3='fusermount -u /mnt/remote/475h3'
-
 #git
 alias g='git status'
 alias gs='git status -s'
@@ -113,85 +104,69 @@ alias gl='git log'
 gc() {
     git commit -m "$*"
 }
+# docker
+alias dcu='docker compose --profile $1 up'
+alias dcud='docker compose --profile $1 up -d'
+alias dcd='docker compose down'
+dca() {
+  docker compose exec "$1" bash
+}
+# autocomplete for dca
+_dca_complete() {
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  local containers=$(docker compose ps --services)
+  COMPREPLY=($(compgen -W "${containers}" -- ${cur}))
+}
+complete -F _dca_complete dca
 
-#nav
-alias cw='cd ~/working'
-alias cdev='cd ~/working/dev'
-alias cleh='cd ~/working/dev/lehigh'
-alias csol='cd ~/working/dev/solar'
-alias cdot='cd $DOTFILES'
-alias ctem='cd ~/working/temp'
-alias cdow='cd ~/working/downloads'
-alias cmis='cd ~/working/misc'
-
+# restart bluetoth and pipewire
 br() {
     systemctl --user restart pipewire
     sudo systemctl stop bluetooth
     sudo systemctl start bluetooth
 }
 
-#lehigh vpn
-alias lvpn='/opt/cisco/anyconnect/bin/vpnui'
-#tunnel from localhost:9090 to gateway gitlab.cse.lehigh.edu:80 because gitlab.cse.lehigh.edu can only be accessed via lehigh network
-alias tun411='ssh -L 9090:gitlab.cse.lehigh.edu:80 -N -f gateway'
-
-#network
-alias lehigh='sudo netctl stop-all && sudo netctl start lehigh'
-alias pierce='sudo netctl stop-all && sudo netctl start 618\ Pieeeeeeerce'
-alias home='sudo netctl stop-all && sudo netctl start OldManDing'
-
-#minecwaft
-alias mine='prime-run minecraft-launcher & disown'
-
-
-ftl() {
-    cd /home/marc/.local/share/Steam/steamapps/common/FTL\ Faster\ Than\ Light
-    ./FTL 2>&1>&0 > /dev/null & disown
-    cd -
-}
-
-#emacs remote dev using named workspaces
-alias eltanin='e e "/ssh:gateway|ssh:eltanin:working/"'
-alias seed='e n "/ssh:gateway|ssh:seed:working/"'
-alias das='e d /ssh:das:working/'
-alias electron='e t /ssh:electron:working/'
-alias ancilla='e a /ssh:ancilla:working/'
-alias sunlab='e s "/ssh:gateway|ssh:sunlab:working"'
-
-#emacsclient named workspaces | this isn't used anymore, but you may want to update it now that you use GUI emacs
-e() {
-    if [[ $1 = "-k" ]]; then
-        /usr/bin/emacsclient -s $2 -e '(kill-emacs)'
-        return
-    elif [[ ${#1} = 1 ]]; then
-       name=$1
-       file=$2
-    else
-       name=0
-       file=$1
-    fi
-    /usr/bin/emacsclient -s $name -nw $file
-    ret=$?
-    if [[ $ret != 0 ]] && [[ $ret != 147 ]] ; then
-        /usr/bin/emacs --daemon=$name
-        /usr/bin/emacsclient -s $name $file
-    fi
+# win10 vm
+win() {
+    # running with -m 100 binds left-alt (keycode 100) to mouse capture and release
+    start_lg() { looking-glass-client -m 100 > /dev/null 2>&1 & }
+    case $1 in
+        "up"|"u")
+            # Start the Windows VM
+            echo "Starting win10"
+            sudo virsh start win10
+            echo "Starting looking glass"
+            start_lg
+            ;;
+        "down"|"d")
+            echo "Shutting down win10"
+            sudo virsh shutdown win10
+            ;;
+        "kill"|"k")
+            echo "Killing win10"
+            sudo virsh destroy win10
+            ;;
+        "attach"|"a")
+            echo "Reattaching win10"
+            start_lg
+            ;;
+        *)
+            echo "Error: must be (u)p, (d)own, (k)ill, or (a)ttach"
+            ;;
+    esac
 }
 
 #change screen layout
 lay() {
-    bash ~/.screenlayout/$1.bash
+    bash $DOTFILES/screenlayout.bash $@
 }
 
+# zathura
 za() {
     zathura $1 > /dev/null 2>&1 & disown
 }
 
-lo() {
-    command libreoffice "$1" &>/dev/null & disown
-}
-
-# note that the following only works with relative paths
+# only office
 oo() {
     command onlyoffice-desktopeditors ./"$1" &>/dev/null & disown
 }
@@ -230,8 +205,6 @@ pass() {
         /usr/bin/pass "$@"
     fi
 }
-
-[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
 
 #enable starship prompt
 eval "$(starship init bash)"

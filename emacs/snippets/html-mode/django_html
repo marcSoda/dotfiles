@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: django_html
+# condition: t
+# key: dh
+# --
+{% $1 %}

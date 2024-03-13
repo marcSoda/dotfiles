@@ -105,7 +105,7 @@
     org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
-(setq org-roam-directory "~/working/org/roam")
+(setq org-roam-directory "/home/marc/Dropbox/org/roam")
 (setq org-roam-completion-everywhere t)
 (org-roam-db-autosync-enable)
 (setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
@@ -137,6 +137,7 @@
     (setq treemacs-width-is-initially-locked nil)
     (setq treemacs-find-workspace-method 'find-for-file-or-manually-select)
     (setq treemacs-is-never-other-window t)
+    ;; (add-hook 'treemacs-mode-hook (lambda () (text-scale-decrease 1.5)))
     (add-to-list 'treemacs-ignored-file-predicates #'treemacs-ignore-filter))
 
 ;;SMOOTH SCROLLING

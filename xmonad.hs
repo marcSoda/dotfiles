@@ -1,6 +1,6 @@
 -- Base
 import XMonad
-import System.IO (hPutStrLn)
+import System.IO (hPutStrLn, readFile)
 import System.Exit (exitSuccess)
 import qualified XMonad.StackSet as W
 -- Hooks
@@ -19,6 +19,11 @@ import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.Run (runProcessWithInput, safeSpawn, spawnPipe)
 import XMonad.Util.SpawnOnce
 import XMonad.Util.NamedScratchpad
+import XMonad.Actions.PhysicalScreens
+-- for switching xmonad config depending if monitor is connected
+import System.Directory (doesFileExist)
+import Control.Exception (catch, SomeException)
+import Data.List (isInfixOf)
 
 myFont :: String
 myFont = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=true"
@@ -30,7 +35,7 @@ disp0 :: String
 disp0 = "eDP-1"
 
 disp1 :: String
-disp1 = "DP1"
+disp1 = "DP2-2"
 
 myTerminal :: String
 myTerminal = "alacritty"
@@ -45,7 +50,9 @@ myBrowser :: String
 myBrowser = "qutebrowser "
 
 myBorderWidth :: Dimension
-myBorderWidth = 2           -- Sets border width for windows
+myBorderWidth = 1           -- Sets border width for windows
+
+myGaps = 0 -- gaps between tiled windows
 
 -- Colors. Also used in xmobarrc. If you change a color here, you should probably change the corresponding color in xmobarrc to keep theme consistent
 myLightGrey :: String
@@ -89,23 +96,25 @@ mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spaci
 mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
 
 tall     = renamed [Replace "T"]
-           $ mySpacing 4
+           $ mySpacing myGaps
            $ ResizableTall 1 (3/100) (1/2) []
+wide     = renamed [Replace "W"]
+           $ mySpacing myGaps
+           $ Mirror (ResizableTall 1 (3/100) (1/2) [])
 monocle  = renamed [Replace "M"]
            $ Full
+myLayoutHook = avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ myDefaultLayout
+  where
+    myDefaultLayout = withBorder myBorderWidth tall ||| withBorder myBorderWidth wide ||| noBorders monocle
 
-myLayoutHook = avoidStruts
-             $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
-             where
-             myDefaultLayout = withBorder myBorderWidth tall
-                           ||| noBorders monocle
 
 --Workspaces
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
      [ className =? "zoom"                       --> doShift(myWorkspaces !! 6)
-     , className =? "Microsoft Teams - Preview"  --> doShift(myWorkspaces !! 6)
      , className =? "Slack"                      --> doShift(myWorkspaces !! 7)
+     , className =? "teams-for-linux"            --> doShift(myWorkspaces !! 7)
+     , className =? "asana"                      --> doShift(myWorkspaces !! 7)
      , className =? "firefox"                    --> doShift(myWorkspaces !! 8)
      , className =? "vlc"                        --> doShift(myWorkspaces !! 8)
      ] <+> namedScratchpadManageHook myScratchpads
@@ -143,20 +152,24 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findChatGpt   = className =? "Chat-gpt"
         manageChatGpt = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
+-- Only allow one scratchpad per window. NB: you can use exclusives to make some scratchpads conflict and some not. Checkout documentation
+myExclusives = addExclusives [ [name | NS name _ _ _ <- myScratchpads] ]
+
 --Keybindings
 myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
-        [ ("M-S-q", io exitSuccess)         -- Quit xmonad
+        [
+        -- [ ("M-S-q", io exitSuccess)         -- Quit xmonad
     -- Applications
-        , ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
+        ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
         , ("M-S-b", spawn (myBrowser))
         , ("M-S-f", spawn "firefox")
-        , ("M-p", spawn "rofi -show run")
+        , ("M-p", spawn "rofi -show drun")
         , ("M-S-p", spawn "rofi-pass")
         , ("M-S-c", spawn "emacs")
     -- Kill windows
-        , ("M-S-x", kill)                 -- Kill the currently focused client
+        , ("M-S-x", kill)                 -- Kill the currently focused window
     -- Windows navigation
         , ("M-j", windows W.focusDown)    -- Move focus to the next window
         , ("M-k", windows W.focusUp)      -- Move focus to the prev window
@@ -175,9 +188,19 @@ myKeys =
         , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
         , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
         , ("M-f", namedScratchpadAction myScratchpads "chatGptScratch")
+        , ("M-0", windows $ W.greedyView "NSP") -- set window focus to hidden NSP workspace
+    -- monitors
+        , ("M-q", viewScreen def 1) -- Switch focus to LeftSide
+        , ("M-w", viewScreen def 2) -- Switch focus to Center
+        , ("M-e", viewScreen def 3) -- Switch focus to RightSide
+        , ("M-r", viewScreen def 0) -- Switch focus to eDP-1
+        , ("M-S-q", sendToScreen def 1) -- Move window to LeftSide
+        , ("M-S-w", sendToScreen def 2) -- Move window to Center
+        , ("M-S-e", sendToScreen def 3) -- Move window to RightSide
+        , ("M-S-r", sendToScreen def 0) -- Move window to eDP-1
     -- Multimedia Keys
-        , ("M-s", spawn ("scrot " ++ scrotPath))
-        , ("M-S-s", spawn ("scrot -s " ++ scrotPath))
+        , ("<Print>", spawn ("scrot " ++ scrotPath))
+        , ("S-<Print>", spawn ("scrot -s " ++ scrotPath))
         , ("<XF86AudioPlay>", spawn (scriptPath ++ "spotify play-pause"))
         , ("M-.", spawn (scriptPath ++ "spotify next")) -- >
         , ("M-,", spawn (scriptPath ++ "spotify previous")) -- <
@@ -203,42 +226,27 @@ myKeys =
 
 main :: IO ()
 main = do
-    -- xmproc <- spawnPipe "xmobar -x 0 /home/marc/working/dotfiles/xmobarrc"
-    xmproc0 <- spawnPipe ("xmobar -x 0 /home/marc/working/dotfiles/xmobarrc")
-    xmproc1 <- spawnPipe ("xmobar -x 1 /home/marc/working/dotfiles/xmobarrc")
-    xmproc2 <- spawnPipe ("xmobar -x 2 /home/marc/working/dotfiles/xmobarrc")
+    xmproc <- spawnPipe ("xmobar -x 1 /home/marc/working/dotfiles/xmobar/xmobarrc")
     xmonad $ docks $ def
         { manageHook         = myManageHook
         , modMask            = myModMask
         , terminal           = myTerminal
-        , startupHook        = myStartupHook
+        , startupHook        = myStartupHook >> myExclusives
         , layoutHook         = avoidStruts $ myLayoutHook
         , workspaces         = myWorkspaces
         , borderWidth        = myBorderWidth
         , normalBorderColor  = myDarkGrey
         , focusedBorderColor = myBlue
         , logHook = dynamicLogWithPP $ xmobarPP
-            { ppOutput = \x -> hPutStrLn xmproc0 x   -- xmobar on monitor 1
-                            >> hPutStrLn xmproc1 x   -- xmobar on monitor 2
-                            >> hPutStrLn xmproc2 x   -- xmobar on monitor 3
-            , ppCurrent = xmobarColor myBlue "" . wrap
-                        ("<box type=Bottom width=2 mb=2 color=" ++ myBlue ++ ">") "</box>"
-            -- Visible but not current workspace
+            { ppOutput = \x -> hPutStrLn xmproc x  -- Update only xmobar on the center screen
+            , ppCurrent = xmobarColor myBlue "" . wrap ("<box type=Bottom width=2 mb=2 color=" ++ myBlue ++ ">") "</box>"
             , ppVisible = xmobarColor myGreen ""
-            -- Hidden workspace
-            , ppHidden = xmobarColor myPurple "" . wrap
-                        ("<box type=Top width=2 mt=2 color=" ++ myPurple ++ ">") "</box>"
-            -- Hidden workspaces (no windows)
+            , ppHidden = xmobarColor myPurple "" . wrap ("<box type=Top width=2 mt=2 color=" ++ myPurple ++ ">") "</box>"
             , ppHiddenNoWindows = xmobarColor myWhite ""
-            -- Title of active window
             , ppTitle = xmobarColor myBlue "" . shorten 60
-            -- Separator character
-            , ppSep =  "<fc=" ++ myLightGrey ++ "> <fn=1>|</fn> </fc>" -- revisit. color does nothing
-            -- Urgent workspace. Not when a workspace becomes urgent
+            , ppSep =  "<fc=" ++ myLightGrey ++ "> <fn=1>|</fn> </fc>"
             , ppUrgent = xmobarColor myRed "" . wrap "!" "!"
-            -- Adding # of windows on current workspace to the bar
             , ppExtras  = [windowCount]
-            -- order of things in xmobar
             , ppOrder  = \(ws:l:t:ex) -> [ws,l]++ex++[t]
             }
         } `additionalKeysP` myKeys

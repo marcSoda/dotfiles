@@ -5,6 +5,7 @@
 * as of 1/24, there are additional equalizer settings that make the sound better
 - you need to be using pipewire
 - these changes may be merged upstream in the future, so test without before adding this stuff
+- NOTE: I never actually ended up using this because I noticed no difference in sound quality, but I'm keeping it here for reference
 - [[https://wiki.archlinux.org/title/PipeWire#Systemwide_parametric_equalization][useful info]]
 - `~/.config/pipewire/pipewire.conf.d/sink-eq6.conf`
 #+BEGIN_SRC conf

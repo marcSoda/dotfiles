@@ -14,6 +14,11 @@ Host gitlab.com-solar
     IdentityFile ~/.ssh/id_rsa_1
     IdentitiesOnly yes
 
+    #Host auto
+    #HostName 3.131.9.49
+    #User marc
+    #IdentityFile ~/.ssh/auto_ec2_keypair.pem
+
 Host auto
     HostName 3.131.9.49
     User marc
