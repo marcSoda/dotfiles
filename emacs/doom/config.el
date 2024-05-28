@@ -6,6 +6,9 @@
 (advice-remove 'evil-open-below #'+evil--insert-newline-below-and-respect-comments-a)
 (advice-remove 'evil-open-above #'+evil--insert-newline-above-and-respect-comments-a)
 (setq tab-width 4)
+(setq js-jsx-indent-level 4)
+(setq js-indent-level 4)
+(setq typescript-indent-level 4)
 (setq evil-shift-width 4)
 
 ;; FONT
@@ -45,6 +48,25 @@
         #'(lambda ()
             (ibuffer-switch-to-saved-filter-groups "Default")
             (setq ibuffer-hidden-filter-groups (list "other"))))
+
+;; javascript indentation
+(defun setup-jsx-indentation ()
+  (setq tab-width 4)
+  (setq js-indent-level 4)
+  (setq typescript-indent-level 4)
+  (setq js2-basic-offset 4)
+  (setq js-jsx-indent-level 4))
+(add-hook 'rjsx-mode-hook 'setup-jsx-indentation)
+(add-hook 'typescript-mode-hook 'setup-jsx-indentation)
+(add-hook 'js-mode-hook 'setup-jsx-indentation)
+(add-hook 'js2-jsx-mode-hook 'setup-jsx-indentation)
+(add-hook 'js-jsx-mode-hook 'setup-jsx-indentation)
+
+(setq js-indent-level 4)
+(setq typescript-indent-level 4)
+(setq tab-width 4)
+(setq js-jsx-indent-level 4)
+(setq js2-basic-offset 4)
 
 ;;LINE NUMBERS
 (setq display-line-numbers-type 'nil)

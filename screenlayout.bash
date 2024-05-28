@@ -42,6 +42,7 @@ set_5120x1440() {
   # Apply the desired configuration, turning off all other displays not explicitly mentioned
   xrandr --output eDP-1 --mode 1920x1200 --pos 0x0 --rotate normal \
          --output "$1" --primary --mode 5120x1440_60 --pos 1920x0 --rotate normal > /dev/null 2>&1
+  ~/working/dotfiles/backgrounds/feh.sh
 }
 
 del_virt_monitors() {
@@ -62,6 +63,7 @@ if [ "$1" = "res" ]; then
   for output in $other_outputs; do
     xrandr --output "$output" --off
   done
+  ~/working/dotfiles/backgrounds/feh_old.sh
   echo "laptop" > /tmp/monitor_state
 elif [ "$1" = "sing" ]; then
   connected_monitor=$(get_connected_monitor)

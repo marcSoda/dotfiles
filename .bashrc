@@ -105,14 +105,12 @@ gc() {
     git commit -m "$*"
 }
 # docker
-alias dcu='docker compose --profile $1 up'
-alias dcud='docker compose --profile $1 up -d'
-alias dcd='docker compose down'
 dca() {
   docker compose exec "$1" bash
 }
 # autocomplete for dca
 _dca_complete() {
+  export PROFILE="UNSET_BY_BASHRC" #hides warnings for solar containers
   local cur=${COMP_WORDS[COMP_CWORD]}
   local containers=$(docker compose ps --services)
   COMPREPLY=($(compgen -W "${containers}" -- ${cur}))
@@ -128,7 +126,7 @@ br() {
 
 # win10 vm
 win() {
-    # running with -m 100 binds left-alt (keycode 100) to mouse capture and release
+    # running with -m 100 binds right-alt (keycode 100) to mouse capture and release
     start_lg() { looking-glass-client -m 100 > /dev/null 2>&1 & }
     case $1 in
         "up"|"u")

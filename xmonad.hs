@@ -198,6 +198,10 @@ myKeys =
         , ("M-S-w", sendToScreen def 2) -- Move window to Center
         , ("M-S-e", sendToScreen def 3) -- Move window to RightSide
         , ("M-S-r", sendToScreen def 0) -- Move window to eDP-1
+        -- , ("M-w", viewScreen def 0) -- Switch focus to LeftSide
+        -- , ("M-e", viewScreen def 1) -- Switch focus to Center
+        -- , ("M-S-w", sendToScreen def 0) -- Move window to LeftSide
+        -- , ("M-S-e", sendToScreen def 1) -- Move window to Center
     -- Multimedia Keys
         , ("<Print>", spawn ("scrot " ++ scrotPath))
         , ("S-<Print>", spawn ("scrot -s " ++ scrotPath))
