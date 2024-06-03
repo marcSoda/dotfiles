@@ -1,4 +1,23 @@
-* To create a table of contents for an ebook using calibre
+* connecting a Kindle
+- When kindle is connected, it should come up via lsusb and lsblk. If not, try restarting the computer, and the kindle.
+- If it still doesn't work check the cable
+- You know it's connected in Calibre when you can see the "Send Book to Device" botton at the top
+* Steps to add a book
+- requirements
+  - calibre duh
+  - 'WordDumb' calibre plugin
+- download an epub of the book
+- add it to calibre with the 'add books' button
+- convert from epub to .azw3 (kfx is apparently better, but does not work on linux)
+- connect device and ensure Calibre recognizes it
+- go to WordDumb > Create XRay
+  - When this is finished, the book will have been uploaded to the device. There is no reason to press "Send to Device". Word dumb does it automatically
+* Cover art disappearing
+- In the kindle library, when a book gets transferred from Calibre, sometimes the cover art disappears sometime soon after the transfer (maybe not right away)
+- The solution to this is to mount the kindle, navigate to ~<kindle_dir>/system/thumbnails~
+- delete all of the files in that dir
+- disconnect, reconnect, disconnect, then you should be good. Maybe try restarting
+* To create a table of contents for a PDF
 - download a pdf
 - add it to calibre
 - convert it to epub
