@@ -9,3 +9,14 @@
   - it shows how to install KUAL/MRPI. KUAL and MRPI depend on eachother. They allow you to load and launch new programs on the kindle
   - it shows you how to disable OTA updates
   - it shows you how to install KOReader
+* here are some useful resources
+- good youtube video
+  - https://www.youtube.com/watch?v=7gkAiCyCZ7c
+- language break (jailbreak guide)
+  - https://www.mobileread.com/forums/showthread.php?t=356872
+- wiki
+  - https://kindlemodding.gitbook.io/kindlemodding/post-jailbreak/optional-koreader
+- koreader
+  - https://github.com/koreader/koreader
+- KUAL/MRPI
+  - https://kindlemodding.gitbook.io/kindlemodding/post-jailbreak/installing-kual-mrpi
