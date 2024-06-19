@@ -79,17 +79,12 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
-    spawnOnce "bash /home/marc/working/dotfiles/backgrounds/feh.sh &"
-    -- spawnOnce "picom --backend glx &"
-    -- NOTE: YOU NEED TO USE `paru -S picom-arian8j2-git` instead of normal `picom` for window edge radius
-    spawnOnce "picom &"
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
     spawnOnce "tmux new-session -t main"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
+    spawnOnce "picom &"
     spawnOnce "xsetroot -cursor_name left_ptr" --set cursor shape
-    spawnOnce "xset r rate 220 40" --keyboard speed
-    -- spawnOnce "protonmail-bridge --noninteractive &" --protonmail-bridge for mu4e
 
 --Layouts
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a

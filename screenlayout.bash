@@ -63,7 +63,7 @@ if [ "$1" = "res" ]; then
   for output in $other_outputs; do
     xrandr --output "$output" --off
   done
-  ~/working/dotfiles/backgrounds/feh_old.sh
+  ~/working/dotfiles/backgrounds/feh_laptop.sh
   echo "laptop" > /tmp/monitor_state
 elif [ "$1" = "sing" ]; then
   connected_monitor=$(get_connected_monitor)

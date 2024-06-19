@@ -212,6 +212,7 @@
 
 (after! org-agenda
   (define-key org-agenda-mode-map (kbd "q") 'org-agenda-exit)
+  (setq org-agenda-auto-save t)
   (setq org-highest-priority ?A)
   (setq org-lowest-priority ?D)
   (setq org-default-priority ?D)

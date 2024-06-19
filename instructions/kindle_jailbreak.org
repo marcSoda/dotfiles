@@ -1,0 +1,11 @@
+#+title: Kindle Jailbreak
+
+* jailbreaking the kindle was not like jailbreaking an android
+* it was super easy. I am not going to give a tutorial, but I will give some useful info
+- the firmware versions are what's important, not the actual kindle device. you can't jailbreak new firmware, but you can jailbreak new devices as long as the firmware isn't too new
+- [[https://kindlemodding.gitbook.io/kindlemodding/jailbreak-software/languagebreak-5.14.3-5.16.2.1.1][this]] website has all the info on it you need
+  - NOTE: it has probably been many years since you rooted a kindle. do some research. I'm sure things have changed
+  - it shows you how to jailbreak. at the time of writing this, the LanguageBreak method is most current, but find the one that works for the firmware of the kindle you want to root
+  - it shows how to install KUAL/MRPI. KUAL and MRPI depend on eachother. They allow you to load and launch new programs on the kindle
+  - it shows you how to disable OTA updates
+  - it shows you how to install KOReader
