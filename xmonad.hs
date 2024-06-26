@@ -143,8 +143,8 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findThunderScratch   = className =? "thunderbird"
         manageThunderScratch = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnChatGpt  = "chat-gpt"
-        findChatGpt   = className =? "Chat-gpt"
+        spawnChatGpt  = "gtk-launch WebApp-GPT1387.desktop"
+        findChatGpt   = className =? "WebApp-GPT1387"
         manageChatGpt = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
 -- Only allow one scratchpad per window. NB: you can use exclusives to make some scratchpads conflict and some not. Checkout documentation
@@ -155,9 +155,9 @@ myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
         [
-        -- [ ("M-S-q", io exitSuccess)         -- Quit xmonad
     -- Applications
-        ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
+        -- ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
+        ("M-S-<Return>", spawn (myTerminal))
         , ("M-S-b", spawn (myBrowser))
         , ("M-S-f", spawn "firefox")
         , ("M-p", spawn "rofi -show drun")
