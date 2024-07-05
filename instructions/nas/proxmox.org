@@ -1,0 +1,163 @@
+#+title: Proxmox
+* Installation and intial setup
+** installation
+- burn proxmox iso and install with gui. super easy. be sure to assign a static ip
+- after install you should set ~intel_iommu=on~ on ~/etc/default/grub~
+  - don't forget to ~update-grub~ and ~update-initramfs -u~
+** enable no subscription repos
+- you will not be able to perform ~apt update~ because by default, the enterprise repos are enabled and you are not authenticated unless you purchase a membership
+- this is not illegal, and is a normal, supported use case
+- modify ~/etc/apt/sources.list.d/pve-enterprise.list~. Notice top line commented out
+        #+BEGIN_SRC
+        #deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise
+        deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+        #+END_SRC
+- modify ~/etc/apt/sources.list.d/ceph.list~. Notice top line commented out
+        #+BEGIN_SRC
+        #deb https://enterprise.proxmox.com/debian/ceph-quincy bookworm enterprise
+        deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription
+        #+END_SRC
+- you can also do this through the web UI via ~updates > repositories~
+- that's it
+* access container via <hostname>.local
+- avahi ALPINE
+        #+BEGIN_SRC
+        apk add avahi avahi-tools
+        rc-update add avahi-daemon default
+        rc-service avahi-daemon start
+        #+END_SRC
+  - now you can access via <hostname>.local
+  - verify with ping <hostname>.local
+- avahi DEBIAN
+        #+BEGIN_SRC
+        apt install avahi-daemon avahi-utils
+        #+END_SRC
+- sshd
+        #+BEGIN_SRC
+        apk add openssh
+        rc-update add sshd
+        service sshd start
+        #+END_SRC
+- allow root login and password auth over ssh:
+  - edit ~/etc/ssh/sshd_config~, and set the following
+        #+BEGIN_SRC
+        PermitRootLogin yes
+        PasswordAuthentication yes
+        #+END_SRC
+    - now you can ~ssh root@<hostname>.local~
+
+* gotify setup. NOTE: this all worked perfectly, but I stopped using it because there was no gotify IOS app
+** container
+*** proxmox container setup
+- just start a proxmox container with Alpine as the base. Call it ~gotify~
+*** installation
+- install ~glibc~
+        #+BEGIN_SRC
+        wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+        wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
+        apk add glibc-2.34-r0.apk
+        #+END_SRC
+- update and dependencies
+        #+BEGIN_SRC
+        apk update
+        apk upgrade
+        apk add bash wget unzip
+        #+END_SRC
+- download gotify binary. replace 'v2.5.0' with the version you want
+        #+BEGIN_SRC
+        cd /root
+        wget https://github.com/gotify/server/releases/download/v2.5.0/gotify-linux-amd64.zip
+        unzip gotify-linux-amd64.zip
+        mv gotify-linux-amd64 /usr/local/bin/gotify
+        chmod +x /usr/local/bin/gotify
+        #+END_SRC
+- configure the gotify config file at ~/etc/gotify/config.yml~
+  - I did not add any configuration and left it as-as
+- create ~OpenRC~ service, which is ~systemd~ for ~Alpine~ at ~/etc/initd/gotify~
+        #+BEGIN_SRC
+        #!/sbin/openrc-run
+
+        name="Gotify"
+        description="Gotify Server"
+        command="/usr/local/bin/gotify"
+        command_background="yes"
+        directory="/etc/gotify"
+        pidfile="/run/gotify.pid"
+
+        depend() {
+        use net
+        }
+
+        output_log="/var/log/gotify.log"
+        error_log="/var/log/gotify-error.log"
+
+        command_args=">>${output_log} 2>>${error_log}"
+        #+END_SRC
+- create and permission the log files
+        #+BEGIN_SRC
+        touch /var/log/gotify.log /var/log/gotify-error.log
+        chmod 644 /var/log/gotify*.log
+        #+END_SRC
+- make it executable
+  - ~chmod +x /etc/init.d/gotify~
+- enable and start it
+        #+BEGIN_SRC
+        rc-update add gotify default
+        rc-service gotify start
+        rc-service gotify status
+        #+END_SRC
+- access it ~http://<your-container-ip>:80~
+  - by default it runs on port 80
+*** avoid static ip allocation on router
+- the ip of this container may change and I don't want to have to create a static ip for every service I have. Here is a nice workaround which allows me to access the server from ~http://gotify.local~
+- uses ~avahi~ to map the current ip address to ~<hostname>.local~
+- install, add, enable and start ~avahi~
+        #+BEGIN_SRC
+        apk add avahi avahi-tools
+        rc-update add avahi-daemon default
+        rc-service avahi-daemon start
+        #+END_SRC
+- edit ~/etc/nsswitch.conf~
+  - remove line that begins with "hosts" and replace the entire line with
+        ~hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4~
+- that's it, now you should be able to access that machine anywhere via ~gotify.local~
+- I did have to install ~nss-mdns~ on proxmox to get proxmox to recognize it, but it worked on my phone and local machine with no additional configuration needed
+  - DO THE FOLLOWING ON THE PROXMOX MACHINE, NOT THE CONTAINER
+  - ~apt-get install libnss-mdns~
+** notifications in proxmox
+- in browser, go to ~http://gotify.local~
+- Login. Default login is user: admin password: admin
+  - I changed the user to root and changed the password
+- ~APPS>CREATE APPLICATION~
+- I named it "Proxmox Notifications"
+- Copy the API Token
+- Go to proxmox
+- ~Datacenter > Notifications > Notification Targets > Add~
+  - Endpoint Name: gotify (or whatever you want)
+  - Server URL: http://gotify.local
+  - API Token: the API Token that you copied from the gotify web app
+- Click the newly created gotify target in the Notification Targets menu and click test.
+- A test notification should then appear
+- Edit the default ~Notification Matchers~ entry and set ~Targets to Notify~ to ~gotify~
+- Donzo
+* OpenMediaVault
+update VM 102: -scsi1 /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_JEH62MHN
+update VM 102: -scsi2 /dev/disk/by-id/ata-HGST_HUH728080ALE600_VLHEL63Y
+* Immich
+- docker compose
+        #+BEGIN_SRC
+        mkdir -p ~/.docker/cli-plugins/
+        wget https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64 -O ~/.docker/cli-plugins/docker-compose
+        chmod +x ~/.docker/cli-plugins/docker-compose
+        #+END_SRC
+* Cloudflare tunnle
+- write these docs soon
+  https://www.youtube.com/watch?v=VrV0udRUi8A
+
+* NGINX Proxy Manager vs Traefik
+https://immich.soda.rip/auth/login
+http://immich.local/auth/user-settings
+NextCloudPiPassword: 6gkysPQJ0SbQ55c/wGMw1uxqdhUHFhx/4JtFaAJm37U
+NextCloud Password: Yklgn81s2h4RWTe6J/hfy5oossuboVytydLZs8UL3Tw
+User for both: ncp
+* TODO:

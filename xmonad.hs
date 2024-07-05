@@ -123,7 +123,7 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
                 , NS "thunderScratch" spawnThunderScratch findThunderScratch manageThunderScratch]
     where
-        spawnTerm  = myTerminal ++ " -t 'Terminal Scratchpad' -e tmux new-session -t main"
+        spawnTerm = myTerminal ++ " -t 'Terminal Scratchpad' -e bash -c 'source ~/.bashrc && tm a main'"
         findTerm   = title =? "Terminal Scratchpad"
         manageTerm = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
@@ -156,7 +156,6 @@ myKeys =
     -- Xmonad
         [
     -- Applications
-        -- ("M-S-<Return>", spawn (myTerminal ++ " -e tmux new-session -t main"))
         ("M-S-<Return>", spawn (myTerminal))
         , ("M-S-b", spawn (myBrowser))
         , ("M-S-f", spawn "firefox")
