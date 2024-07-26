@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # cmd to get pub ip
-current_pub_ip_cmd="dig +short myip.opendns.com @resolver1.opendns.com"
+current_pub_ip_cmd="curl https://ipinfo.io/ip"
 # site to grab public ips of protonvpn connections
 logicals_site="https://api.protonmail.ch/vpn/logicals"
 # path to store public ips of protonvpn connections

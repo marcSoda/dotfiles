@@ -6,7 +6,7 @@
   - output should be something like "freeze mem disk"
   - if "disk" appears, your device supports hibernation
 - open `/dev/default/grub` and add the line
-  - `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash mem_sleep_default=deep intel_pstate=disable resume=<SWAP_PARTITION> ibt=off"`
+  - `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash mem_sleep_default=deep resume=<SWAP_PARTITION>"`
   - replace <SWAP_PARTITION> with your swap partition. probablt /dev/nvme0n1pX
   - note that I don't know what any of the other options do. I forget. they are not all necessare, but the resume one definitely is
 - run `sudo update-grub`

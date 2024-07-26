@@ -12,9 +12,9 @@
 (setq evil-shift-width 4)
 
 ;; FONT
-(setq doom-font (font-spec :family "Iosevka" :size 25)
-      doom-variable-pitch-font (font-spec :family "Ubuntu" :size 25)
-      doom-big-font (font-spec :family "Iosevka" :size 30))
+(setq doom-font (font-spec :family "Iosevka" :size 25))
+(setq doom-variable-pitch-font (font-spec :family "Ubuntu" :size 25))
+(setq doom-big-font (font-spec :family "Iosevka" :size 30))
 
 ;;IBUFFER
 (after! ibuffer
@@ -120,14 +120,14 @@
 (after! org
   :init
   (add-hook 'org-mode-hook 'org-indent-mode)
-  (setq org-directory "/home/marc/Dropbox/org"
-    org-agenda-files '("/home/marc/Dropbox/org")
+  (setq org-directory "/home/marc/Nextcloud/org"
+    org-agenda-files '("/home/marc/Nextcloud/org")
     org-agenda-window-setup 'only-window
     org-hide-emphasis-markers t
     org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
-(setq org-roam-directory "/home/marc/Dropbox/org/roam")
+(setq org-roam-directory "/home/marc/Nextcloud/org/roam")
 (setq org-roam-completion-everywhere t)
 (org-roam-db-autosync-enable)
 (setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
@@ -258,7 +258,7 @@
         :desc "open this file as sudo" "S" #'doom/sudo-this-file
         :desc "find in dotfiles" "d" (lambda () (interactive)(doom-project-browse "~/working/dotfiles/"))
         :desc "find in instructions" "i" (lambda () (interactive)(doom-project-browse "~/working/dotfiles/instructions/"))
-        :desc "find in org" "o" (lambda () (interactive)(doom-project-browse "~/working/org/")))
+        :desc "find in org" "o" (lambda () (interactive)(doom-project-browse "~/Nextcloud/org/")))
     (:prefix ("n". "notes")
         (:prefix ("r". "roam")
         :desc "list all links for a node" "l" #'org-roam-buffer-display-dedicated

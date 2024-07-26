@@ -81,6 +81,7 @@ myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "dunst &"
     spawnOnce "dropbox start &"
+    spawnOnce "nextcloud --background &"
     spawnOnce "tmux new-session -t main"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default
     spawnOnce "picom &"
@@ -118,7 +119,8 @@ myManageHook = composeAll
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
-                , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
+                -- , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
+                , NS "pulsemixerScratch" spawnPulsemixer findPulsemixer managePulsemixer
                 , NS "chatGptScratch" spawnChatGpt findChatGpt manageChatGpt
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
                 , NS "thunderScratch" spawnThunderScratch findThunderScratch manageThunderScratch]
@@ -135,16 +137,20 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findEmacsClient   = title =? "emacs-scratch"
         manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnNcpamixer  = myTerminal ++ " -t 'ncpamixer Scratchpad' -e ncpamixer"
-        findNcpamixer   = title =? "ncpamixer Scratchpad"
-        manageNcpamixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+        -- spawnNcpamixer  = myTerminal ++ " -t 'ncpamixer Scratchpad' -e ncpamixer"
+        -- findNcpamixer   = title =? "ncpamixer Scratchpad"
+        -- manageNcpamixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
+
+        spawnPulsemixer  = myTerminal ++ " -t 'pulsemixer Scratchpad' -e pulsemixer"
+        findPulsemixer   = title =? "pulsemixer Scratchpad"
+        managePulsemixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
         spawnThunderScratch  = "thunderbird"
         findThunderScratch   = className =? "thunderbird"
         manageThunderScratch = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnChatGpt  = "gtk-launch WebApp-GPT1387.desktop"
-        findChatGpt   = className =? "WebApp-GPT1387"
+        spawnChatGpt  = "gtk-launch WebApp-ChatGPT1788.desktop"
+        findChatGpt   = className =? "WebApp-ChatGPT1788"
         manageChatGpt = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
 -- Only allow one scratchpad per window. NB: you can use exclusives to make some scratchpads conflict and some not. Checkout documentation
@@ -179,7 +185,8 @@ myKeys =
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
-        , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
+        -- , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
+        , ("M-a", namedScratchpadAction myScratchpads "pulsemixerScratch")
         , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
         , ("M-f", namedScratchpadAction myScratchpads "chatGptScratch")
         , ("M-0", windows $ W.greedyView "NSP") -- set window focus to hidden NSP workspace

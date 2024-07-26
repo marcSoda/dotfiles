@@ -89,7 +89,7 @@ alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
 alias buds='btc power on && btc connect F4:7D:EF:4F:43:98'
 alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
-alias mouse='btc power on && btc connect FA:BE:26:DE:58:89'
+alias mouse='btc power on && btc connect FA:BE:26:DE:58:8B'
 alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
 #git
 alias g='git status'
