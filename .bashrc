@@ -193,7 +193,14 @@ tm() {
 
 #share text to dropbox
 tshare() {
-    echo "${@:1}" > ~/working/misc/tshare.txt
+    TSHARE_PATH="/home/marc/Nextcloud/tshare.txt"
+    if [[ $# = 0 ]]; then
+        cat $TSHARE_PATH
+    elif [[ $1 = "set" ]]; then
+        echo "${@:2}" > $TSHARE_PATH
+    elif [[ $1 = "clear" ]]; then
+        truncate -s 0 $TSHARE_PATH
+    fi
 }
 
 #Custom pass behavior
