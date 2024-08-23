@@ -2,6 +2,9 @@ Host *
     HostKeyAlgorithms +ssh-rsa
     PubkeyAcceptedKeyTypes +ssh-rsa
 
+Host platinum 10.0.0.243
+    KexAlgorithms +diffie-hellman-group1-sha1
+
 # Allows me to access gitlab.cse.lehigh.edu through a proxyjump to gateway because gitlab.cse.lehigh.edu can only be accessed via lehigh network
 Host gitlab.cse.lehigh.edu
     Hostname gitlab.cse.lehigh.edu

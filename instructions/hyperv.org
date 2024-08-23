@@ -1,0 +1,47 @@
+#+title: Hyperv
+* instructions on how I setup my arch linux hyperv vm at work.
+- this was one of the stupidest things I ever did
+* it is really not that hard. the two main hurdles I had to go through were enabling hyperv enhanced session and audio.
+* installation
+- you need to enable hyperv in windows. it's easy. you need admin privilages
+- download the arco linux (or whatever os) iso
+- open hyperv and create a vm with that image
+- use the default switch as the network adapter
+  - a lot of guides have you do a bunch of weird stuff in the guest and host to crete a new network interface. not sure why. this worked fine
+- give it a small amount of ram. it should balloon to whatever it needs if you set the dynamic memory
+- I gave mine 10 processors. not sure what the optimal amount is
+- for the hard drive, I just gave it 512 gigs. I would have liked to give it a dedicated ssd, but this is a work computer and there are no more m.s slots.
+  - it won't actually partition off 512 gigs. the filesystem will balloon when it needs more space
+  - it seems fast enough to me
+- enable all of the integration services
+- go to "Hyper-V settings"
+  - note this is NOT in the vm settings. you can find it in the actions menu or you can find it if you right click on MSODA
+  - make sure enhanced session mode check boxes are checked in the server menu and the user menu
+  - you can do this later. don't worry about the ordering
+- go through the installation and install what you want
+- make sure you use pulseaudio. not pipewire. you can change this later if you screw it up. I don't rememebr being able to pick this in the arco linux installer, but double check.
+* enhanced session
+- this is what allows the shared clipboard, shared drives, lower keyboard/mouse latency, and audio to work. probably a few other thigns too
+- it allows windows to connect to X using xrdp, which is just a different kind of x server I think.
+- [[https://github.com/k247tEK/archVM-Hyper-V/tree/master/2022-06][these]] instuctions were pretty helpful, but I found info all over the place.
+- skip the arch install instructions. I ended up just installing arco linux which was fine
+- make sure you do this part
+#+BEGIN_SRC
+$ git clone https://github.com/Microsoft/linux-vm-tools
+$ cd linux-vm-tools/arch
+$ sudo ./install-config.sh
+#+END_SRC
+- follow the instructions for enhances session configuration. they worked fine for me
+* audio
+- I did a lot of shit to get this working.
+- I believe all you really need to do is install pulseaudio and everything that it needs
+- Install pulseaudio-module-xrdp from AUR
+  - building from source did not work for me, but I didn't need to
+  - the installer will give you a warning to set PULSE_SCRIPT to get it to work properly. You NEED to do that
+  - edit `/etc/xrdp/xrdp.ini/`. add ~env PULSE_SCRIPT=/etc/xrdp/pulse/default.pa~ in the ~[Xorg]~ block
+- Make sure you get rid of pipewire completely if it is installed
+- Disable pulseaudio systemctl in every way. Make it does not start by itself. It always failed on boot for me until I killed it and restarted it with ~pulseaudio -k && pulseaudio --start~
+- add ~pulseaudio --start~ to your xmonad config
+- after that, it should all work fine
+- if you open pavucontrol and see Dummy devices, it means xrdp is not properly starting pulseaudio and pulseaudio-module-xrdp is probably not setup correctly. you will need to troubleshoot. When it works, you should see devices like xrdp-sink and stuff like that
+- if everything looks good in pavucontrol but you still dont hear sound, try restarting pulseaudio a few times. it's finnicky.
