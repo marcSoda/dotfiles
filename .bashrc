@@ -53,7 +53,10 @@ alias pacin='sudo pacman -S $1'
 alias pacrm='sudo pacman -R $1'
 alias peg='procs'
 alias grep='grep --color=auto'
-alias gerp='grep -rnIi $1 $2 --color'
+alias gerp='grep -rnI $1 $2 --color'
+alias gerpi='grep -rnIi $1 $2 --color'
+alias fnd='find $2 | grep $1 --color'
+alias fndi='find $2 | grep -i $1 --color'
 alias ls='exa -al --icons --git --no-user --no-time --no-filesize -s=type'
 alias rm='rm -v'
 alias top='gotop'
@@ -173,12 +176,7 @@ tm() {
     if [[ $# = 0 ]]; then
         /usr/bin/tmux
     elif [[ $1 = "a" ]]; then #attach
-        /usr/bin/tmux has-session -t $2 2>/dev/null
-        if [ $? != 0 ]; then
-            /usr/bin/tmux new-session -s $2
-        else
-            /usr/bin/tmux attach-session -t $2
-        fi
+        /usr/bin/tmux new-session -t $2
     elif [[ $1 = "k" ]]; then #kill
         /usr/bin/tmux kill-session -t $2
     elif [[ $1 = "l" ]]; then #list
