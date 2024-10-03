@@ -5,52 +5,15 @@ Host *
 Host platinum 10.0.0.243
     KexAlgorithms +diffie-hellman-group1-sha1
 
-# Allows me to access gitlab.cse.lehigh.edu through a proxyjump to gateway because gitlab.cse.lehigh.edu can only be accessed via lehigh network
-Host gitlab.cse.lehigh.edu
-    Hostname gitlab.cse.lehigh.edu
-    Port 22
-    ProxyJump gateway
-
-Host gitlab.com-solar
-    HostName gitlab.com
-    User git
-    IdentityFile ~/.ssh/id_rsa_1
-    IdentitiesOnly yes
-
-    #Host auto
-    #HostName 3.131.9.49
-    #User marc
-    #IdentityFile ~/.ssh/auto_ec2_keypair.pem
-
-Host auto
-    HostName 3.131.9.49
-    User marc
-    IdentityFile ~/.ssh/auto_ec2_keypair.pem
-
-Host sunlab
-     HostName sunlab.cse.lehigh.edu
-     User masa20
-     ProxyJump gateway
-
-Host eltanin
-     HostName eltanin.dept.lehigh.edu
-     User masa20
-     ProxyJump gateway
-
-Host gateway
-     HostName ssh.lehigh.edu
-     User masa20
-
-Host das
-     HostName das-lab.org
-     User masa20
-
 Host electron
-     HostName electron.soda.fm
-     User marc
-     Port 7022
+    HostName electron.soda.fm
+    User marc
+    Port 7022
 
-Host git.electron.soda.fm
-     User git
-     Hostname electron.soda.fm
-     Port 7022
+Host soft-local
+    HostName 10.78.80.157
+    Port 23231
+
+Host soft
+    HostName soft.soda.rip
+    Port 23231

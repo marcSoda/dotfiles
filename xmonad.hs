@@ -80,7 +80,6 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "dunst &"
-    spawnOnce "dropbox start &"
     spawnOnce "nextcloud --background &"
     spawnOnce "tmux new-session -t main"
     spawnOnce "/usr/bin/emacs --daemon=0 &" --emacs daemon for default

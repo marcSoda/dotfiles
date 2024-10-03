@@ -69,13 +69,12 @@ alias xr='xmonad --recompile && xmonad --restart'
 #nav
 alias cw='cd ~/working'
 alias cdev='cd ~/working/dev'
-alias cleh='cd ~/working/dev/lehigh'
-alias csol='cd ~/working/dev/solar'
 alias cdot='cd $DOTFILES'
 alias ctem='cd ~/working/temp'
 alias cdow='cd ~/working/downloads'
 alias cmis='cd ~/working/misc'
 alias corg='cd ~/working/org'
+alias cnex='cd ~/working/nextcloud'
 # network
 alias nmc='nmcli'
 # protonvpn
@@ -191,16 +190,9 @@ tm() {
     fi
 }
 
-#share text to dropbox
 tshare() {
     TSHARE_PATH="/home/marc/Nextcloud/tshare.txt"
-    if [[ $# = 0 ]]; then
-        cat $TSHARE_PATH
-    elif [[ $1 = "set" ]]; then
-        echo "${@:2}" > $TSHARE_PATH
-    elif [[ $1 = "clear" ]]; then
-        truncate -s 0 $TSHARE_PATH
-    fi
+    vim $TSHARE_PATH
 }
 
 #Custom pass behavior

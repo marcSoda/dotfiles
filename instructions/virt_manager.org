@@ -12,13 +12,13 @@
   - Windows is installed on an entire separate physical disk
   - Looking glass
 * Installation
-- ~sudo pacman -S qemu-full virt-manager dnsmasq ovmf spice bridge-utils~
+- ~sudo pacman -S qemu-full virt-manager dnsmasq ovmf spice bridge-utils dmidecode~
   - there may be more to install. Play around but I think this is right
 - ~sudo systemctl enable libvirtd~
 - groups
-  - ~sudo useradd -g $user kvm~
-  - ~sudo useradd -g $user libvirt~
-  - ~sudo useradd -g $user libvirt-qumu~
+  - ~sudo usermod -aG kvm $USER~
+  - ~sudo usermod -aG libvirt $USER~
+  - ~sudo usermod -aG libvirt-qemu $USER~
 - You should now be able to run virt-manager and see "QEMU/KVM" has loaded. If not, there is a problem.
 * Create win installation media
 - Download an installation ISO, format a USB, cat the ISO to the USB.
@@ -249,11 +249,6 @@
         send {end}
         return
         #+END_SRC
-
-
-
-
-
   - share folder between host and guest
 ** solidworks crack (optional)
 - [[https://4mirrorlink.com/1986-solidworks-full-premium.html][here]]
