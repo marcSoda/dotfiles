@@ -27,8 +27,6 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CACHE_HOME=$HOME/.cache
-export JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
-export _JAVA_AWT_WM_NONREPARENTING=1 # issue  with weird java windows:
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
@@ -39,13 +37,15 @@ export PATH="$XDG_DATA_HOME/cargo/bin:$PATH"
 export PATH="$HOME/.config/emacs/bin:$PATH"
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 
-
 #aliases:
 #system
 alias c='clear'
 alias sb='source ~/.bashrc'
 alias grep='grep --color=auto'
-alias gerp='grep -rnIi $1 $2 --color'
+alias gerp='grep -rnI $1 $2 --color'
+alias gerpi='grep -rnIi $1 $2 --color'
+alias fnd='find $2 | grep $1 --color'
+alias fndi='find $2 | grep -i $1 --color'
 alias ls='ls -al --color'
 alias rm='rm -v'
 alias pg='ping google.com'
@@ -73,15 +73,13 @@ alias cw='cd ~/working'
 tm() {
     if [[ $# = 0 ]]; then
         /usr/bin/tmux
-    elif [[ $1 = "-a" ]]; then #attach
-        /usr/bin/tmux attach-session -t $2
-    elif [[ $1 = "-k" ]]; then #kill
-        /usr/bin/tmux kill-session -t $2
-    elif [[ $1 = "-l" ]]; then #list
-        /usr/bin/tmux list-sessions
-    elif [[ $1 = "-c" ]]; then #connect to a session (windows share exact same properties, but NOT physical state)
+    elif [[ $1 = "a" ]]; then #attach
         /usr/bin/tmux new-session -t $2
-    elif [[ $1 = "-p" ]]; then #purge non-attached sessions created by -c
+    elif [[ $1 = "k" ]]; then #kill
+        /usr/bin/tmux kill-session -t $2
+    elif [[ $1 = "l" ]]; then #list
+        /usr/bin/tmux list-sessions
+    elif [[ $1 = "p" ]]; then #purge non-attached sessions created by -c
         tmux list-sessions | grep -v "(attached)" | cut -d: -f1 | while read s; do
             tmux kill-session -t $s
         done

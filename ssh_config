@@ -10,10 +10,46 @@ Host electron
     User marc
     Port 7022
 
-Host soft-local
-    HostName 10.78.80.157
-    Port 23231
+Host praetor
+    HostName 10.78.80.69
+    User root
 
-Host soft
-    HostName soft.soda.rip
+Host wireguard
+    HostName 10.78.80.150
+    User root
+
+Host omv
+    HostName 10.78.80.151
+    User root
+
+Host immich
+    HostName 10.78.80.152
+    User root
+
+Host nextcloud
+    HostName 10.78.80.153
+    User root
+
+Host cloudflared
+    HostName 10.78.80.154
+    User root
+
+Host sodarr
+    HostName 10.78.80.155
+    User root
+
+Host gateway
+    HostName 10.78.80.156
+    User root
+
+Host softserve
+    HostName 10.78.80.157
+    User root
+
+Host freshrss
+    HostName 10.78.80.158
+    User root
+
+Host softgit
+    HostName softserve.soda.rip
     Port 23231

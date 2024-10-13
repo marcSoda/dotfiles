@@ -43,7 +43,6 @@ export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 
 #aliases:
 #system
-alias x='startx'
 alias c='clear'
 alias sb='source ~/.bashrc'
 alias hb='systemctl hibernate'
@@ -62,8 +61,6 @@ alias rm='rm -v'
 alias top='gotop'
 alias ks='xset r rate 180 60'
 alias fehr='bash $DOTFILES/backgrounds/feh.sh &'
-alias sc='wine "/home/marc/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"'
-alias wr='sudo systemctl restart NetworkManager*'
 alias pg='ping 8.8.8.8'
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 alias duh='du -ah --max-depth=1 . | sort -rh'
