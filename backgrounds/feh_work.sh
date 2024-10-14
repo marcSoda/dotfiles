@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # Define paths to your wallpapers
-laptop="/home/marc/working/dotfiles/backgrounds/other_resolution/03.jpg"
-feh --bg-scale "$laptop"
+path="/home/marc/working/dotfiles/backgrounds/3840x1080/01.jpg"
+feh --bg-scale --no-xinerama "$path"

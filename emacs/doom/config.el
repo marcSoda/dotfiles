@@ -168,11 +168,11 @@
   scroll-conservatively 10000
   scroll-preserve-screen-position 1)
 
-;;whitespace: show whitespace and remove it on save
-(after! whitespace
-    (setq-default show-trailing-whitespace t)
-    (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
-    (add-hook 'before-save-hook 'delete-trailing-whitespace))
+;; ;;whitespace: show whitespace and remove it on save
+;; (after! whitespace
+;;     (setq-default show-trailing-whitespace t)
+;;     (set-face-attribute 'trailing-whitespace nil :underline t :background "black")
+;;     (add-hook 'before-save-hook 'delete-trailing-whitespace))
 
 ;; treemacs macros: interact with treemacs without focusing on treemacs buffer
 (fset 'mac-treemacs-up
@@ -248,6 +248,7 @@
     (:prefix ("c". "code")
         :desc "flycheck-next-error" "n" #'flycheck-next-error
         :desc "flycheck-prev-error" "p" #'flycheck-previous-error
+        :desc "switch between header and source (clangd)" "s" #'lsp-clangd-find-other-file
         :desc "grep" "g" #'rgrep)
     (:prefix ("d". "dired")
         :desc "dired" "d" #'dired
