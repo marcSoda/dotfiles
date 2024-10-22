@@ -75,6 +75,7 @@ alias cdow='cd ~/working/downloads'
 alias cmis='cd ~/working/misc'
 alias corg='cd ~/working/org'
 alias cnex='cd ~/working/nextcloud'
+alias cen='cd ~/working/dev/osb/.envcfg.d'
 # network
 alias nmc='nmcli'
 # protonvpn
