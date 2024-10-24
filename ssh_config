@@ -50,6 +50,10 @@ Host freshrss
     HostName 10.78.80.158
     User root
 
+Host vaultwarden
+    HostName 10.78.80.159
+    User root
+
 Host softgit
     HostName softserve.soda.rip
     Port 23231

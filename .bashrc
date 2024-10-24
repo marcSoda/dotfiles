@@ -78,11 +78,7 @@ alias cnex='cd ~/working/nextcloud'
 alias cen='cd ~/working/dev/osb/.envcfg.d'
 # network
 alias nmc='nmcli'
-# protonvpn
-alias wgup='sudo systemctl start wg-quick@wg-US-NY-250'
-alias wgdown='sudo systemctl stop wg-quick@wg-US-NY-250'
-alias wgs='sudo wg show'
-#bluetooth
+# bluetooth
 alias btc='bluetoothctl'
 alias btui='bluetuith'
 alias pods='btc power on && btc connect AC:90:85:61:CB:FC'
@@ -91,7 +87,15 @@ alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:8B'
 alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
-#git
+# warp gravic NOTE: the warp-cli usage changes all the time
+alias warpp='sudo systemctl stop systemd-resolved.service && sudo systemctl start warp-svc.service'
+alias warpc='warp-cli connect'
+alias warpd='warp-cli disconnect'
+alias warps='warp-cli status && echo -e "\n\n\n" && sudo systemctl status systemd-resolved.service --no-pager'
+alias warpreauth='warp-cli debug access-reauth'
+alias warpauth='warp-cli registration new gravic'
+alias warpauthshow='warp-cli registration show'
+# git
 alias g='git status'
 alias gs='git status -s'
 alias gp='git push'
@@ -154,7 +158,7 @@ win() {
     esac
 }
 
-#change screen layout
+# change screen layout
 lay() {
     bash $DOTFILES/screenlayout.bash $@
 }
@@ -169,7 +173,7 @@ oo() {
     command onlyoffice-desktopeditors ./"$1" &>/dev/null & disown
 }
 
-#tmux
+# tmux
 tm() {
     if [[ $# = 0 ]]; then
         /usr/bin/tmux
