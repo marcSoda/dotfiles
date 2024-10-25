@@ -2,14 +2,20 @@
 
 BW_HASH=
 AUTO_LOCK=900 # 15 minutes, default for bitwarden apps
+NOTIFICATION_LENGTH=1 # number of seconds to display notifications
 ITEMS= # Holds the available items in memory
-CACHE_FILE=/tmp/bwmenu/logins.gpg
 LOADING_PID= # Stores the pid of the loading indicator
+CACHE_FILE=/tmp/bwmenu/logins.gpg # item cache dir
+ICON_CACHE_DIR="$HOME/.cache/rofi-bitwarden-icons" # icon cache dir
 
 # Keyboard shortcuts
 : ${KB_SYNC="Alt+r"}
 : ${KB_LOCK="Alt+L"}
 : ${KB_COPY_FIELD="Alt+c"}
+: ${KB_ROW_UP="Alt+k,Up"}
+: ${KB_ROW_DOWN="Alt+j,Down"}
+: ${KB_MOVE_CHAR_BACK="Alt+h,Left"}
+: ${KB_MOVE_CHAR_FORWARD="Alt+l,Right"}
 
 # Item type classification
 TYPE_LOGIN=1
@@ -17,19 +23,10 @@ TYPE_NOTE=2
 TYPE_CARD=3
 TYPE_IDENTITY=4
 
-# Define icon cache directory
-ICON_CACHE_DIR="$HOME/.cache/rofi-bitwarden-icons"
-
-# Escape the argument into a valid jq string literal (with quotes included)
-# $1: string to escape
-jq_escape() {
-    echo -n "$1" | jq -Rs
-}
-
 # Extract item or items matching .name
 # $1: item name
 array_from_name() {
-    item_name=$(jq_escape "$1")
+    item_name=$(echo -n "$1" | jq -Rs)
     echo "$ITEMS" | jq -r "map(select((.name == $item_name) and (.type == $TYPE_LOGIN)))"
 }
 
@@ -39,7 +36,7 @@ ask_password() {
     show_loading "Unlocking Vault..."
     if ! out="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
         unshow_loading
-        exit_program 1 "Error: Could not unlock vault: $out"
+        exit_notification 1 "Error: Could not unlock vault: $out"
     fi
     unshow_loading
     echo "$out"
@@ -68,17 +65,16 @@ load_cache() {
 load_items() {
     if ! ITEMS=$(bw --nointeraction list items --session "$BW_HASH" 2>/dev/null); then
         keyctl purge user bw_session &>/dev/null
-        exit_program $? "Error: Could not load items: $ITEMS"
+        exit_notification $? "Error: Could not load items: $ITEMS"
     fi
     mkdir -p "$(dirname "$CACHE_FILE")"
     echo "$ITEMS" | gpg -c --batch --passphrase "$BW_HASH" --cipher-algo AES256 -o "$CACHE_FILE"
 }
 
-exit_program() {
+exit_notification() {
     local code="$1"
     local message="$2"
-
-    rofi -e "$message"
+    (rofi -e "$message" & export ROFI_PID=$! && sleep $NOTIFICATION_LENGTH && kill $ROFI_PID)
     exit "$code"
 }
 
@@ -95,17 +91,21 @@ unshow_loading() {
 # Reads items from stdin
 rofi_menu() {
     actions=(
-        -kb-custom-1 $KB_SYNC
-        -kb-custom-9 $KB_LOCK
+        -kb-custom-1 $KB_SYNC # exit code 10
+        -kb-custom-2 $KB_LOCK # exit code 11
     )
 
-    msg="<b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock"
+msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock |"
 
-    rofi -dmenu -p 'Name' \
-        -i -no-custom \
-        -markup-rows \
-        -mesg "$msg" \
-        "${actions[@]}"
+rofi -dmenu -p 'Search' \
+    -i -no-custom \
+    -kb-row-up "$KB_ROW_UP" \
+    -kb-row-down "$KB_ROW_DOWN" \
+    -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
+    -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
+    -markup-rows \
+    -mesg "$msg" \
+    "${actions[@]}"
 }
 
 show_items() {
@@ -131,8 +131,8 @@ show_items() {
         show_entry_fields "$item_array"
     else
         rofi_exit_code=$?
-        item_array="$(array_from_name "$item")"
-        on_rofi_exit "$rofi_exit_code" "$item_array"
+        echo $rofi_exit_code
+        on_rofi_exit "$rofi_exit_code"
     fi
 }
 
@@ -162,10 +162,10 @@ get_favicon() {
 
 # Re-sync the BitWarden items with the server
 sync_bitwarden() {
-    show_loading "Resyncing password store..."
+    show_loading "Syncing password store..."
     if ! error="$(bw --nointeraction sync --session "$BW_HASH" 2>/dev/null)"; then
         unshow_loading
-        exit_program 1 "Error: Failed to sync bitwarden: $error"
+        exit_notification 1 "Error: Failed to sync bitwarden: $error"
     fi
     rm -f "$CACHE_FILE"
     load_items
@@ -177,7 +177,7 @@ sync_bitwarden() {
 on_rofi_exit() {
     case "$1" in
         10) sync_bitwarden;;
-        18) lock_vault;;
+        11) lock_vault;;
         *) exit "$1";;
     esac
 }
@@ -189,7 +189,7 @@ get_totp() {
     id=$(echo "$1" | jq -r ".[0].id")
     if ! totp=$(bw --session "$BW_HASH" get totp "$id" 2>&1); then
         unshow_loading
-        exit_program 1 "Error: failed to get TOTP: $totp"
+        exit_notification 1 "Error: failed to get TOTP: $totp"
     fi
     echo -n "$totp"
     unshow_loading
@@ -198,99 +198,213 @@ get_totp() {
 # Lock the vault by purging the key used to store the session hash
 lock_vault() {
     keyctl purge user bw_session &>/dev/null
-    exit_program 0 "Success: Vault Locked"
+    exit_notification 0 "Success: Vault Locked"
 }
 
+# # New function to display the submenu with available fields
+# show_entry_fields() {
+#     # Check for multiple values and error
+#     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
+#         exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
+#     fi
+
+#     item=$(echo "$1" | jq '.[0]')
+#     fields=()
+#     username=$(echo "$item" | jq -r '.login.username // empty')
+#     if [ -n "$username" ]; then
+#         fields+=("username: $username")
+#     fi
+#     password=$(echo "$item" | jq -r '.login.password // empty')
+#     if [ -n "$password" ]; then
+#         fields+=("password: ********")
+#     fi
+#     totp=$(echo "$item" | jq -r '.login.totp // empty')
+#     if [ -n "$totp" ]; then
+#         fields+=("totp")
+#     fi
+#     uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
+#     if [ -n "$uris" ]; then
+#         while read -r uri; do
+#             fields+=("url: $uri")
+#         done <<< "$uris"
+#     fi
+#     if field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu); then
+#         field_name=$(echo "$field_selection" | cut -d: -f1)
+#         value=""
+#         case "$field_name" in
+#             username)
+#                 value="$username"
+#                 ;;
+#             password)
+#                 value="$password"
+#                 ;;
+#             totp)
+#                 value="$(get_totp "$1")"
+#                 ;;
+#             url)
+#                 value=$(echo "$field_selection" | cut -d' ' -f2-)
+#                 ;;
+#         esac
+#         xdotool type --clearmodifiers $value
+#     else
+#         rofi_exit_code=$?
+#         on_rofi_field_exit "$rofi_exit_code" "$1" "$field_selection"
+#     fi
+# }
 # New function to display the submenu with available fields
+
+# show_entry_fields() {
+#     # Check for multiple values and error
+#     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
+#         exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
+#     fi
+
+#     item=$(echo "$1" | jq '.[0]')
+#     fields=()
+
+#     # Standard fields
+#     username=$(echo "$item" | jq -r '.login.username // empty')
+#     if [ -n "$username" ]; then
+#         fields+=("username: $username")
+#     fi
+#     password=$(echo "$item" | jq -r '.login.password // empty')
+#     if [ -n "$password" ]; then
+#         fields+=("password: ********")
+#     fi
+#     totp=$(echo "$item" | jq -r '.login.totp // empty')
+#     if [ -n "$totp" ]; then
+#         fields+=("totp")
+#     fi
+#     uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
+#     if [ -n "$uris" ]; then
+#         while read -r uri; do
+#             fields+=("url: $uri")
+#         done <<< "$uris"
+#     fi
+#     # Custom fields
+#     custom_fields=$(echo "$item" | jq -r '.fields[]? | "\(.name): \(.value // empty)"')
+#     if [ -n "$custom_fields" ]; then
+#         while read -r custom_field; do
+#             fields+=("$custom_field")
+#         done <<< "$custom_fields"
+#     fi
+#     # Display and handle field selection
+#     if field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu); then
+#         field_name=$(echo "$field_selection" | cut -d: -f1)
+#         value=""
+#         case "$field_name" in
+#             username)
+#                 value="$username"
+#                 ;;
+#             password)
+#                 value="$password"
+#                 ;;
+#             totp)
+#                 value="$(get_totp "$1")"
+#                 ;;
+#             url)
+#                 value=$(echo "$field_selection" | cut -d' ' -f2-)
+#                 ;;
+#             *) # custom fields
+#                 value=$(echo "$field_selection" | cut -d':' -f2- | sed 's/^ //')
+#                 ;;
+#         esac
+#         xdotool type --clearmodifiers "$value"
+#     else
+#         rofi_exit_code=$?
+#         on_rofi_field_exit "$rofi_exit_code" "$1" "$field_selection"
+#     fi
+# }
+
+# # Handle exit codes from the field submenu
+# on_rofi_field_exit() {
+#     local exit_code="$1"
+#     local item_array="$2"
+#     local field_selection="$3"
+
+#     case "$exit_code" in
+#         10) # Copy to clipboard
+#             field_name=$(echo "$field_selection" | cut -d: -f1)
+#             value=""
+#             item=$(echo "$item_array" | jq '.[0]')
+#             case "$field_name" in
+#                 username)
+#                     value=$(echo "$item" | jq -r '.login.username')
+#                     ;;
+#                 password)
+#                     value=$(echo "$item" | jq -r '.login.password')
+#                     ;;
+#                 totp)
+#                     value="$(get_totp "$item_array")"
+#                     ;;
+#                 url)
+#                     value=$(echo "$field_selection" | cut -d' ' -f2-)
+#                     ;;
+#             esac
+#             echo -n "$value" | xclip -selection clipboard -r
+#             exit_notification 0 "Success: Copied to clipboard"
+#             ;;
+#         *)
+#             exit "$exit_code"
+#             ;;
+#     esac
+# }
 show_entry_fields() {
-    # Check for multiple values and error
+    # Check for multiple values and handle error
     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
-        exit_program 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
+        exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
     fi
 
     item=$(echo "$1" | jq '.[0]')
     fields=()
-    username=$(echo "$item" | jq -r '.login.username // empty')
-    if [ -n "$username" ]; then
-        fields+=("username: $username")
-    fi
-    password=$(echo "$item" | jq -r '.login.password // empty')
-    if [ -n "$password" ]; then
-        fields+=("password: ********")
-    fi
-    totp=$(echo "$item" | jq -r '.login.totp // empty')
-    if [ -n "$totp" ]; then
-        fields+=("totp")
-    fi
+
+    # Collect standard fields
+    [[ -n "$(echo "$item" | jq -r '.login.username // empty')" ]] && fields+=("username: $(echo "$item" | jq -r '.login.username')")
+    [[ -n "$(echo "$item" | jq -r '.login.password // empty')" ]] && fields+=("password: ********")
+    [[ -n "$(echo "$item" | jq -r '.login.totp // empty')" ]] && fields+=("totp")
     uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
-    if [ -n "$uris" ]; then
-        while read -r uri; do
-            fields+=("url: $uri")
-        done <<< "$uris"
-    fi
-    if field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu); then
+    [[ -n "$uris" ]] && while read -r uri; do fields+=("url: $uri"); done <<< "$uris"
+
+    # Collect custom fields
+    custom_fields=$(echo "$item" | jq -r '.fields[]? | "\(.name): \(.value // empty)"')
+    [[ -n "$custom_fields" ]] && while read -r custom_field; do fields+=("$custom_field"); done <<< "$custom_fields"
+
+    # Display the menu and handle selection
+    field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu)
+    rofi_exit_code=$?
+    if [[ -n "$field_selection" ]]; then
         field_name=$(echo "$field_selection" | cut -d: -f1)
-        value=""
+        value=$(echo "$field_selection" | cut -d':' -f2- | sed 's/^ //')
+
         case "$field_name" in
-            username)
-                value="$username"
-                ;;
             password)
-                value="$password"
-                ;;
+                value=$(echo "$item" | jq -r '.login.password') ;;  # Reveal password if selected
             totp)
-                value="$(get_totp "$1")"
-                ;;
-            url)
-                value=$(echo "$field_selection" | cut -d' ' -f2-)
-                ;;
+                value="$(get_totp "$1")" ;;
         esac
-        xdotool type --clearmodifiers $value
+
+        if [[ $rofi_exit_code -eq 10 ]]; then
+            echo -n "$value" | xclip -selection clipboard -r
+            exit_notification 0 "Success: Copied to clipboard"
+        else
+            xdotool type --clearmodifiers "$value"
+        fi
     else
-        rofi_exit_code=$?
-        on_rofi_field_exit "$rofi_exit_code" "$1" "$field_selection"
+        exit_notification "$rofi_exit_code" "No selection made."
     fi
 }
 
 # Function to display the submenu with appropriate keybindings
 rofi_field_menu() {
+    msg="| <b>Enter</b>: Type Val | <b>$KB_COPY_FIELD</b>: lock |"
     rofi -dmenu -p 'Field' \
         -i -no-custom \
-        -kb-custom-1 "$KB_COPY_FIELD"
-}
-
-# Handle exit codes from the field submenu
-on_rofi_field_exit() {
-    local exit_code="$1"
-    local item_array="$2"
-    local field_selection="$3"
-
-    case "$exit_code" in
-        10) # Copy to clipboard
-            field_name=$(echo "$field_selection" | cut -d: -f1)
-            value=""
-            item=$(echo "$item_array" | jq '.[0]')
-            case "$field_name" in
-                username)
-                    value=$(echo "$item" | jq -r '.login.username')
-                    ;;
-                password)
-                    value=$(echo "$item" | jq -r '.login.password')
-                    ;;
-                totp)
-                    value="$(get_totp "$item_array")"
-                    ;;
-                url)
-                    value=$(echo "$field_selection" | cut -d' ' -f2-)
-                    ;;
-            esac
-            echo -n "$value" | xclip -selection clipboard -r
-            exit_program 0 "Success: Copied to clipboard"
-            ;;
-        *)
-            exit "$exit_code"
-            ;;
-    esac
+        -kb-row-up "$KB_ROW_UP" \
+        -kb-row-down "$KB_ROW_DOWN" \
+        -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
+        -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
+        -kb-custom-1 "$KB_COPY_FIELD" \
+        -mesg "$msg"
 }
 
 get_session_key

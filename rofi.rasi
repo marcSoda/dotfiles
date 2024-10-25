@@ -1,95 +1,96 @@
-configuration {
-  display-drun: "Applications:";
-  display-window: "Windows:";
-  drun-display-format: "{icon}{name}";
-  font: "JetBrainsMono Nerd Font Medium 30";
-  modi: "run,drun";
-  show-icons: true;
-  icon-theme: "Papirus";
-}
-
 @theme "/dev/null"
+configuration {
+    display-drun: "applications:";
+    display-window: "windows:";
+    drun-display-format: "{icon}{name}";
+    font: "jetbrainsmono nerd font medium 30"; /* Larger base font size */
+    modi: "run,drun";
+    show-icons: true;
+    icon-theme: "papirus";
+}
 
 * {
-  bg: #1e1e1e;
-  bg-alt: #292a36;
-
-  fg: #ffffff;
-  fg-alt: #a6accd;
-
-  background-color: @bg;
-
-  border: 0;
-  margin: 0;
-  padding: 0;
-  spacing: 0;
+    bg: #1e1e1e;
+    bg-alt: #292a36;
+    fg: #ffffff;
+    fg-alt: #a6accd;
+    background-color: @bg;
 }
 
+// overall window
 window {
-  width: 50%;
-  border-radius: 15px;
+    width: 70%;
+    border-radius: 0.5em;
 }
 
+// each list element
 element {
-  padding: 12 15;
-  text-color: @fg-alt;
-  border-radius: 8px;
+    padding: 0.1em;  /* Scale padding down slightly */
+    text-color: @fg-alt;
+    border-radius: 0.1em;
 }
 
+// currently selected list element
 element selected {
-  background-color: #474956;
-  text-color: @fg;
-  border-radius: 8px;
+    background-color: #474956;
+    text-color: @fg;
 }
 
+// text for each list element
 element-text {
-  background-color: inherit;
-  text-color: inherit;
-  vertical-align: 0.5;
+    background-color: inherit;
+    text-color: inherit;
+    vertical-align: 0.5;
 }
 
+// icons in the element list
 element-icon {
-  size: 35;
+  size: 1em; /* Scale icon relative to base font size */
 }
 
+// search box
 entry {
   background-color: @bg-alt;
-  padding: 15;
+  padding: 0.3em;
   text-color: @fg;
-  border-radius: 8px;
 }
 
-inputbar {
-  children: [prompt, entry];
-  border-radius: 8px;
-}
-
-listview {
-  padding: 15 20;
-  background-color: @bg;
-  columns: 1;
-  lines: 12;
-}
-
-mainbox {
-  background-color: @bg;
-  children: [inputbar, message, listview];
-}
-
+// search box prompt
 prompt {
   background-color: @bg-alt;
   enabled: true;
-  padding: 15 15 15 20;
+  padding: 0.3em;
   text-color: @fg;
-  border-radius: 8px;
 }
 
+// top bar layout
+inputbar {
+  children: [prompt, entry];
+}
+
+// main list
+listview {
+  padding: 0.1em;
+  background-color: @bg;
+  columns: 1;
+  lines: 14;
+}
+
+// order of main elements
+mainbox {
+  background-color: @bg;
+  children: [inputbar, listview, message];
+}
+
+// message box
 message {
-  background-color: #292a36;
-  text-color: #e0e0e0;
+  background-color: inherit;
   horizontal-align: 0.5;
-  padding: 20;
-  margin: 20 0;
-  border-radius: 10px;
-  font-size: 24px;
+}
+
+// text within message box
+textbox {
+  text-color: @fg-alt;
+  background-color: @bg-alt;
+  horizontal-align: 0.5;
 }
