@@ -112,6 +112,7 @@ myManageHook = composeAll
      , className =? "asana"                      --> doShift(myWorkspaces !! 7)
      , className =? "firefox"                    --> doShift(myWorkspaces !! 8)
      , className =? "vlc"                        --> doShift(myWorkspaces !! 8)
+     , className =? "Nextcloud"                  --> doFloat
      ] <+> namedScratchpadManageHook myScratchpads
 
 --Scratchpads
