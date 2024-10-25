@@ -1,0 +1,503 @@
+#!/usr/bin/env bash
+
+# Escape the argument into a valid jq string literal (with quotes included)
+# $1: string to escape
+jq_escape() {
+    echo -n "$1" | jq -Rs
+}
+
+# Extract item or items matching .name, including deduplication
+# $1: item name, prepended or not with deduplication mark
+array_from_name() {
+    item_name=$(jq_escape "${1#$DEDUP_MARK }")
+    echo "$ITEMS" | jq -r "map(select((.name == $item_name) and (.type == $TYPE_LOGIN)))"
+}
+
+# Extract item matching .id
+# $1: string starting with ".id:"
+array_from_id() {
+    echo "$ITEMS" | jq -r ". | map(select(.id == $(jq_escape $1)))"
+}
+
+# Count the number of items in an array. Return true if more than 1 or none
+# $1: Array of items
+not_unique() {
+    item_count=$(echo "$1" | jq -r '. | length')
+    ! [[ $item_count -eq 1 ]]
+}
+
+# Pipe a document and deduplicate lines.
+# Mark those duplicated by prepending $DEDUP_MARK
+dedup_lines() {
+    sort | uniq -c \
+    | sed "s/^\s*1 //" \
+    | sed -r "s/^\s*[0-9]+ /$DEDUP_MARK /"
+}
+
+NAME="$(basename "$0")"
+VERSION="0.5"
+DEFAULT_CLEAR=5
+BW_HASH=
+
+# Options
+CLEAR=$DEFAULT_CLEAR # Clear password after N seconds (0 to disable)
+SHOW_PASSWORD=no # Show part of the password in the notification
+AUTO_LOCK=900 # 15 minutes, default for bitwarden apps
+
+# Holds the available items in memory
+ITEMS=
+CACHE_FILE=/tmp/bwmenu/logins.gpg
+
+# Stores which command will be used to emulate keyboard type
+AUTOTYPE_MODE=
+# Stores the argument needed by xdotool to clear the modifiers (shift, control, alt, ...) first
+CLEAR_MODIFIERS=
+
+# Stores which command will be used to deal with clipboards
+CLIPBOARD_MODE=
+
+# Specify what happens when pressing Enter on an item.
+# Changed to show_entry_fields function
+ENTER_CMD=show_entry_fields
+
+# Keyboard shortcuts
+: ${KB_SYNC="Alt+r"}
+: ${KB_LOCK="Alt+L"}
+: ${KB_COPY_FIELD="Control+c"}
+
+# Item type classification
+TYPE_LOGIN=1
+TYPE_NOTE=2
+TYPE_CARD=3
+TYPE_IDENTITY=4
+
+# Populated in parse_cli_arguments
+ROFI_OPTIONS=()
+DEDUP_MARK="(+)"
+
+# Define icon cache directory
+ICON_CACHE_DIR="$HOME/.cache/rofi-bitwarden-icons"
+
+ask_password() {
+    rm -f "$CACHE_FILE"
+    mpw=$(printf '' | rofi -dmenu -p "Master Password" -password -l 0 "${ROFI_OPTIONS[@]}") || exit $?
+    if ! out="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
+        exit_error 1 "Could not unlock vault: $out"
+    fi
+    echo "$out"
+}
+
+get_session_key() {
+    if [ $AUTO_LOCK -eq 0 ]; then
+        keyctl purge user bw_session &>/dev/null
+        BW_HASH=$(ask_password)
+    else
+        if ! key_id=$(keyctl request user bw_session 2>/dev/null); then
+            session=$(ask_password) || exit $?
+            key_id=$(echo "$session" | keyctl padd user bw_session @u)
+        fi
+
+        if [ $AUTO_LOCK -gt 0 ]; then
+            keyctl timeout "$key_id" $AUTO_LOCK
+        fi
+        BW_HASH=$(keyctl pipe "$key_id")
+    fi
+}
+
+# Load encrypted passwords from cache if exists
+load_cache() {
+    if [ -f "$CACHE_FILE" ]; then
+        ITEMS=$(gpg --quiet -d --batch --passphrase "$BW_HASH" --cipher-algo AES256 "$CACHE_FILE")
+    else
+        load_items
+    fi
+}
+
+# Pre-fetch all the items
+load_items() {
+    if ! ITEMS=$(bw --nointeraction list items --session "$BW_HASH" 2>/dev/null); then
+        keyctl purge user bw_session &>/dev/null
+        exit_error $? "Could not load items: $ITEMS"
+    fi
+
+    # Create dir for cache and encrypt $ITEMS
+    mkdir -p "$(dirname "$CACHE_FILE")"
+    echo "$ITEMS" | gpg -c --batch --passphrase "$BW_HASH" --cipher-algo AES256 -o "$CACHE_FILE"
+}
+
+exit_error() {
+    local code="$1"
+    local message="$2"
+
+    rofi -e "$message" "${ROFI_OPTIONS[@]}"
+    exit "$code"
+}
+
+# Show the Rofi menu with options
+# Reads items from stdin
+rofi_menu() {
+
+    actions=(
+        -kb-custom-1 $KB_SYNC
+        -kb-custom-9 $KB_LOCK
+    )
+
+    msg="<b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock"
+
+    rofi -dmenu -p 'Name' \
+        -i -no-custom \
+        -markup-rows \
+        -mesg "$msg" \
+        "${actions[@]}" \
+        "${ROFI_OPTIONS[@]}"
+}
+
+show_items() {
+    # Get the list of item names and their uris, deduplicated
+    deduped_items_with_data=$(echo "$ITEMS" \
+        | jq -r '
+            [ .[] | select(has("login")) | {name: .name, uri: (.login.uris[0].uri // empty)} ] |
+            group_by(.name) |
+            map({
+                name: (if (length > 1) then "'"$DEDUP_MARK "'"+.[0].name else .[0].name end),
+                uri: .[0].uri
+            }) |
+            .[]
+            | "\(.name)\t\(.uri)"
+        ')
+
+    rofi_input=""
+    while IFS=$'\t' read -r item_name uri; do
+        # Output the item
+        # Escape ampersands and other special characters
+        escaped_item_name=$(echo "$item_name" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+        icon_path=$(get_favicon "$uri")
+        rofi_input+="<span size=\"small\">$escaped_item_name</span>\0icon\x1f$icon_path\n"
+    done <<< "$deduped_items_with_data"
+
+    # Now, pass to rofi_menu
+    if item=$(echo -e -n "$rofi_input" | rofi_menu); then
+        # Remove markup tags from the selected item
+        item=$(echo "$item" | sed 's/<[^>]*>//g')
+        item_array="$(array_from_name "$item")"
+        "${ENTER_CMD[@]}" "$item_array"
+    else
+        rofi_exit_code=$?
+        item_array="$(array_from_name "$item")"
+        on_rofi_exit "$rofi_exit_code" "$item_array"
+    fi
+}
+
+get_favicon() {
+    local uri="$1"
+    local domain
+    domain=$(echo "$uri" | awk -F/ '{print $3}' | sed 's/^www\.//')
+
+    local icon_path="$ICON_CACHE_DIR/$domain.ico"
+
+    # If icon is cached, return it immediately
+    if [ -f "$icon_path" ]; then
+        echo "$icon_path"
+        return
+    fi
+
+    # Return a default icon immediately while fetching the favicon asynchronously
+    echo "/usr/share/icons/hicolor/64x64/apps/bitwarden.png" &
+
+    # Fetch the favicon asynchronously
+    (
+        mkdir -p "$ICON_CACHE_DIR"
+        local favicon_url="https://icons.duckduckgo.com/ip3/$domain.ico"
+        wget -qO "$icon_path" "$favicon_url" || cp "/usr/share/icons/hicolor/64x64/apps/bitwarden.png" "$icon_path"
+    ) &
+}
+
+# Re-sync the BitWarden items with the server
+sync_bitwarden() {
+    if ! error="$(bw --nointeraction sync --session "$BW_HASH" 2>/dev/null)"; then
+        exit_error 1 "Failed to sync bitwarden: $error"
+    fi
+
+    rm -f "$CACHE_FILE"
+    load_items
+    show_items
+}
+
+# Evaluate the rofi exit codes
+on_rofi_exit() {
+    case "$1" in
+        10) sync_bitwarden;;
+        18) lock_vault;;
+        *) exit "$1";;
+    esac
+}
+
+# Set $AUTOTYPE_MODE to a command that will emulate keyboard input
+select_autotype_command() {
+    if [[ -z "$AUTOTYPE_MODE" ]]; then
+        if hash xdotool 2>/dev/null; then
+            AUTOTYPE_MODE=xdotool
+            CLEAR_MODIFIERS="--clearmodifiers"
+        else
+            exit_error 1 "xdotool not found. Please install xdotool."
+        fi
+    fi
+}
+
+type_word() {
+    "${AUTOTYPE_MODE[@]}" type $CLEAR_MODIFIERS "$1"
+}
+
+type_tab() {
+    "${AUTOTYPE_MODE[@]}" key $CLEAR_MODIFIERS Tab
+}
+
+# Set $CLIPBOARD_MODE to a command that will put stdin into the clipboard.
+select_copy_command() {
+    if [[ -z "$CLIPBOARD_MODE" ]]; then
+        if hash xclip 2>/dev/null; then
+            CLIPBOARD_MODE=xclip
+        elif hash xsel 2>/dev/null; then
+            CLIPBOARD_MODE=xsel
+        else
+            exit_error 1 "No clipboard command found. Please install xclip or xsel."
+        fi
+    fi
+}
+
+clipboard-set() {
+    clipboard-${CLIPBOARD_MODE}-set
+}
+
+clipboard-get() {
+    clipboard-${CLIPBOARD_MODE}-get
+}
+
+clipboard-clear() {
+    clipboard-${CLIPBOARD_MODE}-clear
+}
+
+clipboard-xclip-set() {
+    xclip -selection clipboard -r
+}
+
+clipboard-xclip-get() {
+    xclip -selection clipboard -o
+}
+
+clipboard-xclip-clear() {
+    echo -n "" | xclip -selection clipboard -r
+}
+
+clipboard-xsel-set() {
+    xsel --clipboard --input
+}
+
+clipboard-xsel-get() {
+    xsel --clipboard
+}
+
+clipboard-xsel-clear() {
+    xsel --clipboard --delete
+}
+
+# Get the TOTP
+# $1: item array
+get_totp() {
+    if not_unique "$1"; then
+        ITEMS="$item_array"
+        show_full_items
+    else
+        id=$(echo "$1" | jq -r ".[0].id")
+
+        if ! totp=$(bw --session "$BW_HASH" get totp "$id" 2>&1); then
+            exit_error 1 "$totp"
+        fi
+        echo -n "$totp"
+    fi
+}
+
+# Lock the vault by purging the key used to store the session hash
+lock_vault() {
+    keyctl purge user bw_session &>/dev/null
+}
+
+# Show notification about the password being copied.
+# $1: json item
+show_copy_notification() {
+    local title
+    local body=""
+    local extra_options=()
+
+    title="<b>$(echo "$1" | jq -r '.name')</b> copied"
+
+    if [[ $SHOW_PASSWORD == "yes" ]]; then
+        pass=$(echo "$1" | jq -r '.login.password')
+        body="${pass:0:4}****"
+    fi
+
+    if [[ $CLEAR -gt 0 ]]; then
+        body="$body<br>Will be cleared in ${CLEAR} seconds."
+        # Keep notification visible while the clipboard contents are active.
+        extra_options+=("-t" "$((CLEAR * 1000))")
+    fi
+    # Not sure if icon will be present everywhere, /usr/share/icons is default icon location
+    notify-send "$title" "$body" "${extra_options[@]}" -i /usr/share/icons/hicolor/64x64/apps/bitwarden.png
+}
+
+parse_cli_arguments() {
+    # Use GNU getopt to parse command line arguments
+    if ! ARGUMENTS=$(getopt -o c:C --long auto-lock:,clear:,no-clear,show-password,state-path:,help,version -- "$@"); then
+        exit_error 1 "Failed to parse command-line arguments"
+    fi
+    eval set -- "$ARGUMENTS"
+
+    while true; do
+        case "$1" in
+            --help )
+                cat <<-USAGE
+IGNORE USAGE STR
+USAGE
+                shift
+                exit 0
+                ;;
+            --version )
+                echo "$NAME $VERSION"
+                shift
+                exit 0
+                ;;
+            --auto-lock )
+                AUTO_LOCK=$2
+                shift 2
+                ;;
+            -c | --clear )
+                CLEAR="$2"
+                shift 2
+                ;;
+            -C | --no-clear )
+                CLEAR=0
+                shift
+                ;;
+            --show-password )
+                SHOW_PASSWORD=yes
+                shift
+                ;;
+            -- )
+                shift
+                ROFI_OPTIONS=("$@")
+                break
+                ;;
+            * )
+                exit_error 1 "Unknown option $1"
+        esac
+    done
+}
+
+# New function to display the submenu with available fields
+show_entry_fields() {
+    if not_unique "$1"; then
+        ITEMS="$1"
+        show_full_items
+    else
+        item=$(echo "$1" | jq '.[0]')
+        fields=()
+        username=$(echo "$item" | jq -r '.login.username // empty')
+        if [ -n "$username" ]; then
+            fields+=("username: $username")
+        fi
+        password=$(echo "$item" | jq -r '.login.password // empty')
+        if [ -n "$password" ]; then
+            fields+=("password: ********")
+        fi
+        totp=$(echo "$item" | jq -r '.login.totp // empty')
+        if [ -n "$totp" ]; then
+            fields+=("totp")
+        fi
+        uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
+        if [ -n "$uris" ]; then
+            while read -r uri; do
+                fields+=("url: $uri")
+            done <<< "$uris"
+        fi
+        if field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu); then
+            field_name=$(echo "$field_selection" | cut -d: -f1)
+            value=""
+            case "$field_name" in
+                username)
+                    value="$username"
+                    ;;
+                password)
+                    value="$password"
+                    ;;
+                totp)
+                    value="$(get_totp "$1")"
+                    ;;
+                url)
+                    value=$(echo "$field_selection" | cut -d' ' -f2-)
+                    ;;
+            esac
+            auto_type_value "$value"
+        else
+            rofi_exit_code=$?
+            on_rofi_field_exit "$rofi_exit_code" "$1" "$field_selection"
+        fi
+    fi
+}
+
+# Function to display the submenu with appropriate keybindings
+rofi_field_menu() {
+    rofi -dmenu -p 'Field' \
+        -i -no-custom \
+        -kb-custom-1 "$KB_COPY_FIELD" \
+        "${ROFI_OPTIONS[@]}"
+}
+
+# Handle exit codes from the field submenu
+on_rofi_field_exit() {
+    local exit_code="$1"
+    local item_array="$2"
+    local field_selection="$3"
+
+    case "$exit_code" in
+        10) # Copy to clipboard
+            field_name=$(echo "$field_selection" | cut -d: -f1)
+            value=""
+            item=$(echo "$item_array" | jq '.[0]')
+            case "$field_name" in
+                username)
+                    value=$(echo "$item" | jq -r '.login.username')
+                    ;;
+                password)
+                    value=$(echo "$item" | jq -r '.login.password')
+                    ;;
+                totp)
+                    value="$(get_totp "$item_array")"
+                    ;;
+                url)
+                    value=$(echo "$field_selection" | cut -d' ' -f2-)
+                    ;;
+            esac
+            echo -n "$value" | clipboard-set
+            notify-send "Copied to clipboard"
+            ;;
+        *)
+            exit "$exit_code"
+            ;;
+    esac
+}
+
+# Function to auto-type the selected value
+auto_type_value() {
+    local value="$1"
+    select_autotype_command
+    sleep 0.1
+    type_word "$value"
+}
+
+parse_cli_arguments "$@"
+
+get_session_key
+select_autotype_command
+select_copy_command
+load_cache
+show_items

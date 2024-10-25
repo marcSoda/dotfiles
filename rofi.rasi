@@ -2,7 +2,7 @@ configuration {
   display-drun: "Applications:";
   display-window: "Windows:";
   drun-display-format: "{icon}{name}";
-  font: "JetBrainsMono Nerd Font Medium 20";
+  font: "JetBrainsMono Nerd Font Medium 30";
   modi: "run,drun";
   show-icons: true;
   icon-theme: "Papirus";
@@ -26,20 +26,20 @@ configuration {
 }
 
 window {
-  width: 40%;
-  border-radius: 10px;
+  width: 50%;
+  border-radius: 15px;
 }
 
 element {
-  padding: 6 10;
+  padding: 12 15;
   text-color: @fg-alt;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 element selected {
   background-color: #474956;
   text-color: @fg;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 element-text {
@@ -49,26 +49,26 @@ element-text {
 }
 
 element-icon {
-  size: 25;
+  size: 35;
 }
 
 entry {
   background-color: @bg-alt;
-  padding: 10;
+  padding: 15;
   text-color: @fg;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 inputbar {
   children: [prompt, entry];
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 listview {
-  padding: 10 12;
+  padding: 15 20;
   background-color: @bg;
   columns: 1;
-  lines: 10;
+  lines: 12;
 }
 
 mainbox {
@@ -79,18 +79,17 @@ mainbox {
 prompt {
   background-color: @bg-alt;
   enabled: true;
-  padding: 10 10 10 15;
+  padding: 15 15 15 20;
   text-color: @fg;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 message {
-  background-color: @bg-alt;
-  text-color: #c8c8c8;
+  background-color: #292a36;
+  text-color: #e0e0e0;
   horizontal-align: 0.5;
-  padding: 10;
-  margin: 10 0;
-  border-radius: 5px;
+  padding: 20;
+  margin: 20 0;
+  border-radius: 10px;
+  font-size: 24px;
 }
-
-/* vim: ft=sass */
