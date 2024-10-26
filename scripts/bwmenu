@@ -94,7 +94,9 @@ get_session_key() {
 # Load encrypted passwords from cache if exists
 load_cache() {
     if [ -f "$VAULT_CACHE" ]; then
+        show_loading "Loading Password Cache..."
         ITEMS=$(gpg --quiet -d --batch --passphrase "$BW_SESSION" --cipher-algo AES256 "$VAULT_CACHE")
+        unshow_loading
     else
         load_items
     fi
@@ -102,12 +104,22 @@ load_cache() {
 
 # Pre-fetch all the items
 load_items() {
-    if ! ITEMS=$(bw --nointeraction list items --session "$BW_SESSION" 2>/dev/null); then
-        keyctl purge user bw_session &>/dev/null
-        exit_notification $? "Error: Could not load items: $ITEMS"
+    show_loading "Caching Passwords..."
+    if ! ret=$(bw --nointeraction list items --session "$BW_SESSION" 2>&1); then
+        unshow_loading
+        lock_vault
+        # if it fails because user is not logged in, login and retry
+        if echo "$ret" | grep -q "not logged in"; then
+            get_session_key
+            load_items
+            return
+        fi
+        exit_notification $? "Error: Could not load items: $ret"
     fi
+    ITEMS=$ret
     mkdir -p "$(dirname "$VAULT_CACHE")"
     echo "$ITEMS" | gpg -c --batch --passphrase "$BW_SESSION" --cipher-algo AES256 -o "$VAULT_CACHE"
+    unshow_loading
 }
 
 # display main rofi menu
@@ -266,7 +278,5 @@ lock_vault() {
 }
 
 get_session_key
-show_loading "Loading Password Cache..."
 load_cache
-unshow_loading
 show_items
