@@ -2,3 +2,4 @@ TEMP_MERGED.jpg
 
 # will always be a symlink to a parent xmobarr_... no need to track
 xmobar/xmobarrc
+.bwlogin

@@ -1,12 +1,13 @@
 #!/bin/bash
 
-BW_HASH=
+BW_SESSION=
 AUTO_LOCK=900 # 15 minutes, default for bitwarden apps
 NOTIFICATION_LENGTH=1 # number of seconds to display notifications
 ITEMS= # Holds the available items in memory
 LOADING_PID= # Stores the pid of the loading indicator
-CACHE_FILE=/tmp/bwmenu/logins.gpg # item cache dir
-ICON_CACHE_DIR="$HOME/.cache/rofi-bitwarden-icons" # icon cache dir
+ICON_CACHE_DIR="$HOME/.cache/bwmenu/icons" # icon cache dir
+VAULT_CACHE="$HOME/.cache/bwmenu/vault.gpg" # item cache dir
+BW_LOGIN_INFO="./.bwlogin" # file containing clientid and clientsecret for login
 
 # Keyboard shortcuts
 : ${KB_SYNC="Alt+r"}
@@ -23,51 +24,9 @@ TYPE_NOTE=2
 TYPE_CARD=3
 TYPE_IDENTITY=4
 
-# prompt for password
-ask_password() {
-    rm -f "$CACHE_FILE"
-    mpw=$(printf '' | rofi -dmenu -p "Master Password" -password -l 0) || exit $?
-    show_loading "Unlocking Vault..."
-    if ! out="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
-        unshow_loading
-        exit_notification 1 "Error: Could not unlock vault: $out"
-    fi
-    unshow_loading
-    echo "$out"
-}
-
-get_session_key() {
-    if ! key_id=$(keyctl request user bw_session 2>/dev/null); then
-        session=$(ask_password) || exit $?
-        echo $key_id
-        key_id=$(echo "$session" | keyctl padd user bw_session @u)
-    fi
-    keyctl timeout "$key_id" $AUTO_LOCK
-    BW_HASH=$(keyctl pipe "$key_id")
-}
-
-# Load encrypted passwords from cache if exists
-load_cache() {
-    if [ -f "$CACHE_FILE" ]; then
-        ITEMS=$(gpg --quiet -d --batch --passphrase "$BW_HASH" --cipher-algo AES256 "$CACHE_FILE")
-    else
-        load_items
-    fi
-}
-
-# Pre-fetch all the items
-load_items() {
-    if ! ITEMS=$(bw --nointeraction list items --session "$BW_HASH" 2>/dev/null); then
-        keyctl purge user bw_session &>/dev/null
-        exit_notification $? "Error: Could not load items: $ITEMS"
-    fi
-    mkdir -p "$(dirname "$CACHE_FILE")"
-    echo "$ITEMS" | gpg -c --batch --passphrase "$BW_HASH" --cipher-algo AES256 -o "$CACHE_FILE"
-}
-
 # exit with a notification ($2) and code ($1)
 exit_notification() {
-    (rofi -e "$2" & export ROFI_PID=$! && sleep $NOTIFICATION_LENGTH && kill $ROFI_PID)
+    (rofi -e "$2" & export pid=$! && sleep $NOTIFICATION_LENGTH && kill $pid)
     exit "$1"
 }
 
@@ -82,10 +41,78 @@ unshow_loading() {
     LOADING_PID=-1
 }
 
+# authenticate
+login() {
+    show_loading "Logging in..."
+    if [[ ! -f $BW_LOGIN_INFO ]]; then # Check if BW_LOGIN_INFO exists
+        exit_notification 1 "Error: Auth file not found at $BW_LOGIN_INFO"
+    fi
+    # Read the login info file
+    clientid=$(sed -n '1p' "$BW_LOGIN_INFO")
+    clientsecret=$(sed -n '2p' "$BW_LOGIN_INFO")
+    if [[ -z $clientid || -z $clientsecret ]]; then # verify vars are set
+        exit_notification 1 "Error: Client ID and/or Client Secret is missing in $BW_LOGIN_INFO"
+    fi
+    ret=$(BW_CLIENTID=$clientid BW_CLIENTSECRET=$clientsecret bw login --apikey 2>&1)
+    if [[ $? -ne 0 ]]; then # if login fails
+        exit_notification 1 "Error: Failed to login: $ret"
+    fi
+    unshow_loading
+}
+
+# get session key. prompt for password if necessary
+# if $1 is set, it will be used as the password
+get_session_key() {
+    # if bw_session has not been set or has expired
+    if ! key=$(keyctl request user bw_session 2>/dev/null); then
+        rm -f "$VAULT_CACHE"
+        if [[ -n $1 ]]; then # if $1 is set, it is the master password.
+            mpw=$1
+        else # otherwise, prompt for password
+            mpw=$(rofi -dmenu -p "Master Password" -password -l 0) || exit $?
+        fi
+        show_loading "Unlocking Vault..."
+        if ! ret="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
+            unshow_loading
+            # if it fails because user is not logged in, login and retry
+            if echo "$ret" | grep -q "not logged in"; then
+                login
+                get_session_key $mpw
+                return
+            fi
+            exit_notification 1 "Error: Could not unlock vault: $ret"
+        fi
+        export BW_SESSION=$ret
+        unshow_loading
+        key=$(echo "$BW_SESSION" | keyctl padd user bw_session @u)
+    else # otherwise, grab the BW_SESSION from keyctl using the key
+        BW_SESSION=$(keyctl pipe "$key")
+    fi
+    keyctl timeout "$key" $AUTO_LOCK # set timeout for vault lock for vault lock
+}
+
+# Load encrypted passwords from cache if exists
+load_cache() {
+    if [ -f "$VAULT_CACHE" ]; then
+        ITEMS=$(gpg --quiet -d --batch --passphrase "$BW_SESSION" --cipher-algo AES256 "$VAULT_CACHE")
+    else
+        load_items
+    fi
+}
+
+# Pre-fetch all the items
+load_items() {
+    if ! ITEMS=$(bw --nointeraction list items --session "$BW_SESSION" 2>/dev/null); then
+        keyctl purge user bw_session &>/dev/null
+        exit_notification $? "Error: Could not load items: $ITEMS"
+    fi
+    mkdir -p "$(dirname "$VAULT_CACHE")"
+    echo "$ITEMS" | gpg -c --batch --passphrase "$BW_SESSION" --cipher-algo AES256 -o "$VAULT_CACHE"
+}
+
 # display main rofi menu
 show_items() {
-    show_loading "Managing cache..."
-
+    show_loading "Loading items and caching images..."
     # Get the list of item names and their URIs
     items_with_data=$(echo "$ITEMS" | jq -r '[.[] | select(has("login")) | "\(.name)\t\(.login.uris[0].uri // empty)"] | .[]')
 
@@ -99,238 +126,22 @@ show_items() {
 
     # pass to rofi_menu
     unshow_loading
-    if item=$(echo -e -n "$rofi_input" | rofi_menu); then
+    if item=$(echo -e -n "$rofi_input" | rofi_main_menu); then
         item=$(echo -n "$item" | sed 's/<[^>]*>//g' | jq -Rs )
         item_array=$(echo "$ITEMS" | (jq -r "map(select((.name == $item) and (.type == $TYPE_LOGIN)))"))
-        show_entry_fields "$item_array"
+        submenu "$item_array"
     else
-        on_rofi_exit $?
+        case "$?" in
+            10) sync_vault;;
+            11) lock_vault
+                exit_notification 0 "Success: Vault Locked";;
+            *) exit "0";;
+        esac
     fi
 }
 
-# main rofi menu
-rofi_menu() {
-    msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock |"
-    rofi -dmenu -p 'Search' \
-        -i -no-custom \
-        -kb-row-up "$KB_ROW_UP" \
-        -kb-row-down "$KB_ROW_DOWN" \
-        -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
-        -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
-        -markup-rows \
-        -mesg "$msg" \
-        -kb-custom-1 $KB_SYNC \
-        -kb-custom-2 $KB_LOCK
-}
-
-# icon cache management
-get_favicon() {
-    local uri="$1"
-    local domain
-    domain=$(echo "$uri" | awk -F/ '{print $3}' | sed 's/^www\.//')
-
-    local icon_path="$ICON_CACHE_DIR/$domain.ico"
-
-    if [ -f "$icon_path" ]; then # if icon is cached, return it
-        echo "$icon_path"
-    else # otherwise, cache and return it
-        mkdir -p "$ICON_CACHE_DIR"
-        local favicon_url="https://icons.duckduckgo.com/ip3/$domain.ico"
-        wget -qO "$icon_path" "$favicon_url" || cp "./password-icon.png" "$icon_path"
-        echo $icon_path
-    fi
-}
-
-# Re-sync the BitWarden items with the server
-sync_bitwarden() {
-    show_loading "Syncing password store..."
-    if ! error="$(bw --nointeraction sync --session "$BW_HASH" 2>/dev/null)"; then
-        unshow_loading
-        exit_notification 1 "Error: Failed to sync bitwarden: $error"
-    fi
-    rm -f "$CACHE_FILE"
-    load_items
-    unshow_loading
-    show_items
-}
-
-# Evaluate the rofi exit codes
-on_rofi_exit() {
-    case "$1" in
-        10) sync_bitwarden;;
-        11) lock_vault;;
-        *) exit "$1";;
-    esac
-}
-
-# Get the TOTP
-# $1: item array
-get_totp() {
-    show_loading "Fetching TOTP..."
-    id=$(echo "$1" | jq -r ".[0].id")
-    if ! totp=$(bw --session "$BW_HASH" get totp "$id" 2>&1); then
-        unshow_loading
-        exit_notification 1 "Error: failed to get TOTP: $totp"
-    fi
-    echo -n "$totp"
-    unshow_loading
-}
-
-# Lock the vault by purging the key used to store the session hash
-lock_vault() {
-    keyctl purge user bw_session &>/dev/null
-    exit_notification 0 "Success: Vault Locked"
-}
-
-# # New function to display the submenu with available fields
-# show_entry_fields() {
-#     # Check for multiple values and error
-#     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
-#         exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
-#     fi
-
-#     item=$(echo "$1" | jq '.[0]')
-#     fields=()
-#     username=$(echo "$item" | jq -r '.login.username // empty')
-#     if [ -n "$username" ]; then
-#         fields+=("username: $username")
-#     fi
-#     password=$(echo "$item" | jq -r '.login.password // empty')
-#     if [ -n "$password" ]; then
-#         fields+=("password: ********")
-#     fi
-#     totp=$(echo "$item" | jq -r '.login.totp // empty')
-#     if [ -n "$totp" ]; then
-#         fields+=("totp")
-#     fi
-#     uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
-#     if [ -n "$uris" ]; then
-#         while read -r uri; do
-#             fields+=("url: $uri")
-#         done <<< "$uris"
-#     fi
-#     if field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu); then
-#         field_name=$(echo "$field_selection" | cut -d: -f1)
-#         value=""
-#         case "$field_name" in
-#             username)
-#                 value="$username"
-#                 ;;
-#             password)
-#                 value="$password"
-#                 ;;
-#             totp)
-#                 value="$(get_totp "$1")"
-#                 ;;
-#             url)
-#                 value=$(echo "$field_selection" | cut -d' ' -f2-)
-#                 ;;
-#         esac
-#         xdotool type --clearmodifiers $value
-#     else
-#         rofi_exit_code=$?
-#         on_rofi_field_exit "$rofi_exit_code" "$1" "$field_selection"
-#     fi
-# }
-# New function to display the submenu with available fields
-
-# show_entry_fields() {
-#     # Check for multiple values and error
-#     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
-#         exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
-#     fi
-
-#     item=$(echo "$1" | jq '.[0]')
-#     fields=()
-
-#     # Standard fields
-#     username=$(echo "$item" | jq -r '.login.username // empty')
-#     if [ -n "$username" ]; then
-#         fields+=("username: $username")
-#     fi
-#     password=$(echo "$item" | jq -r '.login.password // empty')
-#     if [ -n "$password" ]; then
-#         fields+=("password: ********")
-#     fi
-#     totp=$(echo "$item" | jq -r '.login.totp // empty')
-#     if [ -n "$totp" ]; then
-#         fields+=("totp")
-#     fi
-#     uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
-#     if [ -n "$uris" ]; then
-#         while read -r uri; do
-#             fields+=("url: $uri")
-#         done <<< "$uris"
-#     fi
-#     # Custom fields
-#     custom_fields=$(echo "$item" | jq -r '.fields[]? | "\(.name): \(.value // empty)"')
-#     if [ -n "$custom_fields" ]; then
-#         while read -r custom_field; do
-#             fields+=("$custom_field")
-#         done <<< "$custom_fields"
-#     fi
-#     # Display and handle field selection
-#     if field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu); then
-#         field_name=$(echo "$field_selection" | cut -d: -f1)
-#         value=""
-#         case "$field_name" in
-#             username)
-#                 value="$username"
-#                 ;;
-#             password)
-#                 value="$password"
-#                 ;;
-#             totp)
-#                 value="$(get_totp "$1")"
-#                 ;;
-#             url)
-#                 value=$(echo "$field_selection" | cut -d' ' -f2-)
-#                 ;;
-#             *) # custom fields
-#                 value=$(echo "$field_selection" | cut -d':' -f2- | sed 's/^ //')
-#                 ;;
-#         esac
-#         xdotool type --clearmodifiers "$value"
-#     else
-#         rofi_exit_code=$?
-#         on_rofi_field_exit "$rofi_exit_code" "$1" "$field_selection"
-#     fi
-# }
-
-# # Handle exit codes from the field submenu
-# on_rofi_field_exit() {
-#     local exit_code="$1"
-#     local item_array="$2"
-#     local field_selection="$3"
-
-#     case "$exit_code" in
-#         10) # Copy to clipboard
-#             field_name=$(echo "$field_selection" | cut -d: -f1)
-#             value=""
-#             item=$(echo "$item_array" | jq '.[0]')
-#             case "$field_name" in
-#                 username)
-#                     value=$(echo "$item" | jq -r '.login.username')
-#                     ;;
-#                 password)
-#                     value=$(echo "$item" | jq -r '.login.password')
-#                     ;;
-#                 totp)
-#                     value="$(get_totp "$item_array")"
-#                     ;;
-#                 url)
-#                     value=$(echo "$field_selection" | cut -d' ' -f2-)
-#                     ;;
-#             esac
-#             echo -n "$value" | xclip -selection clipboard -r
-#             exit_notification 0 "Success: Copied to clipboard"
-#             ;;
-#         *)
-#             exit "$exit_code"
-#             ;;
-#     esac
-# }
-show_entry_fields() {
+# display item submenu. $1 is submenu menu items
+submenu() {
     # Check for multiple values and handle error
     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
         exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
@@ -351,7 +162,7 @@ show_entry_fields() {
     [[ -n "$custom_fields" ]] && while read -r custom_field; do fields+=("$custom_field"); done <<< "$custom_fields"
 
     # Display the menu and handle selection
-    field_selection=$(printf '%s\n' "${fields[@]}" | rofi_field_menu)
+    field_selection=$(printf '%s\n' "${fields[@]}" | rofi_submenu)
     rofi_exit_code=$?
     if [[ -n "$field_selection" ]]; then
         field_name=$(echo "$field_selection" | cut -d: -f1)
@@ -361,7 +172,15 @@ show_entry_fields() {
             password)
                 value=$(echo "$item" | jq -r '.login.password') ;;  # Reveal password if selected
             totp)
-                value="$(get_totp "$1")" ;;
+                show_loading "Fetching TOTP..."
+                id=$(echo "$1" | jq -r ".[0].id")
+                if ! totp=$(bw --session "$BW_SESSION" get totp "$id" 2>&1); then
+                    unshow_loading
+                    exit_notification 1 "Error: failed to get TOTP: $totp"
+                fi
+                value=$totp
+                unshow_loading
+            ;;
         esac
 
         if [[ $rofi_exit_code -eq 10 ]]; then
@@ -370,14 +189,27 @@ show_entry_fields() {
         else
             xdotool type --clearmodifiers "$value"
         fi
-    else
-        exit_notification "$rofi_exit_code" "No selection made."
     fi
 }
 
+# main rofi menu
+rofi_main_menu() {
+    msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock |"
+    rofi -dmenu -p 'Search' \
+        -i -no-custom \
+        -kb-row-up "$KB_ROW_UP" \
+        -kb-row-down "$KB_ROW_DOWN" \
+        -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
+        -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
+        -markup-rows \
+        -mesg "$msg" \
+        -kb-custom-1 $KB_SYNC \
+        -kb-custom-2 $KB_LOCK
+}
+
 # Function to display the submenu with appropriate keybindings
-rofi_field_menu() {
-    msg="| <b>Enter</b>: Type Val | <b>$KB_COPY_FIELD</b>: lock |"
+rofi_submenu() {
+    msg="| <b>Enter</b>: Type Val | <b>$KB_COPY_FIELD</b>: Copy Val |"
     rofi -dmenu -p 'Field' \
         -i -no-custom \
         -kb-row-up "$KB_ROW_UP" \
@@ -388,8 +220,53 @@ rofi_field_menu() {
         -mesg "$msg"
 }
 
+# icon cache management
+get_favicon() {
+    local uri="$1"
+    local domain
+    domain=$(echo "$uri" | awk -F/ '{print $3}' | sed 's/^www\.//')
+
+    local icon_path="$ICON_CACHE_DIR/$domain.ico"
+
+    if [ -f "$icon_path" ]; then # if icon is cached, return it
+        echo "$icon_path"
+    else # otherwise, cache and return it
+        mkdir -p "$ICON_CACHE_DIR"
+        local favicon_url="https://icons.duckduckgo.com/ip3/$domain.ico"
+        wget -qO "$icon_path" "$favicon_url" || cp "./password-icon.png" "$icon_path"
+        echo $icon_path
+    fi
+}
+
+sync_vault() {
+    show_loading "Syncing password store... $1"
+    if ! error="$(bw --nointeraction sync --session "$BW_SESSION" 2>&1)"; then
+        unshow_loading
+        # if it fails because user is not logged in, lock vault and retry
+        if echo "$error" | grep -q "not logged in"; then
+            lock_vault
+            get_session_key
+            sync_vault
+            return
+        fi
+        exit_notification 1 "Error: Failed to sync bitwarden: $error"
+    fi
+    rm -f "$VAULT_CACHE"
+    load_items
+    unshow_loading
+    show_items
+}
+
+# lock vault by removing session from keyctl and locking the cli
+lock_vault() {
+    show_loading "Locking vault..."
+    keyctl purge user bw_session &>/dev/null
+    bw lock &>/dev/null
+    unshow_loading
+}
+
 get_session_key
-show_loading "Loading..."
+show_loading "Loading Password Cache..."
 load_cache
 unshow_loading
 show_items
