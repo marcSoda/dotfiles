@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 BW_HASH=
 AUTO_LOCK=900 # 15 minutes, default for bitwarden apps
@@ -17,19 +17,13 @@ ICON_CACHE_DIR="$HOME/.cache/rofi-bitwarden-icons" # icon cache dir
 : ${KB_MOVE_CHAR_BACK="Alt+h,Left"}
 : ${KB_MOVE_CHAR_FORWARD="Alt+l,Right"}
 
-# Item type classification
+# Item type classification. only TYPE_LOGIN is used
 TYPE_LOGIN=1
 TYPE_NOTE=2
 TYPE_CARD=3
 TYPE_IDENTITY=4
 
-# Extract item or items matching .name
-# $1: item name
-array_from_name() {
-    item_name=$(echo -n "$1" | jq -Rs)
-    echo "$ITEMS" | jq -r "map(select((.name == $item_name) and (.type == $TYPE_LOGIN)))"
-}
-
+# prompt for password
 ask_password() {
     rm -f "$CACHE_FILE"
     mpw=$(printf '' | rofi -dmenu -p "Master Password" -password -l 0) || exit $?
@@ -71,43 +65,24 @@ load_items() {
     echo "$ITEMS" | gpg -c --batch --passphrase "$BW_HASH" --cipher-algo AES256 -o "$CACHE_FILE"
 }
 
+# exit with a notification ($2) and code ($1)
 exit_notification() {
-    local code="$1"
-    local message="$2"
-    (rofi -e "$message" & export ROFI_PID=$! && sleep $NOTIFICATION_LENGTH && kill $ROFI_PID)
-    exit "$code"
+    (rofi -e "$2" & export ROFI_PID=$! && sleep $NOTIFICATION_LENGTH && kill $ROFI_PID)
+    exit "$1"
 }
 
+# show loading screen with message ($1)
 show_loading() {
     rofi -e "$1" & LOADING_PID=$!
 }
 
+# kill loading screen
 unshow_loading() {
     kill "$LOADING_PID"
     LOADING_PID=-1
 }
 
-# Show the Rofi menu with options
-# Reads items from stdin
-rofi_menu() {
-    actions=(
-        -kb-custom-1 $KB_SYNC # exit code 10
-        -kb-custom-2 $KB_LOCK # exit code 11
-    )
-
-msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock |"
-
-rofi -dmenu -p 'Search' \
-    -i -no-custom \
-    -kb-row-up "$KB_ROW_UP" \
-    -kb-row-down "$KB_ROW_DOWN" \
-    -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
-    -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
-    -markup-rows \
-    -mesg "$msg" \
-    "${actions[@]}"
-}
-
+# display main rofi menu
 show_items() {
     show_loading "Managing cache..."
 
@@ -122,20 +97,33 @@ show_items() {
         rofi_input+="<span size=\"small\">$escaped_item_name</span>\0icon\x1f$icon_path\n"
     done <<< "$items_with_data"
 
-    # Now, pass to rofi_menu
+    # pass to rofi_menu
     unshow_loading
     if item=$(echo -e -n "$rofi_input" | rofi_menu); then
-        # Remove markup tags from the selected item
-        item=$(echo "$item" | sed 's/<[^>]*>//g')
-        item_array="$(array_from_name "$item")"
+        item=$(echo -n "$item" | sed 's/<[^>]*>//g' | jq -Rs )
+        item_array=$(echo "$ITEMS" | (jq -r "map(select((.name == $item) and (.type == $TYPE_LOGIN)))"))
         show_entry_fields "$item_array"
     else
-        rofi_exit_code=$?
-        echo $rofi_exit_code
-        on_rofi_exit "$rofi_exit_code"
+        on_rofi_exit $?
     fi
 }
 
+# main rofi menu
+rofi_menu() {
+    msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock |"
+    rofi -dmenu -p 'Search' \
+        -i -no-custom \
+        -kb-row-up "$KB_ROW_UP" \
+        -kb-row-down "$KB_ROW_DOWN" \
+        -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
+        -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
+        -markup-rows \
+        -mesg "$msg" \
+        -kb-custom-1 $KB_SYNC \
+        -kb-custom-2 $KB_LOCK
+}
+
+# icon cache management
 get_favicon() {
     local uri="$1"
     local domain
@@ -143,21 +131,14 @@ get_favicon() {
 
     local icon_path="$ICON_CACHE_DIR/$domain.ico"
 
-    # If icon is cached, return it immediately
-    if [ -f "$icon_path" ]; then
+    if [ -f "$icon_path" ]; then # if icon is cached, return it
         echo "$icon_path"
-        return
-    fi
-
-    # Return a default icon immediately while fetching the favicon asynchronously
-    echo "/usr/share/icons/hicolor/64x64/apps/bitwarden.png" &
-
-    # Fetch the favicon asynchronously
-    (
+    else # otherwise, cache and return it
         mkdir -p "$ICON_CACHE_DIR"
         local favicon_url="https://icons.duckduckgo.com/ip3/$domain.ico"
-        wget -qO "$icon_path" "$favicon_url" || cp "/usr/share/icons/hicolor/64x64/apps/bitwarden.png" "$icon_path"
-    ) &
+        wget -qO "$icon_path" "$favicon_url" || cp "./password-icon.png" "$icon_path"
+        echo $icon_path
+    fi
 }
 
 # Re-sync the BitWarden items with the server

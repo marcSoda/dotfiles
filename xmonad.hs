@@ -166,7 +166,7 @@ myKeys =
         , ("M-S-b", spawn (myBrowser))
         , ("M-S-f", spawn "firefox")
         , ("M-p", spawn "rofi -show drun")
-        , ("M-S-p", spawn "/home/marc/working/dotfiles/bwmenu")
+        , ("M-S-p", spawn (scriptPath ++ "bwmenu"))
         , ("M-S-c", spawn "emacs")
     -- Kill windows
         , ("M-S-x", kill)                 -- Kill the currently focused window
