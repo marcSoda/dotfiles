@@ -58,7 +58,6 @@ login() {
     if [[ $? -ne 0 ]]; then # if login fails
         exit_notification 1 "Error: Failed to login: $ret"
     fi
-    # unshow_loading
 }
 
 logoff() {
@@ -82,7 +81,6 @@ get_session_key() {
         fi
         show_loading "Unlocking Vault..."
         if ! ret="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
-            # unshow_loading
             # if it fails because user is not logged in, login and retry
             if echo "$ret" | grep -q "not logged in"; then
                 login
@@ -92,7 +90,6 @@ get_session_key() {
             exit_notification 1 "Error: Could not unlock vault: $ret"
         fi
         export BW_SESSION=$ret
-        # unshow_loading
         key=$(echo "$BW_SESSION" | keyctl padd user bw_session @u)
     else # otherwise, grab the BW_SESSION from keyctl using the key
         BW_SESSION=$(keyctl pipe "$key")
@@ -105,7 +102,6 @@ load_cache() {
     if [ -f "$VAULT_CACHE" ]; then
         show_loading "Loading Password Cache..."
         ITEMS=$(gpg --quiet -d --batch --passphrase "$BW_SESSION" --cipher-algo AES256 "$VAULT_CACHE")
-        # unshow_loading
     else
         load_items
     fi
@@ -115,7 +111,6 @@ load_cache() {
 load_items() {
     show_loading "Caching Passwords..."
     if ! ret=$(bw --nointeraction list items --session "$BW_SESSION" 2>&1); then
-        # unshow_loading
         lock_vault
         # if it fails because user is not logged in, login and retry
         if echo "$ret" | grep -q "not logged in"; then
@@ -128,7 +123,6 @@ load_items() {
     ITEMS=$ret
     mkdir -p "$(dirname "$VAULT_CACHE")"
     echo "$ITEMS" | gpg -c --batch --passphrase "$BW_SESSION" --cipher-algo AES256 -o "$VAULT_CACHE"
-    # unshow_loading
 }
 
 # display main rofi menu
@@ -198,11 +192,9 @@ submenu() {
                 show_loading "Fetching TOTP..."
                 id=$(echo "$1" | jq -r ".[0].id")
                 if ! totp=$(bw --session "$BW_SESSION" get totp "$id" 2>&1); then
-                    # unshow_loading
                     exit_notification 1 "Error: failed to get TOTP: $totp"
                 fi
                 value=$totp
-                # unshow_loading
             ;;
         esac
 
@@ -261,7 +253,6 @@ get_favicon() {
 sync_vault() {
     show_loading "Syncing password store... $1"
     if ! error="$(bw --nointeraction sync --session "$BW_SESSION" 2>&1)"; then
-        # unshow_loading
         # if it fails because user is not logged in, lock vault and retry
         if echo "$error" | grep -q "not logged in"; then
             lock_vault
@@ -272,7 +263,6 @@ sync_vault() {
         exit_notification 1 "Error: Failed to sync bitwarden: $error"
     fi
     rm -f "$VAULT_CACHE"
-    # unshow_loading
     load_items
     show_items
 }
@@ -282,7 +272,6 @@ lock_vault() {
     show_loading "Locking vault..."
     keyctl purge user bw_session &>/dev/null
     bw lock &>/dev/null
-    # unshow_loading
 }
 
 get_session_key
