@@ -13,15 +13,21 @@ BW_LOGIN_INFO="$HOME/working/dotfiles/scripts/.bwlogin" # file containing client
 : ${KB_SYNC="Alt+r"}
 : ${KB_LOCK="Alt+l"}
 : ${KB_LOGOFF="Alt+L"}
-: ${KB_COPY_FIELD="Alt+c"}
 : ${KB_ROW_UP="Alt+k,Up"}
 : ${KB_ROW_DOWN="Alt+j,Down"}
+: ${KB_COPY_FIELD="Alt+c"}
+: ${KB_BACK_TO_MAIN_MENU="Alt+BackSpace"}
 
 # Item type classification. only TYPE_LOGIN is used
 TYPE_LOGIN=1
 TYPE_NOTE=2
 TYPE_CARD=3
 TYPE_IDENTITY=4
+# The custom field type classification. only HIDDEN is used
+CUSTOM_FIELD_TEXT=0
+CUSTOM_FIELD_HIDDEN=1
+CUSTOM_FIELD_BOOLEAN=2
+CUSTOM_FIELD_LINKED=3
 
 # exit with a notification ($2) and code ($1)
 exit_notification() {
@@ -125,26 +131,26 @@ load_items() {
     echo "$ITEMS" | gpg -c --batch --passphrase "$BW_SESSION" --cipher-algo AES256 -o "$VAULT_CACHE"
 }
 
-# display main rofi menu
 show_items() {
     show_loading "Loading items and caching images..."
-    # Get the list of item names and their URIs
-    items_with_data=$(echo "$ITEMS" | jq -r '[.[] | select(has("login")) | "\(.name)\t\(.login.uris[0].uri // empty)"] | .[]')
+    # Get the list of item names, including those without URIs
+    items_with_data=$(echo "$ITEMS" | jq -r '[.[] | select(has("login")) | "\(.name)\t\(.login.uris[0].uri // "")"] | .[]')
 
     rofi_input=""
     while IFS=$'\t' read -r item_name uri; do
         # Escape ampersands and other special characters
         escaped_item_name=$(echo "$item_name" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+        # Set a default icon if no URI is available for favicon lookup
         icon_path=$(get_favicon "$uri")
         rofi_input+="<span size=\"small\">$escaped_item_name</span>\0icon\x1f$icon_path\n"
     done <<< "$items_with_data"
 
-    # pass to rofi_menu
+    # Pass to rofi_menu
     unshow_loading
     if item=$(echo -e -n "$rofi_input" | rofi_main_menu); then
         item=$(echo -n "$item" | sed 's/<[^>]*>//g' | jq -Rs )
-        item_array=$(echo "$ITEMS" | (jq -r "map(select((.name == $item) and (.type == $TYPE_LOGIN)))"))
-        submenu "$item_array"
+        item_array=$(echo "$ITEMS" | jq -r "map(select((.name == $item) and (.type == $TYPE_LOGIN)))")
+        submenu "$item_array" # launch submenu
     else
         case "$?" in
             10) sync_vault;;
@@ -156,49 +162,64 @@ show_items() {
     fi
 }
 
-# display item submenu. $1 is submenu menu items
+# display submenu. $1 is the submenu items
 submenu() {
     # Check for multiple values and handle error
     if [ "$(echo "$1" | jq 'length')" -ne 1 ]; then
         exit_notification 1 "Error: Item $(echo "$1" | jq '.[0].name') is duplicated. Cannot display."
     fi
-
-    item=$(echo "$1" | jq '.[0]')
-    fields=()
-
+    submenu_items=$(echo "$1" | jq '.[0]')
+    fields=() # Stores the displayed values, with masking for password, hidden fields, and totp
+    declare -A actual_values # Key-value store for the actual values of fields, indexed uniquely for multiple URIs
     # Collect standard fields
-    [[ -n "$(echo "$item" | jq -r '.login.username // empty')" ]] && fields+=("username: $(echo "$item" | jq -r '.login.username')")
-    [[ -n "$(echo "$item" | jq -r '.login.password // empty')" ]] && fields+=("password: ********")
-    [[ -n "$(echo "$item" | jq -r '.login.totp // empty')" ]] && fields+=("totp")
-    uris=$(echo "$item" | jq -r '.login.uris[].uri // empty')
-    [[ -n "$uris" ]] && while read -r uri; do fields+=("url: $uri"); done <<< "$uris"
-
-    # Collect custom fields
-    custom_fields=$(echo "$item" | jq -r '.fields[]? | "\(.name): \(.value // empty)"')
-    [[ -n "$custom_fields" ]] && while read -r custom_field; do fields+=("$custom_field"); done <<< "$custom_fields"
-
+    username=$(echo "$submenu_items" | jq -r '.login.username // empty')
+    [[ -n "$username" ]] && fields+=("username: $username") && actual_values["username"]=$username
+    password=$(echo "$submenu_items" | jq -r '.login.password // empty')
+    [[ -n "$password" ]] && fields+=("password: ********") && actual_values["password"]=$password
+    [[ -n "$(echo "$submenu_items" | jq -r '.login.totp // empty')" ]] && fields+=("totp: ******") # TOTP fetched if requested
+    # Handle multiple URIs uniquely
+    uris=$(echo "$submenu_items" | jq -r '.login.uris[].uri // empty')
+    uri_index=1
+    [[ -n "$uris" ]] && while read -r uri; do
+        fields+=("url$uri_index: $uri")
+        actual_values["url$uri_index"]=$uri
+        ((uri_index++))
+    done <<< "$uris"
+    # Collect custom fields and mask hidden fields
+    custom_fields=$(echo "$submenu_items" | jq -r '.fields[]? | "\(.name):\(.value // empty):\(.type)"')
+    [[ -n "$custom_fields" ]] && while IFS=: read -r name value type; do
+        if [[ "$type" == $CUSTOM_FIELD_HIDDEN ]]; then # if the custom field type is hidden
+            fields+=("$name: ********")
+            actual_values["$name"]=$value
+        else # all other custom field types are displayed the same way. link types are not displayed at all
+            fields+=("$name: $value")
+            actual_values["$name"]=$value
+        fi
+    done <<< "$custom_fields"
     # Display the menu and handle selection
     unshow_loading
     field_selection=$(printf '%s\n' "${fields[@]}" | rofi_submenu)
     rofi_exit_code=$?
+    if [[ $rofi_exit_code -eq 11 ]]; then # KB_BACK_TO_MAIN_MENU hit
+        show_items
+        return
+    fi
+    # handle field selection
     if [[ -n "$field_selection" ]]; then
+        # Fetch actual value based on field selection
         field_name=$(echo "$field_selection" | cut -d: -f1)
-        value=$(echo "$field_selection" | cut -d':' -f2- | sed 's/^ //')
-
-        case "$field_name" in
-            password)
-                value=$(echo "$item" | jq -r '.login.password') ;;  # Reveal password if selected
-            totp)
-                show_loading "Fetching TOTP..."
-                id=$(echo "$1" | jq -r ".[0].id")
-                if ! totp=$(bw --session "$BW_SESSION" get totp "$id" 2>&1); then
-                    exit_notification 1 "Error: failed to get TOTP: $totp"
-                fi
-                value=$totp
-            ;;
-        esac
-
-        if [[ $rofi_exit_code -eq 10 ]]; then
+        if [[ "$field_name" == "totp" ]]; then # if totp was selected, fetch it
+            show_loading "Fetching TOTP..."
+            id=$(echo "$1" | jq -r ".[0].id")
+            if ! value=$(bw --session "$BW_SESSION" get totp "$id" 2>&1); then
+                exit_notification 1 "Error: failed to get TOTP: $value"
+            fi
+            unshow_loading
+        else # otherwise grab the actual value from actual_values
+            value="${actual_values[$field_name]}"
+        fi
+        # Copy or type the actual value
+        if [[ $rofi_exit_code -eq 10 ]]; then # KB_COPY_FIELD hit
             echo -n "$value" | xclip -selection clipboard -r
             exit_notification 0 "Success: Copied to clipboard"
         else
@@ -206,6 +227,7 @@ submenu() {
         fi
     fi
 }
+
 
 # main rofi menu
 rofi_main_menu() {
@@ -223,12 +245,13 @@ rofi_main_menu() {
 
 # Function to display the submenu with appropriate keybindings
 rofi_submenu() {
-    msg="| <b>Enter</b>: Type Val | <b>$KB_COPY_FIELD</b>: Copy Val |"
+    msg="| <b>Enter</b>: Type Val | <b>$KB_COPY_FIELD</b>: Copy Val | <b>$KB_BACK_TO_MAIN_MENU</b>: Back |"
     rofi -dmenu -p 'Field' \
         -i -no-custom \
         -kb-row-up "$KB_ROW_UP" \
         -kb-row-down "$KB_ROW_DOWN" \
         -kb-custom-1 "$KB_COPY_FIELD" \
+        -kb-custom-2 "$KB_BACK_TO_MAIN_MENU" \
         -mesg "$msg"
 }
 
