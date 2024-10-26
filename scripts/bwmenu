@@ -7,16 +7,15 @@ ITEMS= # Holds the available items in memory
 LOADING_PID= # Stores the pid of the loading indicator
 ICON_CACHE_DIR="$HOME/.cache/bwmenu/icons" # icon cache dir
 VAULT_CACHE="$HOME/.cache/bwmenu/vault.gpg" # item cache dir
-BW_LOGIN_INFO="./.bwlogin" # file containing clientid and clientsecret for login
+BW_LOGIN_INFO="$HOME/working/dotfiles/scripts/.bwlogin" # file containing clientid and clientsecret for login
 
 # Keyboard shortcuts
 : ${KB_SYNC="Alt+r"}
-: ${KB_LOCK="Alt+L"}
+: ${KB_LOCK="Alt+l"}
+: ${KB_LOGOFF="Alt+L"}
 : ${KB_COPY_FIELD="Alt+c"}
 : ${KB_ROW_UP="Alt+k,Up"}
 : ${KB_ROW_DOWN="Alt+j,Down"}
-: ${KB_MOVE_CHAR_BACK="Alt+h,Left"}
-: ${KB_MOVE_CHAR_FORWARD="Alt+l,Right"}
 
 # Item type classification. only TYPE_LOGIN is used
 TYPE_LOGIN=1
@@ -26,18 +25,20 @@ TYPE_IDENTITY=4
 
 # exit with a notification ($2) and code ($1)
 exit_notification() {
+    kill "$LOADING_PID" 2>/dev/null
     (rofi -e "$2" & export pid=$! && sleep $NOTIFICATION_LENGTH && kill $pid)
     exit "$1"
 }
 
 # show loading screen with message ($1)
 show_loading() {
+    kill "$LOADING_PID" 2>/dev/null
     rofi -e "$1" & LOADING_PID=$!
 }
 
 # kill loading screen
 unshow_loading() {
-    kill "$LOADING_PID"
+    kill "$LOADING_PID" 2>/dev/null
     LOADING_PID=-1
 }
 
@@ -57,11 +58,18 @@ login() {
     if [[ $? -ne 0 ]]; then # if login fails
         exit_notification 1 "Error: Failed to login: $ret"
     fi
-    unshow_loading
+    # unshow_loading
+}
+
+logoff() {
+    show_loading "Logging out..."
+    lock_vault
+    bw logout 2>/dev/null
+    exit_notification 0 "Success: Logged out"
 }
 
 # get session key. prompt for password if necessary
-# if $1 is set, it will be used as the password
+# if $1 is set, it will be used as the password if it is needed
 get_session_key() {
     # if bw_session has not been set or has expired
     if ! key=$(keyctl request user bw_session 2>/dev/null); then
@@ -69,11 +77,12 @@ get_session_key() {
         if [[ -n $1 ]]; then # if $1 is set, it is the master password.
             mpw=$1
         else # otherwise, prompt for password
+            unshow_loading
             mpw=$(rofi -dmenu -p "Master Password" -password -l 0) || exit $?
         fi
         show_loading "Unlocking Vault..."
         if ! ret="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
-            unshow_loading
+            # unshow_loading
             # if it fails because user is not logged in, login and retry
             if echo "$ret" | grep -q "not logged in"; then
                 login
@@ -83,7 +92,7 @@ get_session_key() {
             exit_notification 1 "Error: Could not unlock vault: $ret"
         fi
         export BW_SESSION=$ret
-        unshow_loading
+        # unshow_loading
         key=$(echo "$BW_SESSION" | keyctl padd user bw_session @u)
     else # otherwise, grab the BW_SESSION from keyctl using the key
         BW_SESSION=$(keyctl pipe "$key")
@@ -96,7 +105,7 @@ load_cache() {
     if [ -f "$VAULT_CACHE" ]; then
         show_loading "Loading Password Cache..."
         ITEMS=$(gpg --quiet -d --batch --passphrase "$BW_SESSION" --cipher-algo AES256 "$VAULT_CACHE")
-        unshow_loading
+        # unshow_loading
     else
         load_items
     fi
@@ -106,7 +115,7 @@ load_cache() {
 load_items() {
     show_loading "Caching Passwords..."
     if ! ret=$(bw --nointeraction list items --session "$BW_SESSION" 2>&1); then
-        unshow_loading
+        # unshow_loading
         lock_vault
         # if it fails because user is not logged in, login and retry
         if echo "$ret" | grep -q "not logged in"; then
@@ -119,7 +128,7 @@ load_items() {
     ITEMS=$ret
     mkdir -p "$(dirname "$VAULT_CACHE")"
     echo "$ITEMS" | gpg -c --batch --passphrase "$BW_SESSION" --cipher-algo AES256 -o "$VAULT_CACHE"
-    unshow_loading
+    # unshow_loading
 }
 
 # display main rofi menu
@@ -147,6 +156,7 @@ show_items() {
             10) sync_vault;;
             11) lock_vault
                 exit_notification 0 "Success: Vault Locked";;
+            12) logoff;;
             *) exit "0";;
         esac
     fi
@@ -174,6 +184,7 @@ submenu() {
     [[ -n "$custom_fields" ]] && while read -r custom_field; do fields+=("$custom_field"); done <<< "$custom_fields"
 
     # Display the menu and handle selection
+    unshow_loading
     field_selection=$(printf '%s\n' "${fields[@]}" | rofi_submenu)
     rofi_exit_code=$?
     if [[ -n "$field_selection" ]]; then
@@ -187,11 +198,11 @@ submenu() {
                 show_loading "Fetching TOTP..."
                 id=$(echo "$1" | jq -r ".[0].id")
                 if ! totp=$(bw --session "$BW_SESSION" get totp "$id" 2>&1); then
-                    unshow_loading
+                    # unshow_loading
                     exit_notification 1 "Error: failed to get TOTP: $totp"
                 fi
                 value=$totp
-                unshow_loading
+                # unshow_loading
             ;;
         esac
 
@@ -206,17 +217,16 @@ submenu() {
 
 # main rofi menu
 rofi_main_menu() {
-    msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock |"
+    msg="| <b>$KB_SYNC</b>: sync | <b>$KB_LOCK</b>: lock | <b>$KB_LOGOFF</b>: logout |"
     rofi -dmenu -p 'Search' \
         -i -no-custom \
         -kb-row-up "$KB_ROW_UP" \
         -kb-row-down "$KB_ROW_DOWN" \
-        -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
-        -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
         -markup-rows \
         -mesg "$msg" \
         -kb-custom-1 $KB_SYNC \
-        -kb-custom-2 $KB_LOCK
+        -kb-custom-2 $KB_LOCK \
+        -kb-custom-3 $KB_LOGOFF
 }
 
 # Function to display the submenu with appropriate keybindings
@@ -226,8 +236,6 @@ rofi_submenu() {
         -i -no-custom \
         -kb-row-up "$KB_ROW_UP" \
         -kb-row-down "$KB_ROW_DOWN" \
-        -kb-move-char-back "$KB_MOVE_CHAR_BACK" \
-        -kb-move-char-forward "$KB_MOVE_CHAR_FORWARD" \
         -kb-custom-1 "$KB_COPY_FIELD" \
         -mesg "$msg"
 }
@@ -253,7 +261,7 @@ get_favicon() {
 sync_vault() {
     show_loading "Syncing password store... $1"
     if ! error="$(bw --nointeraction sync --session "$BW_SESSION" 2>&1)"; then
-        unshow_loading
+        # unshow_loading
         # if it fails because user is not logged in, lock vault and retry
         if echo "$error" | grep -q "not logged in"; then
             lock_vault
@@ -264,8 +272,8 @@ sync_vault() {
         exit_notification 1 "Error: Failed to sync bitwarden: $error"
     fi
     rm -f "$VAULT_CACHE"
+    # unshow_loading
     load_items
-    unshow_loading
     show_items
 }
 
@@ -274,7 +282,7 @@ lock_vault() {
     show_loading "Locking vault..."
     keyctl purge user bw_session &>/dev/null
     bw lock &>/dev/null
-    unshow_loading
+    # unshow_loading
 }
 
 get_session_key

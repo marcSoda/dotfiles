@@ -19,7 +19,7 @@ configuration {
 
 // overall window
 window {
-    width: 70%;
+    width: 90%;
     border-radius: 0.5em;
 }
 
