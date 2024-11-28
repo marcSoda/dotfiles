@@ -6,6 +6,7 @@ import qualified XMonad.StackSet as W
 -- Hooks
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
 import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
+import XMonad.Hooks.ManageHelpers
 -- Layouts and modifiers
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.LayoutModifier
@@ -102,24 +103,20 @@ myLayoutHook = avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ myDefaultLa
   where
     myDefaultLayout = withBorder myBorderWidth tall ||| withBorder myBorderWidth wide ||| noBorders monocle
 
-
---Workspaces
+myWorkspaces :: [String]
 myWorkspaces = ["  1  ", "  2  ", "  3  ", "  4  ", "  5  ", "  6  ", "  7  ", "  8  ", "  9  "]
 myManageHook = composeAll
-     [ className =? "zoom"                       --> doShift(myWorkspaces !! 6)
-     , className =? "Slack"                      --> doShift(myWorkspaces !! 7)
-     , className =? "teams-for-linux"            --> doShift(myWorkspaces !! 7)
-     , className =? "asana"                      --> doShift(myWorkspaces !! 7)
-     , className =? "firefox"                    --> doShift(myWorkspaces !! 8)
-     , className =? "vlc"                        --> doShift(myWorkspaces !! 8)
-     , className =? "Nextcloud"                  --> doFloat
+     [ className =? "zoom"       --> doShift (myWorkspaces !! 6)
+     , className =? "firefox"    --> doShift (myWorkspaces !! 8)
+     , className =? "vlc"        --> doShift (myWorkspaces !! 8)
+     , className =? "Nextcloud"  --> doFloat
+     , className =? "xfreerdp"   --> doFullFloat
      ] <+> namedScratchpadManageHook myScratchpads
 
 --Scratchpads
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
-                -- , NS "ncpamixerScratch" spawnNcpamixer findNcpamixer manageNcpamixer
                 , NS "pulsemixerScratch" spawnPulsemixer findPulsemixer managePulsemixer
                 , NS "chatGptScratch" spawnChatGpt findChatGpt manageChatGpt
                 , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
@@ -136,10 +133,6 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         spawnEmacsClient  = "emacsclient -s 0 -a='' --no-wait -c -F '(quote (name . \"emacs-scratch\"))'"
         findEmacsClient   = title =? "emacs-scratch"
         manageEmacsClient = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
-
-        -- spawnNcpamixer  = myTerminal ++ " -t 'ncpamixer Scratchpad' -e ncpamixer"
-        -- findNcpamixer   = title =? "ncpamixer Scratchpad"
-        -- manageNcpamixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
         spawnPulsemixer  = myTerminal ++ " -t 'pulsemixer Scratchpad' -e pulsemixer"
         findPulsemixer   = title =? "pulsemixer Scratchpad"

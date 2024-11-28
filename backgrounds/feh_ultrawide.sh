@@ -20,4 +20,4 @@ convert "$ultrawide" -resize 5120x1440\! "$ultrawide"
 convert +append "$laptop" "$ultrawide" "$combined_wallpaper"
 
 # Use feh to set the combined image as the desktop background
-feh --no-xinerama --bg-scale "$combined_wallpaper"
+feh --no-xinerama --bg-scale --no-fehbg "$combined_wallpaper"

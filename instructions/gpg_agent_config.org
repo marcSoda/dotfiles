@@ -1,2 +1,2 @@
-* link ~/.gnupg/gpg-agent.conf to ~/working/dotfiles/gpg-agent.conf
+* link $XDG_DATA_HOME/gnupg/gpg-agent.conf to ~/working/dotfiles/gpg-agent.conf
 - depend on pinentry-rofi, make sure you install it from the AUR

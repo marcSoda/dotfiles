@@ -27,13 +27,16 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CACHE_HOME=$HOME/.cache
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
 export _JAVA_AWT_WM_NONREPARENTING=1 # issue  with weird java windows:
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
 export WINEPREFIX="$XDG_DATA_HOME"/wine
+export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
