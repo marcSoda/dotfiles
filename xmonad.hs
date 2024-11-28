@@ -119,8 +119,7 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
                 , NS "ncspotScratch" spawnNcspot findNcspot manageNcspot
                 , NS "pulsemixerScratch" spawnPulsemixer findPulsemixer managePulsemixer
                 , NS "chatGptScratch" spawnChatGpt findChatGpt manageChatGpt
-                , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient
-                , NS "thunderScratch" spawnThunderScratch findThunderScratch manageThunderScratch]
+                , NS "emacsScratch" spawnEmacsClient findEmacsClient manageEmacsClient]
     where
         spawnTerm = myTerminal ++ " -t 'Terminal Scratchpad' -e bash -c 'source ~/.bashrc && tm a main'"
         findTerm   = title =? "Terminal Scratchpad"
@@ -138,12 +137,8 @@ myScratchpads = [ NS "terminalScratch" spawnTerm findTerm manageTerm
         findPulsemixer   = title =? "pulsemixer Scratchpad"
         managePulsemixer = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
-        spawnThunderScratch  = "thunderbird"
-        findThunderScratch   = className =? "thunderbird"
-        manageThunderScratch = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
-
-        spawnChatGpt  = "gtk-launch WebApp-ChatGPT1788.desktop"
-        findChatGpt   = className =? "WebApp-ChatGPT1788"
+        spawnChatGpt  = "chromium --app='https://chat.openai.com' --class=ChatGPT --name=ChatGPT --user-data-dir=/home/marc/.local/share/ice/profiles/ChatGPT"
+        findChatGpt   = className =? "ChatGPT"
         manageChatGpt = customFloating $ W.RationalRect 0.025 0.025 0.95 0.95
 
 -- Only allow one scratchpad per window. NB: you can use exclusives to make some scratchpads conflict and some not. Checkout documentation
@@ -178,9 +173,7 @@ myKeys =
         , ("M-<Return>", namedScratchpadAction myScratchpads "terminalScratch")
         , ("M-m", namedScratchpadAction myScratchpads "ncspotScratch")
         , ("M-c", namedScratchpadAction myScratchpads "emacsScratch")
-        -- , ("M-a", namedScratchpadAction myScratchpads "ncpamixerScratch")
         , ("M-a", namedScratchpadAction myScratchpads "pulsemixerScratch")
-        , ("M-g", namedScratchpadAction myScratchpads "thunderScratch")
         , ("M-f", namedScratchpadAction myScratchpads "chatGptScratch")
         , ("M-0", windows $ W.greedyView "NSP") -- set window focus to hidden NSP workspace
     -- monitors
