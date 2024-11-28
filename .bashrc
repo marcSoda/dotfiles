@@ -74,12 +74,9 @@ alias cdev='cd ~/working/dev'
 alias cdot='cd $DOTFILES'
 alias ctem='cd ~/working/temp'
 alias cdow='cd ~/working/downloads'
-alias cmis='cd ~/working/misc'
-alias corg='cd ~/working/org'
+alias corg='cd ~/working/nextcloud/org'
 alias cnex='cd ~/working/nextcloud'
 alias cen='cd ~/working/dev/osb/.envcfg.d'
-# network
-alias nmc='nmcli'
 # bluetooth
 alias btc='bluetoothctl'
 alias btui='bluetuith'
