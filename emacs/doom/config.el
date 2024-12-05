@@ -6,10 +6,11 @@
 (advice-remove 'evil-open-below #'+evil--insert-newline-below-and-respect-comments-a)
 (advice-remove 'evil-open-above #'+evil--insert-newline-above-and-respect-comments-a)
 (setq tab-width 4)
-(setq js-jsx-indent-level 4)
-(setq js-indent-level 4)
-(setq typescript-indent-level 4)
-(setq evil-shift-width 4)
+(setq native-comp-jit-compilation nil) ;; don't defer compilation for new packages
+;; treesitter
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
 
 ;; FONT
 (setq doom-font (font-spec :family "Iosevka" :size 25))
@@ -73,6 +74,17 @@
 
 ;;LSP
 (after! lsp-mode
+    ;; lsp stuff
+    (setq lsp-idle-delay 0.5)
+    (setq lsp-signature-render-documentation nil)
+    (setq lsp-lens-enable nil)
+    (setq lsp-eldoc-render-all nil)
+    (setq gc-cons-threshold (* 100 1024 1024))
+    (setq read-process-output-max (* 3 1024 1024))
+    (setq undo-limit (* 2 1024 1024))
+    (setq undo-strong-limit (* 2 1024 1024))
+    (setq undo-outer-limit (* 24 1024 1024))
+    (setq compilation-scroll-output t)
     ;; tramp remote stuff
     (if (boundp 'tramp-remote-path)
         (progn
@@ -97,9 +109,54 @@
                 :server-id 'rust-server)))
 
 (after! lsp-ui
-    (setq lsp-ui-doc-enable t)
+    ;; lsp bar at the top of frame
     (setq lsp-headerline-breadcrumb-enable t)
-    (setq lsp-ui-doc-show-with-mouse t))
+    ;; peek
+    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+    (setq lsp-ui-peek-peek-height 12)
+    (setq lsp-ui-peek-enable t)
+    ;; sideline
+    (setq lsp-ui-sideline-show-hover t)
+    ;; doc
+    (setq lsp-ui-doc-enable t)
+    (setq lsp-ui-doc-show-with-cursor t)
+    (setq lsp-ui-doc-position 'top)
+    (setq lsp-ui-doc-side 'right))
+
+;; lsp-booster
+;; NOTE: you will need to download the lsp-booster binary and move it to /bin before this will work
+;; NOTE: does not work on docker repos or remote repos (for now, I think...)
+(setenv "LSP_USE_PLISTS" "true")
+(defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+        (when (equal (following-char) ?#)
+            (let ((bytecode (read (current-buffer))))
+                (when (byte-code-function-p bytecode)
+                    (funcall bytecode))))
+        (apply old-fn args)))
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+        (if (and (not test?)                             ;; for check lsp-server-present?
+                 (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+                 lsp-use-plists
+                 (not (functionp 'json-rpc-connection))  ;; native json-rpc
+                 (executable-find "emacs-lsp-booster"))
+            (progn
+                (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+                    (setcar orig-result command-from-exec-path))
+                (message "Using emacs-lsp-booster for %s!" orig-result)
+                (cons "emacs-lsp-booster" orig-result))
+            orig-result)))
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
 ;; direnv. for now, this mode just allows pyright to use python venvs. Check instructions for more details
 (after! direnv
@@ -107,14 +164,8 @@
   (direnv-mode))
 
 ;; theme
-(setq rand-theme-wanted '(doom-henna doom-xcode doom-dark+ doom-opera misterioso doom-badger doom-snazzy doom-Iosvkem doom-molokai doom-peacock doom-old-hope humanoid-dark doom-monokai-pro doom-monokai-classic))
+(setq rand-theme-wanted '(misterioso humanoid-dark))
 (rand-theme)
-;; (load-theme 'humanoid-dark t nil)
-;; ;; I have to do this for the xmonad named scratchpad to load the theme right. It's only necessary when using humanoid-dark
-;; (defun apply-my-theme (frame)
-;;   (select-frame frame)
-;;   (load-theme 'humanoid-dark t))
-;; (add-hook 'after-make-frame-functions 'apply-my-theme)
 
 ;;ORG
 (after! org
@@ -200,11 +251,6 @@
 (define-key minibuffer-mode-map   (kbd "M-j") 'next-line)
 (define-key minibuffer-mode-map   (kbd "M-k") 'previous-line)
 
-(evil-define-key 'normal peep-dired-mode-map
-  (kbd "j") 'peep-dired-next-file
-  (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-
 (after! evil-org
     (evil-define-key 'normal evil-org-mode-map
         (kbd "M-o") '+org/insert-item-below
@@ -248,6 +294,9 @@
     (:prefix ("c". "code")
         :desc "flycheck-next-error" "n" #'flycheck-next-error
         :desc "flycheck-prev-error" "p" #'flycheck-previous-error
+        :desc "find definitions" "d" #'xref-find-definitions
+        :desc "find references" "D" #'xref-find-references
+        :desc "open imenu" "I" #'lsp-ui-imenu
         :desc "switch between header and source (clangd)" "s" #'lsp-clangd-find-other-file
         :desc "grep" "g" #'rgrep)
     (:prefix ("d". "dired")
