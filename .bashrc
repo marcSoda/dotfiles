@@ -35,7 +35,7 @@ export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
 export WINEPREFIX="$XDG_DATA_HOME"/wine
-export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
+#export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority IF YOU RE-ADD THIS, IT WILL NOT ALLOW YOU TO LOGIN TO XRDP. DO NOT RE-ADD.
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -207,6 +207,3 @@ pass() {
         /usr/bin/pass "$@"
     fi
 }
-
-#enable starship prompt
-eval "$(starship init bash)"
