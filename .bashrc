@@ -35,8 +35,7 @@ export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export GOPATH="$XDG_DATA_HOME"/go
 export WINEPREFIX="$XDG_DATA_HOME"/wine
-#export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority IF YOU RE-ADD THIS, IT WILL NOT ALLOW YOU TO LOGIN TO XRDP. DO NOT RE-ADD.
-
+#export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority IF YOU RE-ADD THIS, IT WILL NOT ALLOW YOU TO LOGIN TO XRDP AT WORK. DO NOT RE-ADD.
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$XDG_DATA_HOME/cargo/bin:$PATH"
@@ -68,6 +67,7 @@ alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 alias duh='du -ah --max-depth=1 . | sort -rh'
 alias vim='nvim'
 alias xr='xmonad --recompile && xmonad --restart'
+alias clangk="ps aux | grep '[c]lang' | awk '{print \$2}' | xargs -r kill -9" # kill all clang processes
 #nav
 alias cw='cd ~/working'
 alias cdev='cd ~/working/dev'
@@ -207,3 +207,10 @@ pass() {
         /usr/bin/pass "$@"
     fi
 }
+
+# remap caps lock to control
+setxkbmap -option ctrl:nocaps
+
+# Hishtory Config:
+export PATH="$PATH:/home/marc/.hishtory"
+source /home/marc/.hishtory/config.sh

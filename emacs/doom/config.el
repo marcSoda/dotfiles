@@ -91,22 +91,7 @@
             (add-to-list 'tramp-remote-path "~/go/bin")
             (add-to-list 'tramp-remote-path "/usr/bin")
             (setq enable-remote-dir-locals t)
-            (add-to-list 'tramp-remote-path 'tramp-own-remote-path)))
-    (lsp-register-client
-        (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
-                :major-modes '(c++-mode)
-                :remote? t
-                :server-id 'cpp-server))
-    (lsp-register-client
-        (make-lsp-client :new-connection (lsp-tramp-connection "gopls")
-                :major-modes '(go-mode)
-                :remote? t
-                :server-id 'go-server))
-    (lsp-register-client
-        (make-lsp-client :new-connection (lsp-tramp-connection "rust-analyzer")
-                :major-modes '(rust-mode rustic-mode)
-                :remote? t
-                :server-id 'rust-server)))
+            (add-to-list 'tramp-remote-path 'tramp-own-remote-path))))
 
 (after! lsp-ui
     ;; lsp bar at the top of frame
@@ -118,6 +103,7 @@
     (setq lsp-ui-peek-enable t)
     ;; sideline
     (setq lsp-ui-sideline-show-hover t)
+    (setq lsp-ui-sideline-show-code-actions t)
     ;; doc
     (setq lsp-ui-doc-enable t)
     (setq lsp-ui-doc-show-with-cursor t)
