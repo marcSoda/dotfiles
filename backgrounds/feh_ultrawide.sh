@@ -10,7 +10,7 @@ combined_wallpaper="/home/marc/working/dotfiles/backgrounds/TEMP_MERGED.jpg"  # 
 # Resize the laptop wallpaper to 1920x1200 if it's not already that size
 # The '!'' flag forces the image to the exact size, potentially altering aspect ratio
 # Remove '!' if maintaining the aspect ratio is desired, possibly resulting in different dimensions
-convert "$laptop" -resize 1920x1200\! "$laptop"
+# convert "$laptop" -resize 1920x1200\! "$laptop"
 
 # Resize the ultrawide wallpaper to 5120x1440 if it's not already that size
 convert "$ultrawide" -resize 5120x1440\! "$ultrawide"
