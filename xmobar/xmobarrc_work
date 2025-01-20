@@ -4,7 +4,7 @@ Config { font    = "xft:Ubuntu:weight=bold:pixelsize=12:antialias=true:hinting=t
        , fgColor = "#eeeeee"
        , lowerOnStart = True
        , hideOnStart = False
-       , position = Static { xpos = 20 , ypos = 10 , width = 1880, height = 30 }
+       , position = Static { xpos = 0 , ypos = 0 , width = 1920, height = 40 }
        , commands = [Run Date " %a %b %d - %I:%M %p " "date" 30
                     ,Run Cpu ["-t", "    <total>%"] 20
                     ,Run Memory ["-t", "    <usedratio>%"] 20
