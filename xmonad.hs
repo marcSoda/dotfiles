@@ -47,9 +47,6 @@ scriptPath = "/home/marc/working/dotfiles/scripts/"
 scrotPath :: String
 scrotPath = "/home/marc/working/screenshots/screenshot.jpg"
 
-myBrowser :: String
-myBrowser = "qutebrowser "
-
 myBorderWidth :: Dimension
 myBorderWidth = 1           -- Sets border width for windows
 
@@ -151,8 +148,7 @@ myKeys =
         [
     -- Applications
         ("M-S-<Return>", spawn (myTerminal))
-        , ("M-S-b", spawn (myBrowser))
-        , ("M-S-f", spawn "firefox")
+        , ("M-S-b", spawn ("librewolf"))
         , ("M-p", spawn "rofi -show drun")
         , ("M-S-p", spawn (scriptPath ++ "bwmenu"))
         , ("M-S-c", spawn "emacs")
