@@ -59,6 +59,14 @@ Host vaultwarden
     HostName 10.78.80.159
     User root
 
+Host lubelog
+    HostName 10.78.80.160
+    User root
+
+Host paperless
+    HostName 10.78.80.161
+    User root
+
 Host softgit
     HostName softserve.soda.rip
     Port 23231

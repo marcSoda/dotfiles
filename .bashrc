@@ -86,6 +86,7 @@ alias anker='btc power on && btc connect 08:EB:ED:6E:E8:29'
 alias keyboard='btc power on && btc connect DC:2C:26:F8:7F:DC'
 alias mouse='btc power on && btc connect FA:BE:26:DE:58:8B'
 alias jbl='btc power on && btc connect F8:DF:15:D8:2F:C3'
+# GRAVIC
 # warp gravic NOTE: the warp-cli usage changes all the time
 alias warpp='sudo systemctl stop systemd-resolved.service && sudo systemctl start warp-svc.service'
 alias warpc='warp-cli connect'
@@ -94,6 +95,9 @@ alias warps='warp-cli status && echo -e "\n\n\n" && sudo systemctl status system
 alias warpreauth='warp-cli debug access-reauth'
 alias warpauth='warp-cli registration new gravic'
 alias warpauthshow='warp-cli registration show'
+# misc gravic
+alias lwin="xfreerdp /u:msoda /p:B1tch3s0nWh33ls /v:msoda.iticscppi.com /size:1920x1200 +smart-sizing -sound +clipboard"
+alias larch="xfreerdp /u:marc /p:x /v:msoda.iticscppi.com /size:1920x1200 +smart-sizing -sound +clipboard"
 # git
 alias g='git status'
 alias gs='git status -s'
