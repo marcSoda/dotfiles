@@ -96,8 +96,10 @@ alias warpreauth='warp-cli debug access-reauth'
 alias warpauth='warp-cli registration new gravic'
 alias warpauthshow='warp-cli registration show'
 # misc gravic
-alias lwin="xfreerdp /u:msoda /p:B1tch3s0nWh33ls /v:msoda.iticscppi.com /size:1920x1200 +smart-sizing -sound +clipboard"
-alias larch="xfreerdp /u:marc /p:x /v:msoda.iticscppi.com /size:1920x1200 +smart-sizing -sound +clipboard"
+alias lwinsinglaptop="xfreerdp /u:msoda /p:B1tch3s0nWh33ls /v:msoda.iticscppi.com /size:1920x1200 +smart-sizing -sound +clipboard"
+alias larchsinglaptop="xfreerdp /u:marc /p:x /v:msoda.iticscppi.com /size:1920x1200 +smart-sizing -sound +clipboard"
+alias lwinsingmon="xfreerdp /u:msoda /p:B1tch3s0nWh33ls /v:msoda.iticscppi.com /size:2560x1440 +smart-sizing -sound +clipboard"
+alias larchsingmon="xfreerdp /u:marc /p:x /v:msoda.iticscppi.com /size:2560x1440 +smart-sizing -sound +clipboard"
 # git
 alias g='git status'
 alias gs='git status -s'

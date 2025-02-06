@@ -75,16 +75,16 @@
 ;;LSP
 (after! lsp-mode
     ;; lsp stuff
-    (setq lsp-idle-delay 0.5)
-    (setq lsp-signature-render-documentation nil)
-    (setq lsp-lens-enable nil)
-    (setq lsp-eldoc-render-all nil)
-    (setq gc-cons-threshold (* 100 1024 1024))
-    (setq read-process-output-max (* 3 1024 1024))
-    (setq undo-limit (* 2 1024 1024))
-    (setq undo-strong-limit (* 2 1024 1024))
-    (setq undo-outer-limit (* 24 1024 1024))
-    (setq compilation-scroll-output t)
+    (setq lsp-idle-delay 0.5
+          lsp-signature-render-documentation nil
+          lsp-lens-enable nil
+          lsp-eldoc-render-all nil
+          gc-cons-threshold (* 100 1024 1024)
+          read-process-output-max (* 3 1024 1024)
+          undo-limit (* 2 1024 1024)
+          undo-strong-limit (* 2 1024 1024)
+          undo-outer-limit (* 24 1024 1024)
+          compilation-scroll-output t)
     ;; tramp remote stuff
     (if (boundp 'tramp-remote-path)
         (progn
@@ -112,7 +112,6 @@
 
 ;; direnv. for now, this mode just allows pyright to use python venvs. Check instructions for more details
 (after! direnv
-  :config
   (direnv-mode))
 
 ;; theme
@@ -121,36 +120,36 @@
 
 ;;ORG
 (after! org
-  :init
   (add-hook 'org-mode-hook 'org-indent-mode)
   (setq org-directory "/home/marc/Nextcloud/org"
-    org-agenda-files '("/home/marc/Nextcloud/org")
-    org-agenda-window-setup 'only-window
-    org-hide-emphasis-markers t
-    org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)"))))
+        org-agenda-files '("/home/marc/Nextcloud/org")
+        org-agenda-window-setup 'only-window
+        org-hide-emphasis-markers t
+        org-todo-keywords '((sequence "TODO(t)" "MEET(m)" "|" "DONE(d)"))))
 
 ;;ORG-ROAM
-(setq org-roam-directory "/home/marc/Nextcloud/org/roam")
-(setq org-roam-completion-everywhere t)
-(org-roam-db-autosync-enable)
-(setq epa-file-encrypt-to '("m@soda.fm"))                    ;;use the gpg key for m@soda.fm by default
-(setq epa-file-select-keys 1)                                ;;don't prompt which key to use
+(setq org-roam-directory "~/working/nextcloud/org/roam"
+      org-roam-completion-everywhere t
+      org-roam-db-autosync-mode t)
+
+;; CAPTURE TEMPLATES
 (setq org-roam-capture-templates '(("d" "default" plain "%?"
-     :target (file+head "${slug}.org.gpg"
-                        "#+title: ${title}\n")
-     :unnarrowed t)))
+    :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+    :unnarrowed t)))
+
+;; DAILIES CAPTURE TEMPLATE
 (setq org-roam-dailies-capture-templates
     '(("d" "default" entry "* %?"
-    :target (file+head "%<%Y-%m-%d>.org.gpg" "#+title: %<%Y-%m-%d>\n"))))
+    :target (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
 
 ;;ORG-ROAM-UI
 (after! org-roam-ui
-   (setq org-roam-ui-sync-theme t
-         org-roam-ui-follow nil
-         org-roam-ui-update-on-save t))
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow nil
+          org-roam-ui-update-on-save t))
 
 ;;TRANSPARENCY
-(add-to-list 'default-frame-alist '(alpha-background . 92))
+(add-to-list 'default-frame-alist '(alpha-background . 100))
 
 ;;TREEMACS
 (after! treemacs
