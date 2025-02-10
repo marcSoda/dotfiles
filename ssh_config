@@ -15,6 +15,26 @@ Host work
     User marc
     Port 7023
 
+Host oss
+    HostName 10.1.50.110
+    User super.msoda
+
+Host winp
+    HostName msoda
+    User iticscppi\msoda
+
+Host winc
+    HostName msoda
+    User iticscppi\msoda
+    RequestTTY yes
+    RemoteCommand "C:/cygwin/Cygwin.bat --login -i"
+
+Host wing
+    HostName msoda
+    User iticscppi\msoda
+    RequestTTY yes
+    RemoteCommand "C:/Program Files/Git/bin/bash.exe" --login -i
+
 Host praetor
     HostName 10.78.80.69
     User root

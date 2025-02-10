@@ -68,6 +68,7 @@ alias duh='du -ah --max-depth=1 . | sort -rh'
 alias vim='nvim'
 alias xr='xmonad --recompile && xmonad --restart'
 alias clangk="ps aux | grep '[c]lang' | awk '{print \$2}' | xargs -r kill -9" # kill all clang processes
+alias black="xsetroot -bg black"
 #nav
 alias cw='cd ~/working'
 alias cdev='cd ~/working/dev'
